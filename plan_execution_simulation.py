@@ -2,10 +2,11 @@ import numpy as np
 import random
 import copy
 import math
+from planners import plan_path
 
 
 
-def plan_and_execute(strategy, g, base_availability_models, true_schedules, node_requests, start_time, start_node_id, maintenance_node, mu, params):
+def plan_and_execute(strategy, g, base_availability_models, base_model_variances, true_schedules, node_requests, start_time, start_node_id, maintenance_node, mu, params):
 
     ### plan, execution loop
     num_requests = len(node_requests)
@@ -38,7 +39,7 @@ def plan_and_execute(strategy, g, base_availability_models, true_schedules, node
     while (path_visits < path_length):
 
         # runtime_start = timer()
-        path = plan_path(strategy, g, base_availability_models, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
+        path = plan_path(strategy, g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
         # plan_time = timer() - runtime_start
         # print ("Plan time: " + str(plan_time))
 
@@ -55,14 +56,14 @@ def plan_and_execute(strategy, g, base_availability_models, true_schedules, node
             path_visits += 1
 
             if visit == maintenance_node:
-                total_maintenance_profit += maintenance_reward
+                total_maintenance_profit += params['maintenance_reward']
 
             if visit in requests_left_to_deliver:
                 curr_time_index = int(curr_time/params['time_interval'])
                 available = true_schedules[visit][curr_time_index]
                 if available:
                     requests_left_to_deliver.remove(visit)
-                    total_profit += deliver_reward
+                    total_profit += params['deliver_reward']
                     delivery_history.append([visit, curr_time])
                     # availability_observations[visit] = [1, curr_time]
 
@@ -79,9 +80,9 @@ def plan_and_execute(strategy, g, base_availability_models, true_schedules, node
                         break
 
 
-    ratio_divisor = num_requests*params.deliver_reward + ((params['budget']-start_time-num_requests)/params['time_interval'])*params.maintenance_reward
+    ratio_divisor = num_requests*params['deliver_reward']+ ((params['budget']-start_time-num_requests)/params['time_interval'])*params['maintenance_reward']
     competitive_ratio = (float(total_profit) + total_maintenance_profit)/ratio_divisor
-    maintenance_ratio_divisor = ((params['budget']-start_time)/params['time_interval'])*maintenance_reward
+    maintenance_ratio_divisor = ((params['budget']-start_time)/params['time_interval'])*params['maintenance_reward']
     maintenance_competitive_ratio = total_maintenance_profit/maintenance_ratio_divisor
 
     return total_profit, competitive_ratio, maintenance_competitive_ratio, path_history

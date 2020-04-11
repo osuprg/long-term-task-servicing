@@ -183,10 +183,11 @@ class STGraphNode:
 
 
 class SpatioTemporalGraph:
-    def __init__(self, availability_models, mu, num_intervals, budget, time_interval, maintenance_node, maintenance_reward, deliver_reward):
+    def __init__(self, availability_models, model_variances, mu, num_intervals, budget, time_interval, maintenance_node, maintenance_reward, deliver_reward):
         self.vertices = {}
         self.start_node = None
         self.availability_models = availability_models
+        self.model_variances = model_variances
         self.mu = mu
         self.num_intervals = num_intervals
         self.budget = budget
@@ -226,7 +227,7 @@ class SpatioTemporalGraph:
                                 last_observation = observations[v][0]
                                 last_observation_time = observations[v][1]
                                 st_node.prob = self.combine_probabilities_hack(v, st_node.t, last_observation, last_observation_time)
-                                st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
+                                st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)       # should be updated to handle more than bernoulli variance
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                             else:
                                 st_node.prob = self.availability_models[v][int((st_node.t - self.vertices[self.start_node].t)/self.time_interval)]
@@ -416,13 +417,6 @@ class SpatioTemporalGraph:
 def add_random_noise(availability_model, noise_amplitude, availability_chance):
     f = lambda x: min(max(availability_model(x) + (random.random() -.5)*(noise_amplitude/.5), 1.0 - availability_chance), availability_chance)
     return f
-
-
-def sample_occupancy(prob):
-    if random.random() < prob:
-        return 1
-    else:
-        return 0
 
 def persistence_prob(mu, delta_t, last_observation):
     if last_observation == 1:

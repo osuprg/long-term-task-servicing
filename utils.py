@@ -1,16 +1,20 @@
 import yaml    
 
 def load_params(param_config_file):
-    params = yaml.load(param_config_file)
+    with open(param_config_file) as f:
+        params = yaml.load(f, Loader=yaml.FullLoader)
     params['budget'] = int(params['budget'])
     params['time_interval'] = int(params['time_interval'])
-    params['num_intervals'] = int(budget/time_interval)
+    params['num_intervals'] = int(params['budget']/params['time_interval'])
     params['availability_length'] = int(params['availability_length'])
     params['availability_chance'] = float(params['availability_chance'])
+    params['temporal_consistency'] = bool(int(params['temporal_consistency']))
     params['maintenance_reward'] = float(params['maintenance_reward'])
     params['deliver_reward'] = float(params['deliver_reward'])
     params['max_noise_amplitude'] = float(params['max_noise_amplitude'])
     params['variance_bias'] = float(params['variance_bias'])
+    params['num_paths'] = int(params['num_paths'])
+    params['num_worlds'] = int(params['num_worlds'])
     num_deliveries = []
     for n in params['num_deliveries']:
         num_deliveries.append(int(n))
@@ -22,8 +26,8 @@ def load_params(param_config_file):
     return params
 
 def load_scenario(scenario_config_file):
-
-    scenario = yaml.load(scenario_config_file)
+    with open(scenario_config_file) as f:
+        scenario = yaml.load(f, Loader=yaml.FullLoader)
     rooms = scenario['rooms']
     start_node_id = scenario['start_node_id']
     maintenance_node = scenario['maintenance_node']

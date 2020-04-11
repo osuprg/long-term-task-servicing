@@ -2,6 +2,7 @@ import numpy as np
 import random
 import copy
 import math
+import yaml
 
 def bernoulli_variance(availability_prob):
     return availability_prob*(1-availability_prob)
@@ -13,10 +14,21 @@ def sample_bernoulli_avialability_model(availability_model):
         avails.append(new_avail)
     return avails
 
+def sample_occupancy(prob):
+    if random.random() < prob:
+        return 1
+    else:
+        return 0
+
+def persistence_prob(mu, delta_t, last_observation):
+    if last_observation == 1:
+        return math.exp(-(1.0/mu)*(delta_t))
+    else:
+        return 1.0 - math.exp(-(1.0/mu)*(delta_t))
 
 
 
-def generate_window_base_availability_models_with_bernoulli_variance(node_requests, start_time, availability_percent, budget, time_interval, availability_length):
+def generate_window_base_availability_models_with_bernoulli_variance(node_requests, start_time, availability_percent, budget, time_interval, availability_length, availability_chance):
 
     # generate base availability model with corresponding variance
     base_availability_models = {}
@@ -53,7 +65,7 @@ def generate_window_base_availability_models_with_bernoulli_variance(node_reques
         for i in range(num_intervals):
             avail = window_check(t, windows)
             avails.append(avail)
-            variances.append(bernoulli_variance(avails))
+            variances.append(bernoulli_variance(avail))
             t += time_interval
         base_availability_models[request] = avails
         model_variances[request] = variances
@@ -65,22 +77,22 @@ def generate_window_base_availability_models_with_bernoulli_variance(node_reques
 def sample_model_parameters(node_requests, base_availability_models, model_variances, sampling_method='gauss'):
     sampled_availability_models = {}
     for request in node_requests:
-    	new_avails = []
-    	for i in range(len(base_availability_models[request])):
-    		old_avail = base_availability_models[request][i]
-    		variance = model_variances[request][i]
+        new_avails = []
+        for i in range(len(base_availability_models[request])):
+            old_avail = base_availability_models[request][i]
+            variance = model_variances[request][i]
 
-    		if sampling_method == 'gauss':
-       			new_avail = max(min(random.gauss(old_avail, math.sqrt(variance), 1.0), 0.0))
-       		new_avails.append(new_avail)
+            if sampling_method == 'gauss':
+                new_avail = max(min(random.gauss(old_avail, math.sqrt(variance)), 1.0), 0.0)
+            new_avails.append(new_avail)
 
         sampled_availability_models[request] = new_avails
 
     return sampled_availability_models
 
 
-def sample_schedule_from_model(node_requests, availability_models, mu, num_intervals):
-	schedules = {}
+def sample_schedule_from_model(node_requests, availability_models, mu, num_intervals, temporal_consistency=True):
+    schedules = {}
     for request in node_requests:
         availability_model = availability_models[request]
         initial_occ = sample_occupancy(availability_model[0])
@@ -109,53 +121,55 @@ def sample_schedule_from_model(node_requests, availability_models, mu, num_inter
 
 
 def load_base_models_from_file(base_model_filepath, num_deliveries, availability_percent, stat_run):
-    filename = base_model_filepath + "_" + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml"
-    in_dict = yaml.load(filename)
-
+    filename = base_model_filepath  + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml"
+    with open(filename) as f:
+        in_dict = yaml.load(f, Loader=yaml.FullLoader)
     node_requests = in_dict['node_requests']
     base_availability_models = {}
     base_model_variances = {}
     for node_request in node_requests:
-    	avails = []
-    	variances = []
-    	for i in range(len(in_dict['base_availability_models'][node_request])):
-    		avails.append(float(in_dict['base_availability_models'][node_request][i]))
-    		variances.append(float(in_dict['base_model_variances'][node_request][i]))
-    	base_availability_models[node_request] = avails
-    	base_model_variances[node_request] = variances			    
-	return base_availability_models, base_model_variances, node_requests
+        avails = []
+        variances = []
+        for i in range(len(in_dict['base_availability_models'][node_request])):
+            avails.append(float(in_dict['base_availability_models'][node_request][i]))
+            variances.append(float(in_dict['base_model_variances'][node_request][i]))
+        base_availability_models[node_request] = avails
+        base_model_variances[node_request] = variances              
+    return base_availability_models, base_model_variances, node_requests
 
 def load_schedules_from_file(schedule_filepath, num_deliveries, availability_percent, stat_run):
-    filename = schedule_filepath + "_" + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run)
+    filename = schedule_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run)
     in_dict = yaml.load(filename)
 
     node_requests = in_dict['node_requests']
-   	true_availability_models = {}
+    true_availability_models = {}
     true_schedules = {}
     for node_request in node_requests:
-    	avails = []
-    	schedules = []
-    	for i in range(len(in_dict['true_availability_models'][node_request])):
-    		avails.append(float(in_dict['true_availability_models'][node_request][i]))
-    		schedules.append(int(in_dict['true_schedules'][node_request][i]))
-    	true_availability_models[node_request] = avails
-    	true_schedules[node_request] = schedules	
+        avails = []
+        schedules = []
+        for i in range(len(in_dict['true_availability_models'][node_request])):
+            avails.append(float(in_dict['true_availability_models'][node_request][i]))
+            schedules.append(int(in_dict['true_schedules'][node_request][i]))
+        true_availability_models[node_request] = avails
+        true_schedules[node_request] = schedules    
 
-	return true_availability_models, true_schedules
-	
+    return true_availability_models, true_schedules
+    
 
 def save_base_models_to_file(base_model_filepath, base_availability_models, base_model_variances, node_requests, num_deliveries, availability_percent, stat_run):
-	filename = base_model_filepath + "_" + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml"
-	out_dict = {}
-	out_dict['base_availability_models'] = base_availability_models
-	out_dict['base_model_variances'] = base_model_variances
-	out_dict['node_requests'] = node_requests
-	yaml.dump(out_dict, filename)
+    filename = base_model_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml"
+    out_dict = {}
+    out_dict['base_availability_models'] = base_availability_models
+    out_dict['base_model_variances'] = base_model_variances
+    out_dict['node_requests'] = node_requests
+    with open(filename, 'w') as f:
+         yaml.dump(out_dict, f)
 
 def save_schedules_to_file(schedule_filepath, true_availability_models, true_schedules, node_requests, num_deliveries, availability_percent, stat_run):
-	filename = schedule_filepath + "_" + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run)
-	out_dict = {}
-	out_dict['true_availability_models'] = true_availability_models
-	out_dict['true_schedules'] = true_schedules
-	out_dict['node_requests'] = node_requests
-	yaml.dump(out_dict, filename)
+    filename = schedule_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run)
+    out_dict = {}
+    out_dict['true_availability_models'] = true_availability_models
+    out_dict['true_schedules'] = true_schedules
+    out_dict['node_requests'] = node_requests
+    with open(filename, 'w') as f:
+        yaml.dump(out_dict, f)

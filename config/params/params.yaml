@@ -1,14 +1,16 @@
-params:
-    budget: 480
-    time_interval: 1
-    num_deliveries: [40]
-    node_closeness: random
-    availabilities: windows
-    sampling_method: gauss
-    availability_length: 60
-    availability_percents: [.1, .2, .3, .4, .5, .6, .7, .8, .9]
-    availability_chance: 0.9
-    maintenance_reward: 0.1
-    deliver_reward: 1.0
-    max_noise_amplitude: 0.0
-    variance_bias: 0.1
+budget: 480
+time_interval: 1
+num_deliveries: [40]
+node_closeness: random
+availabilities: windows
+sampling_method: gauss
+temporal_consistency: 1
+availability_length: 60
+availability_percents: [.1, .2, .3, .4, .5, .6, .7, .8, .9]
+availability_chance: 0.9
+maintenance_reward: 0.1
+deliver_reward: 1.0
+max_noise_amplitude: 0.0
+variance_bias: 0.1
+num_paths: 1
+num_worlds: 1
