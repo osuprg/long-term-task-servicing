@@ -138,9 +138,9 @@ def load_base_models_from_file(base_model_filepath, num_deliveries, availability
     return base_availability_models, base_model_variances, node_requests
 
 def load_schedules_from_file(schedule_filepath, num_deliveries, availability_percent, stat_run):
-    filename = schedule_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run)
-    in_dict = yaml.load(filename)
-
+    filename = schedule_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml"
+    with open(filename) as f:
+        in_dict = yaml.load(f, Loader=yaml.FullLoader)
     node_requests = in_dict['node_requests']
     true_availability_models = {}
     true_schedules = {}
@@ -166,7 +166,7 @@ def save_base_models_to_file(base_model_filepath, base_availability_models, base
          yaml.dump(out_dict, f)
 
 def save_schedules_to_file(schedule_filepath, true_availability_models, true_schedules, node_requests, num_deliveries, availability_percent, stat_run):
-    filename = schedule_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run)
+    filename = schedule_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml"
     out_dict = {}
     out_dict['true_availability_models'] = true_availability_models
     out_dict['true_schedules'] = true_schedules

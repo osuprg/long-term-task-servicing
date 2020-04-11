@@ -8,7 +8,7 @@ from world_generation import sample_occupancy, persistence_prob
 
 
 def sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, budget, time_interval, num_intervals, curr_time, curr_node, maintenance_node,
-        mu, maintenance_reward, deliver_reward, num_paths, num_worlds, incorporate_observation, incorporate_observation_hack, variance_bias, multiple_visits):
+        mu, maintenance_reward, deliver_reward, num_paths, num_worlds, incorporate_observation, incorporate_observation_hack, variance_bias, multiple_visits, replan):
 
     # generate potential solutions
     solution_set = []
@@ -370,15 +370,15 @@ def plan_path_with_observe(g, base_availability_models, base_model_variances, av
 
 def plan_path_with_observe_sampling(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
     path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, maintenance_node,
-            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, 0.0, False)
+            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, 0.0, False, True)
     return path
 
 def plan_path_replan_with_observe_sampling_variance_bias(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
     path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, maintenance_node,
-            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, params['variance_bias'], False)
+            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, params['variance_bias'], False, True)
     return path
 
 def plan_path_replan_with_observe_sampling_mult_visits(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
     path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, maintenance_node,
-            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, 0.0, True)
+            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, 0.0, True, True)
     return path

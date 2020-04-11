@@ -6,7 +6,6 @@ import heapq
 
 
 
-
 class GraphNode:
     def __init__(self):
         self.neighbors = {}

@@ -78,7 +78,7 @@ def stat_runs(param_config_file, scenario_config_file, base_model_filepath, sche
                 true_schedules = []
                 for stat_run in range(num_stat_runs):
                     base_avails, base_variances, requests = load_base_models_from_file(base_model_filepath, num_deliveries, availability_percent, stat_run)
-                    true_avails, schedules = load_schedules_from_file(schedule_filepath, node_requests, num_deliveries, availability_percent, stat_run)
+                    true_avails, schedules = load_schedules_from_file(schedule_filepath, num_deliveries, availability_percent, stat_run)
                     node_requests.append(requests)
                     base_availability_models.append(base_avails)
                     base_model_variances.append(base_variances)

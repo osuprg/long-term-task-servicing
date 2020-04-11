@@ -60,7 +60,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
 
             if visit in requests_left_to_deliver:
                 curr_time_index = int(curr_time/params['time_interval'])
-                available = true_schedules[visit][curr_time_index]
+                available = true_schedules[visit][curr_time_index]              #FIXME: list index out of range
                 if available:
                     requests_left_to_deliver.remove(visit)
                     total_profit += params['deliver_reward']
