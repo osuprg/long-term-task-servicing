@@ -9,7 +9,7 @@ from plan_execution_simulation import plan_and_execute
 from planners import visualize_path_willow
 
 
-def stat_runs(param_config_file, scenario_config_file, base_model_filepath, schedule_filepath, out_csv, out_img, strategies, num_deliveries_runs, availability_percents, num_stat_runs, record_output, generate_schedules):
+def stat_runs(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, out_csv, out_img, strategies, num_deliveries_runs, availability_percents, num_stat_runs, record_output, generate_schedules):
 
     ## params
     params = load_params(param_config_file)
