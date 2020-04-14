@@ -6,7 +6,7 @@ from planners import plan_path
 
 
 
-def plan_and_execute(strategy, g, base_availability_models, base_model_variances, true_schedules, node_requests, start_time, start_node_id, maintenance_node, mu, params):
+def plan_and_execute(strategy, g, base_availability_models, base_model_variances, true_schedules, node_requests, mu, params):
 
     ### plan, execution loop
     num_requests = len(node_requests)
@@ -15,9 +15,9 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
     total_profit = 0.0
     total_maintenance_profit = 0.0
     delivery_history = []
-    path_history = [start_node_id]
-    curr_time = start_time
-    curr_node = start_node_id
+    path_history = [params['start_node_id']]
+    curr_time = params['start_time']
+    curr_node = params['start_node_id']
     path_length = 1
     path_visits = 0
 
@@ -39,7 +39,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
     while (path_visits < path_length):
 
         # runtime_start = timer()
-        path = plan_path(strategy, g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
+        path = plan_path(strategy, g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
         # plan_time = timer() - runtime_start
         # print ("Plan time: " + str(plan_time))
 
@@ -55,7 +55,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
             curr_node = visit
             path_visits += 1
 
-            if visit == maintenance_node:
+            if visit == params['maintenance_node']:
                 total_maintenance_profit += params['maintenance_reward']
 
             if visit in requests_left_to_deliver:
@@ -80,10 +80,12 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                         break
 
 
-    ratio_divisor = num_requests*params['deliver_reward']+ ((params['budget']-start_time-num_requests)/params['time_interval'])*params['maintenance_reward']
+    ratio_divisor = num_requests*params['deliver_reward'] + ((params['budget']-params['start_time']-num_requests)/params['time_interval'])*params['maintenance_reward']
     competitive_ratio = (float(total_profit) + total_maintenance_profit)/ratio_divisor
-    maintenance_ratio_divisor = ((params['budget']-start_time)/params['time_interval'])*params['maintenance_reward']
+    maintenance_ratio_divisor = ((params['budget']-params['start_time'])/params['time_interval'])*params['maintenance_reward']
     maintenance_competitive_ratio = total_maintenance_profit/maintenance_ratio_divisor
+
+    print(strategy + " cr: " + str(competitive_ratio))
 
     return total_profit, competitive_ratio, maintenance_competitive_ratio, path_history
     

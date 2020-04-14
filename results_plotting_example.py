@@ -2,10 +2,11 @@ import sys
 import yaml
 import os.path
 from test_runs import stat_runs
+from plotting import generate_plots
 
 
 
-def main(num_stat_runs, input_file, output_file):
+def main(input_file, results_file, save_file):
 
     filepath = os.path.dirname(os.path.abspath(__file__))
     with open(input_file) as f:
@@ -23,17 +24,16 @@ def main(num_stat_runs, input_file, output_file):
     for i in inputs['availability_percents']:
         availability_percents.append(float(i))
 
-    # planning and execution
-    stat_runs(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries, availability_percents, num_stat_runs)
-
+    # plotting
+    generate_plots(strategies, num_deliveries, availability_percents, results_file, plotting_mode='cr')
 
 if __name__ == "__main__":
-    num_stat_runs = int(sys.argv[1])
-    input_file = sys.argv[2]
+    input_file = sys.argv[1]
+    results_file = sys.argv[2]
     if len(sys.argv) == 3:
-        main(num_stat_runs, input_file, None)
+        main(input_file, results_file, None)
     elif len(sys.argv) == 4:
-        output_file = sys.argv[3]
-        main(num_stat_runs, input_file, output_file)
+        save_file = sys.argv[3]
+        main(input_file, results_file, save_file)
     else:
-        print("Usage: <num stat runs> <input file> <output file=None>")
+        print("Usage: <input file> <results file> <save file=None>")

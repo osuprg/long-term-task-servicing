@@ -160,7 +160,7 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
 
 
 
-def visualize_path_willow(strategies, paths, availabilities, schedules, node_requests, maintenance_node, start_time, budget, time_interval, out_img_path):
+def visualize_path_willow(strategies, paths, availabilities, schedules, node_requests, maintenance_node, start_time, budget, time_interval):
    
     # time axis 
     X = np.array(list(range(int((budget-start_time)/time_interval))))
@@ -214,6 +214,8 @@ def visualize_path_willow(strategies, paths, availabilities, schedules, node_req
     num_strategies = len(strategies)
     subplot_num1 = int(math.ceil(num_strategies/2))
     subplot_num2 = 2
+    if num_strategies == 1:
+        subplot_num2 = 1
 
     # subplot_num1 = 1
     # subplot_num2 = 1
@@ -253,10 +255,10 @@ def visualize_path_willow(strategies, paths, availabilities, schedules, node_req
 
         cbar = ax.figure.colorbar(im, ax=ax)
         cbar.ax.set_ylabel("Availability", rotation=-90, va="bottom")
-    # plt.show()
-    print ("saving img")
+
     plt.suptitle("Path Trace vs Probs")
-    plt.savefig(out_img + "_avail.jpg")
+    # plt.savefig(out_img + "_avail.jpg")
+    plt.show()
 
     plt.clf()
 
@@ -298,38 +300,37 @@ def visualize_path_willow(strategies, paths, availabilities, schedules, node_req
         cbar = ax.figure.colorbar(im, ax=ax)
         cbar.ax.set_ylabel("Availability", rotation=-90, va="bottom")
 
-    # plt.show()
-    print ("saving img")
     plt.suptitle("Path Trace vs Schedule")
-    plt.savefig(out_img + "_schedule.jpg")
+    # plt.savefig(out_img + "_schedule.jpg")
+    plt.show()
 
 
 
 
 
 
-def plan_path(strategy, g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
+def plan_path(strategy, g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
     if strategy == 'no_temp':
-        return plan_path_no_temp_info(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
+        return plan_path_no_temp_info(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     elif strategy == 'no_replan':
-        return plan_path_no_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
+        return plan_path_no_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     elif strategy == 'replan_no_observe':
-        return plan_path_no_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
+        return plan_path_no_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     elif strategy == 'hack_observe':
-        return plan_path_with_hack_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
+        return plan_path_with_hack_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     elif strategy == 'observe':
-        return plan_path_with_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
+        return plan_path_with_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     elif strategy == 'observe_sampling':
-        return plan_path_with_observe_sampling(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
+        return plan_path_with_observe_sampling(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     elif strategy == 'observe_sampling_variance_bias':
-        return plan_path_replan_with_observe_sampling_variance_bias(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
+        return plan_path_replan_with_observe_sampling_variance_bias(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     elif strategy == 'observe_sampling_mult_visits':
-        return plan_path_replan_with_observe_sampling_mult_visits(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params)
+        return plan_path_replan_with_observe_sampling_mult_visits(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     else:
         raise ValueError(strategy)
 
 
-def plan_path_no_temp_info(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
+def plan_path_no_temp_info(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
     constant_availability_models = {}
     constant_model_variances = {}
     for request in requests_left_to_deliver:
@@ -341,44 +342,44 @@ def plan_path_no_temp_info(g, base_availability_models, base_model_variances, av
         constant_availability_models[request] = avails
         constant_availability_models[request] = variances
 
-    st_g = SpatioTemporalGraph(constant_availability_models, constant_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], maintenance_node, params['maintenance_reward'], params['deliver_reward'])
+    st_g = SpatioTemporalGraph(constant_availability_models, constant_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'])
     st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, False, False, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path(L, requests_left_to_deliver, False)
     return path
 
-def plan_path_no_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
-    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], maintenance_node, params['maintenance_reward'], params['deliver_reward'])
+def plan_path_no_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
+    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'])
     st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, False, False, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path(L, requests_left_to_deliver, False)
     return path
 
-def plan_path_with_hack_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
-    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], maintenance_node, params['maintenance_reward'], params['deliver_reward'])
+def plan_path_with_hack_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
+    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'])
     st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, True, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path(L, requests_left_to_deliver, False)
     return path
 
-def plan_path_with_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
-    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], maintenance_node, params['maintenance_reward'], params['deliver_reward'])
+def plan_path_with_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
+    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'])
     st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, False, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path(L, requests_left_to_deliver, False)
     return path
 
-def plan_path_with_observe_sampling(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
-    path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, maintenance_node,
+def plan_path_with_observe_sampling(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
+    path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, params['maintenance_node'],
             mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, 0.0, False, True)
     return path
 
-def plan_path_replan_with_observe_sampling_variance_bias(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
-    path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, maintenance_node,
+def plan_path_replan_with_observe_sampling_variance_bias(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
+    path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, params['maintenance_node'],
             mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, params['variance_bias'], False, True)
     return path
 
-def plan_path_replan_with_observe_sampling_mult_visits(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, maintenance_node, mu, params):
-    path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, maintenance_node,
+def plan_path_replan_with_observe_sampling_mult_visits(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
+    path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, params['maintenance_node'],
             mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, 0.0, True, True)
     return path

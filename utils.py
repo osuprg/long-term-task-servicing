@@ -1,40 +1,39 @@
 import yaml    
 
-def load_params(param_config_file):
-    with open(param_config_file) as f:
-        params = yaml.load(f, Loader=yaml.FullLoader)
-    params['budget'] = int(params['budget'])
-    params['time_interval'] = int(params['time_interval'])
+def load_params(world_config_file, schedule_config_file, planner_config_file):
+    params = {}
+    with open(world_config_file) as f:
+        world_params = yaml.load(f, Loader=yaml.FullLoader)
+    params['rooms'] = world_params['rooms']
+    params['start_node_id'] = world_params['start_node_id']
+    params['maintenance_node'] = world_params['maintenance_node']
+    params['max_rooms'] = int(world_params['max_rooms'])
+    params['graph_filename'] = world_params['graph_filename']
+
+    with open(schedule_config_file) as f:
+        schedule_params = yaml.load(f, Loader=yaml.FullLoader)
+    params['budget'] = int(schedule_params['budget'])
+    params['time_interval'] = int(schedule_params['time_interval'])
+    params['start_time'] = int(schedule_params['start_time'])
+    params['node_closeness'] = schedule_params['node_closeness']
+    params['availabilities'] = schedule_params['availabilities']
+    params['sampling_method'] = schedule_params['sampling_method']
+    params['availability_length'] = int(schedule_params['availability_length'])
+    params['availability_chance'] = float(schedule_params['availability_chance'])
+    params['temporal_consistency'] = bool(int(schedule_params['temporal_consistency']))
+    params['maintenance_reward'] = float(schedule_params['maintenance_reward'])
+    params['deliver_reward'] = float(schedule_params['deliver_reward'])
+    params['max_noise_amplitude'] = float(schedule_params['max_noise_amplitude'])
     params['num_intervals'] = int(params['budget']/params['time_interval'])
-    params['availability_length'] = int(params['availability_length'])
-    params['availability_chance'] = float(params['availability_chance'])
-    params['temporal_consistency'] = bool(int(params['temporal_consistency']))
-    params['maintenance_reward'] = float(params['maintenance_reward'])
-    params['deliver_reward'] = float(params['deliver_reward'])
-    params['max_noise_amplitude'] = float(params['max_noise_amplitude'])
-    params['variance_bias'] = float(params['variance_bias'])
-    params['num_paths'] = int(params['num_paths'])
-    params['num_worlds'] = int(params['num_worlds'])
-    num_deliveries = []
-    for n in params['num_deliveries']:
-        num_deliveries.append(int(n))
-    params['num_deliveries'] = num_deliveries
-    availability_percents = []
-    for n in params['availability_percents']:
-        availability_percents.append(float(n))
-    params['availability_percents'] = availability_percents
+
+    with open(planner_config_file) as f:
+        planner_params = yaml.load(f, Loader=yaml.FullLoader)
+    params['variance_bias'] = float(planner_params['variance_bias'])
+    params['num_paths'] = int(planner_params['num_paths'])
+    params['num_worlds'] = int(planner_params['num_worlds'])
+
     return params
 
-def load_scenario(scenario_config_file):
-    with open(scenario_config_file) as f:
-        scenario = yaml.load(f, Loader=yaml.FullLoader)
-    rooms = scenario['rooms']
-    start_node_id = scenario['start_node_id']
-    maintenance_node = scenario['maintenance_node']
-    start_time = int(scenario['start_time'])
-    max_rooms = int(scenario['max_rooms'])
-    graph_filename = scenario['graph_filename']
-    return rooms, start_node_id, maintenance_node, start_time, max_rooms, graph_filename
 
 
 def read_cost_matrix_from_file(filename):

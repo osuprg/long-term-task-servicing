@@ -1,11 +1,11 @@
 import sys
 import yaml
 import os.path
-from test_runs import stat_runs
+from test_runs import vizualize_sample_execution
 
 
 
-def main(num_stat_runs, input_file, output_file):
+def main(stat_run, input_file):
 
     filepath = os.path.dirname(os.path.abspath(__file__))
     with open(input_file) as f:
@@ -24,16 +24,13 @@ def main(num_stat_runs, input_file, output_file):
         availability_percents.append(float(i))
 
     # planning and execution
-    stat_runs(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries, availability_percents, num_stat_runs)
+    vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries, availability_percents, stat_run)
 
 
 if __name__ == "__main__":
-    num_stat_runs = int(sys.argv[1])
+    stat_run = int(sys.argv[1])
     input_file = sys.argv[2]
     if len(sys.argv) == 3:
-        main(num_stat_runs, input_file, None)
-    elif len(sys.argv) == 4:
-        output_file = sys.argv[3]
-        main(num_stat_runs, input_file, output_file)
+        main(stat_run, input_file)
     else:
-        print("Usage: <num stat runs> <input file> <output file=None>")
+        print("Usage: <stat run> <input file>")
