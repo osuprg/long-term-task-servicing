@@ -5,7 +5,7 @@ High level file for running stat runs of planning and simulated execution. Run w
 
 Example: python3 example_tests.py 10 /experiment_files/input/willow_8hrs_all_deliv_all_avail_all_strategies.yaml /experiment_files/output/willow_8hrs_all_deliv_all_avail_all_strategies.yaml
 
-# example_tests.py
+# results_plotting_example.py
 High level file for plotting results generated from running example_tests.py. Run with: python3 results_plotting_example.py <input_file> <results_file>, where input_file is the associated input_file given to example_tests.py and results_file is the output_file it produces. Competitive ratio (collected reward from task servicing over conservative estimate of total possible reward) will be plotted for strategies specified in input_file for specified number of deliveries and schedule availabilities.
 
 Example: python3 results_plotting_example.py /experiment_files/output/willow_8hrs_all_deliv_all_avail_all_strategies.yaml
