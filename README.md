@@ -3,12 +3,12 @@
 # example_tests.py
 High level file for running stat runs of planning and simulated execution. Run with: python3 example_tests.py <num_stat_runs> <input_file> <output_file>. input_file should follow format similar to those in experiment_files/input/ and will notably include relative locations of config files for world generation, schedule generation, and planner parameters. Additionally will include which planner strategies to test along with numbers of scheduled deliveries and general schedule availabilities to test against. output_file is optional; if included will output a csv file of results to be plotted using results_plotting_example.py. num_stat_runs specifies number of experiments to run for each planner, test combination.
 
-Example: python3 example_tests.py 10 /experiment_files/input/willow_8hrs_no_sampling.yaml /experiment_files/output/willow_8hrs_no_sampling.yaml
+Example: python3 example_tests.py 10 /experiment_files/input/willow_8hrs_no_sampling.yaml /experiment_files/output/willow_8hrs_no_sampling.csv
 
 # results_plotting_example.py
 High level file for plotting results generated from running example_tests.py. Run with: python3 results_plotting_example.py <input_file> <results_file>, where input_file is the associated input_file given to example_tests.py and results_file is the output_file it produces. Competitive ratio (collected reward from task servicing over conservative estimate of total possible reward) will be plotted for strategies specified in input_file for specified number of deliveries and schedule availabilities.
 
-Example: python3 results_plotting_example.py /experiment_files/output/willow_8hrs_no_sampling.yaml
+Example: python3 results_plotting_example.py /experiment_files/output/willow_8hrs_no_sampling.csv
 
 # visualization_example.py
 High level file for visualizing sample execution. Run with: python3 visualization_example.py <input_file> where input_file is the same as would be given to example_tests.py. For each planning strategy, test scenario combination included in input_file, visited nodes will be overlayed against true availabilities and schedules of associated nodes.
