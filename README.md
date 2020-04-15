@@ -28,18 +28,24 @@ Functions for constructed plans for various planning strategies. Additionally co
 Functions for creating simulated schedules for given graph representations. Base probability models to be used in planning/associated true models and schedules are generally saved and loaded for experiment repeatability.
 
 # td_op.py
-SpatioTemporalGraph class implementation of (Ma, et al., 2017)* with additional modifications along with supporting spatial graph class. build_graph creates spatio temporal representation of spatial nodes at every time slice within budget with edges connecting nodes at different time slices according to associated travel costs. topological_sort produces ordering to allow for efficient calculation of best path using calc_max_profit_path. Modifications include taking into account temporal persistence model of (Toris and Chernova, 2017)** as well as additional information needed for various planner strategies.
+SpatioTemporalGraph class implementation of (Ma, et al., 2017)[1] with additional modifications along with supporting spatial graph class. build_graph creates spatio temporal representation of spatial nodes at every time slice within budget with edges connecting nodes at different time slices according to associated travel costs. topological_sort produces ordering to allow for efficient calculation of best path using calc_max_profit_path. Modifications include taking into account temporal persistence model of (Toris and Chernova, 2017)[2] as well as additional information needed for various planner strategies.
+
+[1] *Ma, Zhibei, et al. "A Spatio-Temporal Representation for the Orienteering Problem with Time-Varying Profits." IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). 2017.
+
+[2] *Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.
 
 # utils.py
+Various supporting functions, notably for file I/O.
 
 # plotting.py
+Results plotting code
 
 # config/
+Sub-folder holding config files containing world generation, schedule generation, and planner parameters.
 
 # worlds/
+Sub-folder for saving generated models/schedules to allow for experiment repeatability.
 
 # experiment_files/
+Sub-folder for input and output files for high level stat runs.
 
-
-* *Ma, Zhibei, et al. "A Spatio-Temporal Representation for the Orienteering Problem with Time-Varying Profits." IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). 2017.
-** *Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.
