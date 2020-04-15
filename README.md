@@ -21,8 +21,8 @@ High level functions for running planners on simulated worlds as well as visuali
 # plan_execution_simulation.py
 Evaluates execution simulation of planner applied to task delivery scenario.
 
-# planner.py
-Functions for constructed plans for various planning strategies. Additionally contains functions for producing path visualizations.
+# planners.py
+Functions for constructed plans for various planning strategies. Additionally contains functions for producing path visualizations. Currently implemented planners include no_temp (no temporal info used), no_replan (no replanning around execution failure), replan_no_observe (replanning without updating temporal models around execution failure), hack_observe (simplistic update of temporal model with observations), observe (update temporal model accounting for temporal persistence when observations are encountered), observe_sampling (additionally simulate multiple possible exeuctions and plan variations, choose plan that performs best), observe_sampling_variance_bias (bias toward nodes with low variance on availability probability), observe_sampling_mult_visits (allow planning to consider multiple visits, spread out expected reward accordingly) 
 
 # world_generation.py
 Functions for creating simulated schedules for given graph representations. Base probability models to be used in planning/associated true models and schedules are generally saved and loaded for experiment repeatability.
