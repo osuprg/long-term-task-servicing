@@ -1,4 +1,5 @@
 # long-term-task-servicing
+Project for modeling probabilistic, temporal availability of service tasks and exploiting models for efficient service. Currently being investigated in the context of a package delivery scenario for an autonomous delivery service robot.
 
 # example_tests.py
 High level file for running stat runs of planning and simulated execution. Run with: python3 example_tests.py <num_stat_runs> <input_file> <output_file>. input_file should follow format similar to those in experiment_files/input/ and will notably include relative locations of config files for world generation, schedule generation, and planner parameters. Additionally will include which planner strategies to test along with numbers of scheduled deliveries and general schedule availabilities to test against. output_file is optional; if included will output a csv file of results to be plotted using results_plotting_example.py. num_stat_runs specifies number of experiments to run for each planner, test combination.
