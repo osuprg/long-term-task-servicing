@@ -7,6 +7,7 @@ from td_op import SpatioTemporalGraph, sample_bernoulli_avialability_model
 from world_generation import sample_occupancy, persistence_prob
 
 
+### Path planning for sampling based methods
 def sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, budget, time_interval, num_intervals, curr_time, curr_node, maintenance_node,
         mu, maintenance_reward, deliver_reward, num_paths, num_worlds, incorporate_observation, incorporate_observation_hack, variance_bias, multiple_visits, replan):
 
@@ -86,8 +87,8 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
             while (path_visits < path_length):
 
                 if orig_path_used:
-                    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((budget - curr_time)/time_interval), budget - curr_time, time_interval, maintenance_node, maintenance_reward, deliver_reward)
-                    st_g.build_graph(g, sim_curr_node, curr_time, sim_requests_left_to_deliver, sim_availability_observations, incorporate_observation, incorporate_observation_hack, variance_bias)
+                    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((budget - sim_time)/time_interval), budget - sim_time, time_interval, maintenance_node, maintenance_reward, deliver_reward)
+                    st_g.build_graph(g, sim_curr_node, sim_time, sim_requests_left_to_deliver, sim_availability_observations, incorporate_observation, incorporate_observation_hack, variance_bias)
 
                     ## topological sort
                     # print ("Sorting of the topological variety...")
@@ -110,38 +111,42 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
                         dist = 1
                     else:
                         dist = g.get_distance(sim_curr_node, visit)
-                    curr_time += dist
+                    sim_time += dist
                     sim_curr_node = visit
                     path_visits += 1
                     if visit == maintenance_node:
                         total_maintenance_profit += maintenance_reward
                     if visit in sim_requests_left_to_deliver:
 
-                        # profit = availability_models[trial][visit](curr_time)
+                        # profit = availability_models[trial][visit](sim_time)
                         # total_profit += profit
-                        # delivery_history.append([visit, curr_time])
+                        # delivery_history.append([visit, sim_time])
                         # sim_requests_left_to_deliver.remove(visit)
 
-                        curr_time_index = int(curr_time/time_interval)
-                        available = sim_worlds[world_index][request]
+                        curr_time_index = int(sim_time/time_interval)
+                        if curr_time_index > (num_intervals - 1):
+                            print("Curr time index exceeds num intervals: " + str(curr_time_index) + ", " + str(num_intervals))
+                            curr_time_index = num_intervals-1
+
+                        available = sim_worlds[world_index][request][curr_time_index]
                         if available:
                             sim_requests_left_to_deliver.remove(visit)
                             total_profit += deliver_reward
-                            delivery_history.append([visit, curr_time])
+                            delivery_history.append([visit, sim_time])
 
                             if multiple_visits:
                                 if replan:
                                     if incorporate_observation:
-                                        sim_availability_observations[visit] = [1, curr_time]
+                                        sim_availability_observations[visit] = [1, sim_time]
                                     path_visits = 0
                                     path_length = 1
                                     break
 
                         else:
                             if replan:
-                                # print ("Replanning, curr time: " + str(curr_time))
+                                # print ("Replanning, curr time: " + str(sim_time))
                                 if incorporate_observation:
-                                    sim_availability_observations[visit] = [0, curr_time]
+                                    sim_availability_observations[visit] = [0, sim_time]
                                 path_visits = 0
                                 path_length = 1
                                 break
@@ -160,6 +165,7 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
 
 
 
+### Path visualization function specific to willow scenario
 def visualize_path_willow(strategies, paths, availabilities, schedules, node_requests, maintenance_node, start_time, budget, time_interval):
    
     # time axis 
@@ -308,7 +314,7 @@ def visualize_path_willow(strategies, paths, availabilities, schedules, node_req
 
 
 
-
+### Template for various path planner implementations
 def plan_path(strategy, g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
     if strategy == 'no_temp':
         return plan_path_no_temp_info(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)

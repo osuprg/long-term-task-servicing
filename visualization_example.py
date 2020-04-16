@@ -28,9 +28,8 @@ def main(stat_run, input_file):
 
 
 if __name__ == "__main__":
-    stat_run = int(sys.argv[1])
-    input_file = sys.argv[2]
-    if len(sys.argv) == 3:
-        main(stat_run, input_file)
+    input_file = sys.argv[1]
+    if len(sys.argv) == 2:
+        main(0, input_file)
     else:
-        print("Usage: <stat run> <input file>")
+        print("Usage: <input file>")

@@ -5,8 +5,8 @@ from test_runs import stat_runs
 from plotting import generate_plots
 
 
-
-def main(input_file, results_file, save_file):
+### High level code for generating results plots
+def main(input_file, results_file):
 
     filepath = os.path.dirname(os.path.abspath(__file__))
     with open(input_file) as f:
@@ -31,9 +31,6 @@ if __name__ == "__main__":
     input_file = sys.argv[1]
     results_file = sys.argv[2]
     if len(sys.argv) == 3:
-        main(input_file, results_file, None)
-    elif len(sys.argv) == 4:
-        save_file = sys.argv[3]
-        main(input_file, results_file, save_file)
+        main(input_file, results_file)
     else:
-        print("Usage: <input file> <results file> <save file=None>")
+        print("Usage: <input file> <results file>")

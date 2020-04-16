@@ -181,6 +181,7 @@ class STGraphNode:
         self.serviced_probs = {}
 
 
+### Modification of representation proposed in Ma, Zhibei, et al. "A Spatio-Temporal Representation for the Orienteering Problem with Time-Varying Profits." IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). 2017
 class SpatioTemporalGraph:
     def __init__(self, availability_models, model_variances, mu, num_intervals, budget, time_interval, maintenance_node, maintenance_reward, deliver_reward):
         self.vertices = {}
@@ -229,7 +230,7 @@ class SpatioTemporalGraph:
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)       # should be updated to handle more than bernoulli variance
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                             else:
-                                st_node.prob = self.availability_models[v][int((st_node.t - self.vertices[self.start_node].t)/self.time_interval)]
+                                st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                         else:
@@ -240,11 +241,11 @@ class SpatioTemporalGraph:
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                             else:
-                                st_node.prob = self.availability_models[v][int((st_node.t - self.vertices[self.start_node].t)/self.time_interval)]
+                                st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                     else:
-                        st_node.prob = self.availability_models[v][int((st_node.t - self.vertices[self.start_node].t)/self.time_interval)]
+                        st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
                         st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                         st_node.serviced_probs[st_node.id] = st_node.prob
                 elif v == self.maintenance_node:
@@ -391,7 +392,7 @@ class SpatioTemporalGraph:
         return path
 
     def combine_probabilities(self, node_id, curr_time, last_observation, last_observation_time):
-        a_priori_prob = self.availability_models[node_id][int((curr_time - self.vertices[self.start_node].t)/self.time_interval)]
+        a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
         likelihood = persistence_prob(self.mu, curr_time-last_observation_time, last_observation)
         # if last_observation == 1:
         #     evidence_prob = availability_model(last_observation_time)
@@ -405,7 +406,7 @@ class SpatioTemporalGraph:
         return new_prob
 
     def combine_probabilities_hack(self, node_id, curr_time, last_observation, last_observation_time):
-        a_priori_prob = self.availability_models[node_id][int((curr_time - self.vertices[self.start_node].t)/self.time_interval)]
+        a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
         new_prob = a_priori_prob
         if last_observation == 0.0:
             if curr_time < (last_observation_time + (self.mu/2)):
@@ -417,6 +418,7 @@ def add_random_noise(availability_model, noise_amplitude, availability_chance):
     f = lambda x: min(max(availability_model(x) + (random.random() -.5)*(noise_amplitude/.5), 1.0 - availability_chance), availability_chance)
     return f
 
+# temporal persistence per Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.
 def persistence_prob(mu, delta_t, last_observation):
     if last_observation == 1:
         return math.exp(-(1.0/mu)*(delta_t))

@@ -5,10 +5,11 @@ from test_runs import stat_runs
 
 
 
+### High level code for running stat runs of task planning and simulated execution
 def main(num_stat_runs, input_file, output_file):
 
     filepath = os.path.dirname(os.path.abspath(__file__))
-    with open(input_file) as f:
+    with open(filepath + input_file) as f:
         inputs = yaml.load(f, Loader=yaml.FullLoader)
     world_config_file = filepath + inputs['world_config_file']
     schedule_config_file = filepath + inputs['schedule_config_file']
@@ -22,6 +23,8 @@ def main(num_stat_runs, input_file, output_file):
     availability_percents = []
     for i in inputs['availability_percents']:
         availability_percents.append(float(i))
+    if not(output_file is None):
+        output_file = filepath + output_file
 
     # planning and execution
     stat_runs(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries, availability_percents, num_stat_runs)

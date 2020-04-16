@@ -11,6 +11,7 @@ from plan_execution_simulation import plan_and_execute
 from planners import visualize_path_willow
 
 
+### High level code for running stat runs of task planning and simulated execution
 def stat_runs(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries_runs, availability_percents, num_stat_runs):
 
     if output_file == None:
@@ -98,6 +99,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, base
 
 
 
+### High level function for visualizing simulated execution
 def vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries_runs, availability_percents, stat_run):
 
     ## params

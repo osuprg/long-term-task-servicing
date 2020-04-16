@@ -6,9 +6,10 @@ from planners import plan_path
 
 
 
+### Simulate specified planning strategy being employed to given task execution scenario
 def plan_and_execute(strategy, g, base_availability_models, base_model_variances, true_schedules, node_requests, mu, params):
 
-    ### plan, execution loop
+    ## plan, execution loop
     num_requests = len(node_requests)
     requests_left_to_deliver = copy.deepcopy(node_requests)
     availability_observations = {}
@@ -40,44 +41,55 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
 
         # runtime_start = timer()
         path = plan_path(strategy, g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
+        path_length = len(path)
         # plan_time = timer() - runtime_start
         # print ("Plan time: " + str(plan_time))
 
-        ### Execute
-        path_visits = 1
-        for visit in path[1:]:
-            path_history.append(visit)
-            if curr_node == visit:
-                dist = 1
-            else:
-                dist = g.get_distance(curr_node, visit)
-            curr_time += dist
-            curr_node = visit
-            path_visits += 1
+        ## Execute
+        if path_length > 1:
 
-            if visit == params['maintenance_node']:
-                total_maintenance_profit += params['maintenance_reward']
+            path_visits = 1
+            for visit in path[1:]:
+                path_history.append(visit)
+                if curr_node == visit:
+                    dist = 1
+                else:
+                    dist = g.get_distance(curr_node, visit)
+                curr_time += dist
+                curr_node = visit
+                path_visits += 1
 
-            if visit in requests_left_to_deliver:
-                curr_time_index = int(curr_time/params['time_interval'])
-                available = true_schedules[visit][curr_time_index]              #FIXME: list index out of range
-                if available:
-                    requests_left_to_deliver.remove(visit)
-                    total_profit += params['deliver_reward']
-                    delivery_history.append([visit, curr_time])
-                    # availability_observations[visit] = [1, curr_time]
+                if visit == params['maintenance_node']:
+                    total_maintenance_profit += params['maintenance_reward']
 
-                    if multiple_visits:
+                if visit in requests_left_to_deliver:
+                    curr_time_index = int(curr_time/params['time_interval'])
+
+                    if curr_time_index > (params['num_intervals'] - 1):
+                        print("Curr time index exceeds num intervals: " + str(curr_time_index))
+                        curr_time_index = params['num_intervals']-1
+
+                    available = true_schedules[visit][curr_time_index]              #FIXME: list index out of range
+                    if available:
+                        requests_left_to_deliver.remove(visit)
+                        total_profit += params['deliver_reward']
+                        delivery_history.append([visit, curr_time])
+                        # availability_observations[visit] = [1, curr_time]
+
+                        if multiple_visits:
+                            if replan:
+                                path_visits = 0
+                                path_length = 1
+                                break
+                    else:
                         if replan:
+                            availability_observations[visit] = [0, curr_time]
                             path_visits = 0
                             path_length = 1
                             break
-                else:
-                    if replan:
-                        availability_observations[visit] = [0, curr_time]
-                        path_visits = 0
-                        path_length = 1
-                        break
+        else:
+            path_visits = 0
+            path_length = 0
 
 
     ratio_divisor = num_requests*params['deliver_reward'] + ((params['budget']-params['start_time']-num_requests)/params['time_interval'])*params['maintenance_reward']
