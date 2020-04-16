@@ -25,7 +25,7 @@ def main(input_file, results_file):
         availability_percents.append(float(i))
 
     # plotting
-    generate_plots(strategies, num_deliveries, availability_percents, results_file, plotting_mode='cr')
+    generate_plots(strategies, num_deliveries, availability_percents, filepath+results_file, plotting_mode='cr')
 
 if __name__ == "__main__":
     input_file = sys.argv[1]
