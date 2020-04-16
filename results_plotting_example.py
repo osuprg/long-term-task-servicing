@@ -9,7 +9,7 @@ from plotting import generate_plots
 def main(input_file, results_file):
 
     filepath = os.path.dirname(os.path.abspath(__file__))
-    with open(input_file) as f:
+    with open(filepath + input_file) as f:
         inputs = yaml.load(f, Loader=yaml.FullLoader)
     world_config_file = filepath + inputs['world_config_file']
     schedule_config_file = filepath + inputs['schedule_config_file']
