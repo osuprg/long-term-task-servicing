@@ -5,6 +5,7 @@ from test_runs import vizualize_sample_execution
 
 
 
+### High level code for visualizing sample execution
 def main(stat_run, input_file):
 
     filepath = os.path.dirname(os.path.abspath(__file__))

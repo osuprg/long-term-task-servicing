@@ -13,6 +13,7 @@ class GraphNode:
     def get_neighbors(self):
         return self.neighbors.keys()
 
+### Supporting Graph class to represent 2D graph
 class Graph:
     def __init__(self):
         self.vertices = {}
@@ -196,6 +197,7 @@ class SpatioTemporalGraph:
         self.maintenance_reward = maintenance_reward
         self.deliver_reward = deliver_reward
 
+    ### Create STGraph, node for each spatial node/time slice. Edges connect nodes at different time slices according to traversal costs.
     def build_graph(self, spatial_graph, graph_start_node_id, graph_start_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, variance_bias):
         graph_start_node = STGraphNode()
         graph_start_node.id = graph_start_node_id
@@ -293,6 +295,7 @@ class SpatioTemporalGraph:
                 self.vertices[node_name] = st_node
 
 
+    ### Topologically sort nodes to allow for efficient DP shortest path (max profit path) calculations
     def topological_sort(self):
         self_copy = copy.deepcopy(self)
         L = []
@@ -317,6 +320,7 @@ class SpatioTemporalGraph:
                 self_copy.vertices[successor_name] = successor
         return L
 
+    ### DP based calculation of max profit path from starting node within budget
     def calc_max_profit_path(self, L, node_requests, multiple_visits):
 
         # for each node in topological order
@@ -391,6 +395,7 @@ class SpatioTemporalGraph:
         path = self.vertices[end_node].path
         return path
 
+    ### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)
     def combine_probabilities(self, node_id, curr_time, last_observation, last_observation_time):
         a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
         likelihood = persistence_prob(self.mu, curr_time-last_observation_time, last_observation)
@@ -405,20 +410,22 @@ class SpatioTemporalGraph:
             new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
         return new_prob
 
+    ### Simplistic method for accounting for observations. Zeroes out probability for fixed amount following negative observation
     def combine_probabilities_hack(self, node_id, curr_time, last_observation, last_observation_time):
         a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
         new_prob = a_priori_prob
-        if last_observation == 0.0:
+        if last_observation == 0:
             if curr_time < (last_observation_time + (self.mu/2)):
                 new_prob = 0.0
         return new_prob
 
 
+### Add random noise to availability model
 def add_random_noise(availability_model, noise_amplitude, availability_chance):
     f = lambda x: min(max(availability_model(x) + (random.random() -.5)*(noise_amplitude/.5), 1.0 - availability_chance), availability_chance)
     return f
 
-# temporal persistence per Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.
+### Temporal persistence per Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.
 def persistence_prob(mu, delta_t, last_observation):
     if last_observation == 1:
         return math.exp(-(1.0/mu)*(delta_t))
@@ -428,6 +435,7 @@ def persistence_prob(mu, delta_t, last_observation):
 def bernoulli_variance(availability_prob):
     return availability_prob*(1-availability_prob)
 
+### Sample model availability parameter assuming Bernoulli variance
 def sample_bernoulli_avialability_model(availability_model):
     avails = []
     for avail in availability_model:
@@ -435,5 +443,6 @@ def sample_bernoulli_avialability_model(availability_model):
         avails.append(new_avail)
     return avails
 
+### Artificially increase expected reward from reliable (low variance) nodes
 def bernoulli_variance_biasing(prob, variance_bias, deliver_reward):
     return deliver_reward*prob - variance_bias*bernoulli_variance(prob)

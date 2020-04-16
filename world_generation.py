@@ -20,6 +20,7 @@ def sample_occupancy(prob):
     else:
         return 0
 
+### Temporal persistence per Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.
 def persistence_prob(mu, delta_t, last_observation):
     if last_observation == 1:
         return math.exp(-(1.0/mu)*(delta_t))
@@ -28,6 +29,7 @@ def persistence_prob(mu, delta_t, last_observation):
 
 
 
+### Generate base availability models with corresponding Bernoulli variance. To be used as planner models or sampled to produce "true" simulator model.
 def generate_window_base_availability_models_with_bernoulli_variance(node_requests, start_time, availability_percent, budget, time_interval, availability_length, availability_chance):
 
     # generate base availability model with corresponding variance
@@ -73,7 +75,7 @@ def generate_window_base_availability_models_with_bernoulli_variance(node_reques
     return base_availability_models, model_variances
 
 
-
+### Sample individual model from base model with variance.
 def sample_model_parameters(node_requests, base_availability_models, model_variances, sampling_method='gauss'):
     sampled_availability_models = {}
     for request in node_requests:
@@ -91,6 +93,7 @@ def sample_model_parameters(node_requests, base_availability_models, model_varia
     return sampled_availability_models
 
 
+### Sample simulated availabilities given "true" model, incorporating temporal consistency
 def sample_schedule_from_model(node_requests, availability_models, mu, num_intervals, temporal_consistency=True):
     schedules = {}
     for request in node_requests:
