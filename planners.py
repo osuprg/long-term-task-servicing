@@ -2,6 +2,7 @@ import numpy as np
 import random
 import copy
 import math
+import networkx as nx  
 import matplotlib.pyplot as plt
 from td_op import SpatioTemporalGraph, sample_bernoulli_avialability_model
 from world_generation import sample_occupancy, persistence_prob
@@ -110,7 +111,8 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
                     if sim_curr_node == visit:
                         dist = 1
                     else:
-                        dist = g.get_distance(sim_curr_node, visit)
+                        # dist = g.get_distance(sim_curr_node, visit)
+                        dist = g[sim_curr_node][visit]['weight']
                     sim_time += dist
                     sim_curr_node = visit
                     path_visits += 1

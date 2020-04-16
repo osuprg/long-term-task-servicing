@@ -2,6 +2,7 @@ import numpy as np
 import random
 import copy
 import math
+import networkx as nx  
 from planners import plan_path
 
 
@@ -54,7 +55,8 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                 if curr_node == visit:
                     dist = 1
                 else:
-                    dist = g.get_distance(curr_node, visit)
+                    # dist = g.get_distance(curr_node, visit)
+                    dist = g[curr_node][visit]['weight']
                 curr_time += dist
                 curr_node = visit
                 path_visits += 1

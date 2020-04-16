@@ -4,7 +4,8 @@ import copy
 import math
 import os.path
 import csv
-from utils import load_params
+import networkx as nx  
+from utils import load_params, read_graph_from_file
 from td_op import Graph
 from world_generation import generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, sample_schedule_from_model, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file
 from plan_execution_simulation import plan_and_execute
@@ -23,8 +24,10 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, base
     params = load_params(world_config_file, schedule_config_file, planner_config_file)
 
     ## load world
-    g = Graph()
-    g.read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
+    # g = Graph()
+    # g.read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
+
+    g = read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
 
     
     for num_deliveries in num_deliveries_runs:
@@ -107,8 +110,10 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
     
 
     ## import world
-    g = Graph()
-    g.read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
+    # g = Graph()
+    # g.read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
+
+    g = read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
 
     for num_deliveries in num_deliveries_runs:
         for availability_percent in availability_percents:

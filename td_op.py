@@ -3,6 +3,7 @@ import random
 import copy
 import math
 import heapq
+import networkx as nx  
 
 
 
@@ -211,7 +212,8 @@ class SpatioTemporalGraph:
         self.vertices[graph_start_node.name] = graph_start_node
         self.start_node = graph_start_node.name
 
-        for v in spatial_graph.vertices.keys():
+        # for v in spatial_graph.vertices.keys():
+        for v in spatial_graph:
             for t in range(self.num_intervals):
                 node_time = self.vertices[self.start_node].t + (t*self.time_interval)
                 node_name = v + "_" + str(node_time)
@@ -257,9 +259,11 @@ class SpatioTemporalGraph:
                 st_node.weight = st_node.profit
 
                 # for each neighbor
-                neighbors = spatial_graph.vertices[v].get_neighbors()
-                for neighbor in neighbors:
-                    dist = spatial_graph.get_distance(v, neighbor)
+                # neighbors = spatial_graph.vertices[v].get_neighbors()
+                # for neighbor in neighbors:
+                for neighbor in spatial_graph.neighbors(v):
+                    # dist = spatial_graph.get_distance(v, neighbor)
+                    dist = spatial_graph[v][neighbor]['weight']
 
                     # if travel cost doesnt exceed budget add neighbor to dag and increase its indegree
                     if (st_node.t + dist) <= (graph_start_time + self.budget):

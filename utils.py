@@ -1,4 +1,5 @@
-import yaml    
+import yaml
+import networkx as nx    
 
 def load_params(world_config_file, schedule_config_file, planner_config_file):
     params = {}
@@ -33,6 +34,34 @@ def load_params(world_config_file, schedule_config_file, planner_config_file):
     params['num_worlds'] = int(planner_params['num_worlds'])
 
     return params
+
+
+
+def read_graph_from_file(input_filename):
+    g = nx.Graph()
+
+    # read known connections
+    lines = [line.rstrip('\n') for line in open(input_filename)]
+    for line in lines:
+        line = line.split()
+        node_a = line[0]
+        node_b = line[1]
+        dist = float(line[2])
+        dist = max(int(round(float(dist)/60)), 1)           # convert seconds to minutes
+
+        # add nodes
+        if not(g.has_node(node_a)):
+            g.add_node(node_a)
+        if not(g.has_node(node_b)):
+            g.add_node(node_b)
+
+        # add edges
+        g.add_edge(node_a, node_b)
+        g.add_edge(node_b, node_a)
+        g[node_a][node_b]['weight'] = dist
+        g[node_b][node_a]['weight'] = dist
+
+    return g
 
 
 
