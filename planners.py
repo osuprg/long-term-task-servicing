@@ -242,10 +242,16 @@ def visualize_path_willow(strategies, paths, availabilities, schedules, node_req
         im = ax.imshow(availability_array)
         # im = ax.imshow(schedule_array)
 
-        ax.set_xticks(np.arange(len(X)))
-        ax.set_yticks(np.arange(len(node_names)))
-        ax.set_xticklabels(X)
-        ax.set_yticklabels(node_names)
+        # ax.set_xticks(np.arange(len(X)))
+        # ax.set_yticks(np.arange(len(node_names)))
+        # ax.set_xticklabels(X)
+        # ax.set_yticklabels(node_names)
+        # plt.xticks(range(min(X), max(X)+1, 1))
+        # ax.get_yaxis().set_visible(False)
+        ax.axes.get_yaxis().set_ticks([])
+
+        plt.xlabel("Time (min)")
+        plt.ylabel("Nodes")
 
         # # Rotate the tick labels and set their alignment.
         # plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
@@ -264,11 +270,10 @@ def visualize_path_willow(strategies, paths, availabilities, schedules, node_req
         cbar = ax.figure.colorbar(im, ax=ax)
         cbar.ax.set_ylabel("Availability", rotation=-90, va="bottom")
 
-    plt.suptitle("Path Trace vs Probs")
+    plt.suptitle("Path Trace vs Node Availability Probabilities")
     # plt.savefig(out_img + "_avail.jpg")
     plt.show()
 
-    plt.clf()
 
 
 
@@ -286,10 +291,16 @@ def visualize_path_willow(strategies, paths, availabilities, schedules, node_req
         # im = ax.imshow(availability_array)
         im = ax.imshow(schedule_array)
 
-        ax.set_xticks(np.arange(len(X)))
-        ax.set_yticks(np.arange(len(node_names)))
-        ax.set_xticklabels(X)
-        ax.set_yticklabels(node_names)
+        # ax.set_xticks(np.arange(len(X)))
+        # ax.set_yticks(np.arange(len(node_names)))
+        # ax.set_xticklabels(X)
+        # ax.set_yticklabels(node_names)
+        # plt.xticks(range(min(X), max(X)+1, 1))
+        # ax.get_yaxis().set_visible(False)
+        ax.axes.get_yaxis().set_ticks([])
+
+        plt.xlabel("Time (min)")
+        plt.ylabel("Nodes")
 
         # # Rotate the tick labels and set their alignment.
         # plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
@@ -308,7 +319,7 @@ def visualize_path_willow(strategies, paths, availabilities, schedules, node_req
         cbar = ax.figure.colorbar(im, ax=ax)
         cbar.ax.set_ylabel("Availability", rotation=-90, va="bottom")
 
-    plt.suptitle("Path Trace vs Schedule")
+    plt.suptitle("Path Trace vs Node Schedules")
     # plt.savefig(out_img + "_schedule.jpg")
     plt.show()
 
