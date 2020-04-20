@@ -135,12 +135,14 @@ def generate_plots(strategies, num_deliveries_runs, availability_percents, csv_f
                     plt.plot(x, cr_y, label=strategy)
                     plt.fill_between(x, cr_y-cr_y_sd, cr_y+cr_y_sd, alpha=0.2)
 
+                plt.legend(loc='lower right')
+
 
         if plotting_mode == 'mr':
-            plt.suptitle("Maintenance CR by Availability Percent for Num Del: " + str(num_deliveries))  
+            plt.suptitle("Maintenance CR by Availability Percent")  
         if plotting_mode == 'cr':
-            plt.suptitle("Competitive Ratio by Availability Percent for Num Del: " + str(num_deliveries))           
-        plt.legend(loc='lower right')
+            plt.suptitle("Competitive Ratio by Availability Percent")           
+        # plt.legend(loc='lower right')
         plt.show()
 
 
