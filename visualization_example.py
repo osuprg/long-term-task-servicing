@@ -23,9 +23,11 @@ def main(stat_run, input_file):
     availability_percents = []
     for i in inputs['availability_percents']:
         availability_percents.append(float(i))
+    visualize = bool(int(inputs['visualize']))
+    visualize_path = filepath + inputs['visualize_path']
 
     # planning and execution
-    vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries, availability_percents, stat_run)
+    vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries, availability_percents, stat_run, visualize, visualize_path)
 
 
 if __name__ == "__main__":

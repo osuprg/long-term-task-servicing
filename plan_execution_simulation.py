@@ -4,11 +4,13 @@ import copy
 import math
 import networkx as nx  
 from planners import plan_path
+from utils import visualize_graph
+import imageio
 
 
 
 ### Simulate specified planning strategy being employed to given task execution scenario
-def plan_and_execute(strategy, g, base_availability_models, base_model_variances, true_schedules, node_requests, mu, params):
+def plan_and_execute(strategy, g, base_availability_models, base_model_variances, true_schedules, node_requests, mu, params, visualize, visualize_path):
 
     ## plan, execution loop
     num_requests = len(node_requests)
@@ -17,6 +19,8 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
     total_profit = 0.0
     total_maintenance_profit = 0.0
     delivery_history = []
+    nodes_delivered = []
+    img_history = []
     path_history = [params['start_node_id']]
     curr_time = params['start_time']
     curr_node = params['start_node_id']
@@ -36,6 +40,10 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
         multiple_visits = False
 
 
+    # if visualize:
+        # visualize_graph(g, base_availability_models, true_schedules, availability_observations, curr_time_index, curr_node, node_requests, delivery_history, curr_time, mu)
+
+        # img_history.append(img)
 
 
     while (path_visits < path_length):
@@ -64,31 +72,40 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                 if visit == params['maintenance_node']:
                     total_maintenance_profit += params['maintenance_reward']
 
+                breakout = False
+                curr_time_index = int(curr_time/params['time_interval'])
+                if curr_time_index > (params['num_intervals'] - 1):
+                    print("Curr time index exceeds num intervals: " + str(curr_time_index))
+                    curr_time_index = params['num_intervals']-1
+                assert(curr_time_index <= (params['num_intervals'] - 1))
+
                 if visit in requests_left_to_deliver:
-                    curr_time_index = int(curr_time/params['time_interval'])
-
-                    if curr_time_index > (params['num_intervals'] - 1):
-                        print("Curr time index exceeds num intervals: " + str(curr_time_index))
-                        curr_time_index = params['num_intervals']-1
-
-                    available = true_schedules[visit][curr_time_index]              #FIXME: list index out of range
-                    if available:
+                    available = true_schedules[visit][curr_time_index]
+                    if bool(available):
                         requests_left_to_deliver.remove(visit)
                         total_profit += params['deliver_reward']
                         delivery_history.append([visit, curr_time])
-                        # availability_observations[visit] = [1, curr_time]
+                        nodes_delivered.append(visit)
+                        availability_observations[visit] = [1, curr_time]
 
                         if multiple_visits:
                             if replan:
                                 path_visits = 0
                                 path_length = 1
-                                break
+                                breakout = True
                     else:
                         if replan:
                             availability_observations[visit] = [0, curr_time]
                             path_visits = 0
                             path_length = 1
-                            break
+                            breakout = True
+
+                if visualize:
+                    img = visualize_graph(g, base_availability_models, true_schedules, availability_observations, curr_time_index, curr_node, node_requests, nodes_delivered, curr_time, mu)
+                    img_history.append(img)
+
+                if breakout:
+                    break
         else:
             path_visits = 0
             path_length = 0
@@ -101,5 +118,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
 
     print(strategy + " cr: " + str(competitive_ratio))
 
+    if visualize:
+        imageio.mimsave(visualize_path, img_history, duration=1)
+
     return total_profit, competitive_ratio, maintenance_competitive_ratio, path_history
-    

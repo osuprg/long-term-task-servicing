@@ -4,4 +4,6 @@ rooms: [R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12,R13,R14,R15,R16,R17,R18,R19,R20,
 start_node_id: R1
 maintenance_node: R1
 max_rooms: 43
+max_traversal_cost: 0
+graph_generator_type: read
 graph_filename: /config/world_params/willow_distance_file.txt

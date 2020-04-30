@@ -399,6 +399,7 @@ class SpatioTemporalGraph:
         path = self.vertices[end_node].path
         return path
 
+
     ### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)
     def combine_probabilities(self, node_id, curr_time, last_observation, last_observation_time):
         a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
@@ -426,7 +427,7 @@ class SpatioTemporalGraph:
 
 ### Add random noise to availability model
 def add_random_noise(availability_model, noise_amplitude, availability_chance):
-    f = lambda x: min(max(availability_model(x) + (random.random() -.5)*(noise_amplitude/.5), 1.0 - availability_chance), availability_chance)
+    f = lambda x: min(max(availability_model(x) + (random.random() -.5)*(noise_amplitude*2), 1.0 - availability_chance), availability_chance)
     return f
 
 ### Temporal persistence per Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.
@@ -443,10 +444,12 @@ def bernoulli_variance(availability_prob):
 def sample_bernoulli_avialability_model(availability_model):
     avails = []
     for avail in availability_model:
-        new_avail = max(min(random.gauss(avail, math.sqrt(bernoulli_variance(avail))), 1.0), 0.0)
+        new_avail = max(min(random.gauss(avail, math.sqrt(bernoulli_variance(avail))), 0.99), 0.01)
         avails.append(new_avail)
     return avails
 
 ### Artificially increase expected reward from reliable (low variance) nodes
 def bernoulli_variance_biasing(prob, variance_bias, deliver_reward):
-    return deliver_reward*prob - variance_bias*bernoulli_variance(prob)
+    reward = deliver_reward*prob - variance_bias*bernoulli_variance(prob)
+    assert(reward >= 0)
+    return reward

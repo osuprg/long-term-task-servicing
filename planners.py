@@ -5,7 +5,7 @@ import math
 import networkx as nx  
 import matplotlib.pyplot as plt
 from td_op import SpatioTemporalGraph, sample_bernoulli_avialability_model
-from world_generation import sample_occupancy, persistence_prob
+from schedule_generation import sample_occupancy, persistence_prob, generate_schedule
 
 
 ### Path planning for sampling based methods
@@ -37,29 +37,11 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
     # generate evaluation worlds
     sim_worlds = {}
     for world_index in range(num_worlds):
-        sim_worlds[world_index] = {}
+        true_availability_models = {}
         for request in requests_left_to_deliver:
-            true_availability_model = sample_bernoulli_avialability_model(base_availability_models[request])
-            initial_occ = sample_occupancy(true_availability_model[0])
-            prev_occ = initial_occ
-            occupancies = [initial_occ]
-            for i in range(num_intervals)[1:]:
-                if incorporate_observation:
-                    likelihood = persistence_prob(mu, 1, prev_occ)
-                    # if prev_occ == 1:
-                    #     evidence_prob = true_availability_model[i]
-                    # else:
-                    #     evidence_prob = 1 - true_availability_model[i]
-                    evidence_prob = likelihood*true_availability_model[i] + (1.0-likelihood)*(1.0-true_availability_model[i])
-                    new_prob = likelihood*true_availability_model[i]/evidence_prob         # Bayesian update of last observation times occ prior
-                    occ = sample_occupancy(new_prob)
-                    occupancies.append(occ)
-                    prev_occ = occ
-                else:
-                    occ = sample_occupancy(true_availability_model[i])
-                    occupancies.append(occ)
+            true_availability_models[request] = sample_bernoulli_avialability_model(base_availability_models[request])
+        sim_worlds[world_index] = generate_schedule(requests_left_to_deliver, true_availability_models, mu, params['num_intervals'], params['schedule_generation_method'], incorporate_observation)
 
-            sim_worlds[world_index][request] = occupancies
 
     # evaluate potential solutions
     best_path = None
@@ -119,19 +101,18 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
                     if visit == maintenance_node:
                         total_maintenance_profit += maintenance_reward
                     if visit in sim_requests_left_to_deliver:
-
                         # profit = availability_models[trial][visit](sim_time)
                         # total_profit += profit
                         # delivery_history.append([visit, sim_time])
                         # sim_requests_left_to_deliver.remove(visit)
-
                         curr_time_index = int(sim_time/time_interval)
-                        if curr_time_index > (num_intervals - 1):
-                            print("Curr time index exceeds num intervals: " + str(curr_time_index) + ", " + str(num_intervals))
-                            curr_time_index = num_intervals-1
 
+                        # if curr_time_index > (num_intervals - 1):
+                        #     print("Curr time index exceeds num intervals: " + str(curr_time_index) + ", " + str(num_intervals))
+                        #     curr_time_index = num_intervals-1
+                        assert(curr_time_index <= (num_intervals - 1))
                         available = sim_worlds[world_index][request][curr_time_index]
-                        if available:
+                        if bool(available):
                             sim_requests_left_to_deliver.remove(visit)
                             total_profit += deliver_reward
                             delivery_history.append([visit, sim_time])

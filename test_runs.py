@@ -7,13 +7,14 @@ import csv
 import networkx as nx  
 from utils import load_params, read_graph_from_file
 from td_op import Graph
-from world_generation import generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, sample_schedule_from_model, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file
+from world_generation import generate_graph
+from schedule_generation import generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, generate_schedule, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file
 from plan_execution_simulation import plan_and_execute
 from planners import visualize_path_willow
 
 
 ### High level code for running stat runs of task planning and simulated execution
-def stat_runs(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries_runs, availability_percents, num_stat_runs):
+def stat_runs(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries_runs, availability_percents, num_stat_runs, visualize, visualize_path):
 
     if output_file == None:
         record_output = False
@@ -27,7 +28,8 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, base
     # g = Graph()
     # g.read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
 
-    g = read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
+    # g = read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
+    g = generate_graph(params['graph_generator_type'], os.path.dirname(os.path.abspath(__file__)), params['graph_filename'], params['max_rooms'], params['max_traversal_cost'])
 
     
     for num_deliveries in num_deliveries_runs:
@@ -78,7 +80,8 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, base
                     true_availability_models.append(sampled_avails)
 
                     ## true schedules
-                    true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
+                    true_schedules.append(generate_schedule(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['schedule_generation_method']))
+                    # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
 
                     save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
                     save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
@@ -92,7 +95,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, base
             # plan and execute paths for specified strategies
             for strategy in strategies:
                 for stat_run in range(num_stat_runs):
-                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params)
+                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, visualize_path)
                     
                     if record_output:
                         with open(output_file, 'a', newline='') as csvfile:
@@ -103,7 +106,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, base
 
 
 ### High level function for visualizing simulated execution
-def vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries_runs, availability_percents, stat_run):
+def vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries_runs, availability_percents, stat_run, visualize, visualize_path):
 
     ## params
     params = load_params(world_config_file, schedule_config_file, planner_config_file)
@@ -149,7 +152,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                 true_availability_models = sample_model_parameters(node_requests, base_availability_models, base_model_variances, params['sampling_method'])
 
                 ## true schedules
-                true_schedules = sample_schedule_from_model(node_requests, true_availability_models, mu, params['num_intervals'], params['temporal_consistency'])
+                true_schedules = generate_schedule(node_requests, true_availability_models, mu, params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency'])
 
                 save_base_models_to_file(base_model_filepath, base_availability_models, base_model_variances, node_requests, num_deliveries, availability_percent, stat_run)
                 save_schedules_to_file(schedule_filepath, true_availability_models, true_schedules, node_requests, num_deliveries, availability_percent, stat_run)
@@ -163,7 +166,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
             # plan and execute paths for specified strategies
             visit_traces = {}
             for strategy in strategies:
-                total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params)
+                total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params, visualize, visualize_path)
                 visit_traces[strategy] = path_history
 
             visualize_path_willow(strategies, visit_traces, true_availability_models, true_schedules, node_requests, params['maintenance_node'], params['start_time'], params['budget'], params['time_interval'])

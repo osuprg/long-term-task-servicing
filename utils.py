@@ -1,5 +1,9 @@
 import yaml
-import networkx as nx    
+import networkx as nx  
+import copy
+import math
+from io import BytesIO
+from PIL import Image
 
 def load_params(world_config_file, schedule_config_file, planner_config_file):
     params = {}
@@ -9,7 +13,10 @@ def load_params(world_config_file, schedule_config_file, planner_config_file):
     params['start_node_id'] = world_params['start_node_id']
     params['maintenance_node'] = world_params['maintenance_node']
     params['max_rooms'] = int(world_params['max_rooms'])
-    params['graph_filename'] = world_params['graph_filename']
+    params['max_traversal_cost'] = int(world_params['max_traversal_cost'])
+    params['graph_generator_type'] = world_params['graph_generator_type']
+    if 'graph_filename' in world_params.keys():
+        params['graph_filename'] = world_params['graph_filename']
 
     with open(schedule_config_file) as f:
         schedule_params = yaml.load(f, Loader=yaml.FullLoader)
@@ -25,6 +32,7 @@ def load_params(world_config_file, schedule_config_file, planner_config_file):
     params['maintenance_reward'] = float(schedule_params['maintenance_reward'])
     params['deliver_reward'] = float(schedule_params['deliver_reward'])
     params['max_noise_amplitude'] = float(schedule_params['max_noise_amplitude'])
+    params['schedule_generation_method'] = schedule_params['schedule_generation_method']
     params['num_intervals'] = int(params['budget']/params['time_interval'])
 
     with open(planner_config_file) as f:
@@ -34,6 +42,78 @@ def load_params(world_config_file, schedule_config_file, planner_config_file):
     params['num_worlds'] = int(planner_params['num_worlds'])
 
     return params
+
+
+### Temporal persistence per Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.
+def persistence_prob(mu, delta_t, last_observation):
+    if last_observation == 1:
+        return math.exp(-(1.0/mu)*(delta_t))
+    else:
+        return 1.0 - math.exp(-(1.0/mu)*(delta_t))
+
+
+### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)
+def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_observation_time):
+    likelihood = persistence_prob(mu, curr_time-last_observation_time, last_observation)
+    # if last_observation == 1:
+    #     evidence_prob = availability_model(last_observation_time)
+    # else:
+    #     evidence_prob = 1 - availability_model(last_observation_time)
+    evidence_prob = (likelihood*a_priori_prob) + (1.0-likelihood)*(1.0-a_priori_prob)
+    if evidence_prob < .001:
+        new_prob = .99
+    else:
+        new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
+    return new_prob
+
+
+
+### Visualize servicing execution over graph at given time slice
+def visualize_graph(g, base_availability_models, true_schedule, availability_observations, curr_time_index, curr_node, node_requests, nodes_delivered, curr_time, mu):
+
+    viz_g = copy.deepcopy(g)
+    for v in viz_g:
+        
+
+        if not(v in node_requests):
+            viz_g.nodes[v]['fillcolor'] = "white"
+        elif v in nodes_delivered:
+            viz_g.nodes[v]['fillcolor'] = "gray"
+        else:
+            if v in availability_observations.keys():
+                prob = combine_probabilities(base_availability_models[v][curr_time_index], mu, curr_time, availability_observations[v][0], availability_observations[v][1])
+            else:
+                prob = base_availability_models[v][curr_time_index]
+            viz_g.nodes[v]['prob'] = prob
+            viz_g.nodes[v]['schedule'] = true_schedule[v][curr_time_index]
+
+            # unavailable
+            if viz_g.nodes[v]['schedule'] == 0:
+                viz_g.nodes[v]['fillcolor'] = "firebrick1"
+            
+            # available
+            else:
+                viz_g.nodes[v]['fillcolor'] = "green"
+
+        if v == curr_node:
+            viz_g.nodes[v]['label'] = v
+            viz_g.nodes[v]['style'] = "filled, bold"
+            viz_g.nodes[v]['fontcolor'] = "blue"
+            viz_g.nodes[v]['color'] = "blue"
+        else:
+            viz_g.nodes[v]['label'] = v
+            viz_g.nodes[v]['style'] = "filled"
+            viz_g.nodes[v]['fontcolor'] = "black"
+            viz_g.nodes[v]['color'] = "black"   
+
+    pydot_graph = nx.nx_pydot.to_pydot(viz_g)
+    png_str = pydot_graph.create_png(prog='dot')
+    im_io = BytesIO()
+    im_io.write(png_str)
+    im_io.seek(0)
+    img = Image.open(im_io) 
+
+    return img
 
 
 
