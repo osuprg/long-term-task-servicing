@@ -12,7 +12,7 @@ High level file for plotting results generated from running example_tests.py. Ru
 Example: python3 results_plotting_example.py /experiment_files/input/willow_8hrs_no_sampling.yaml /experiment_files/output/willow_8hrs_no_sampling.csv
 
 # visualization_example.py
-High level file for visualizing sample execution. Run with: python3 visualization_example.py <input_file> where input_file is the same as would be given to example_tests.py. For each planning strategy, test scenario combination included in input_file, visited nodes will be overlayed against true availabilities and schedules of associated nodes.
+High level file for visualizing sample execution. Produces timeline graphic with nodes and corresponding schedules/availabilities overlaid with indicator designating nodes visited during execution. Run with: python3 visualization_example.py <input_file> where input_file is the same as would be given to example_tests.py. For each planning strategy, test scenario combination included in input_file, visited nodes will be overlayed against true availabilities and schedules of associated nodes. If visualization is set to 1 in the input file, gif animation of execution will additionally be generated in experimental_files/output/animaations.
 
 Example: python3 visualization_example.py /experiment_files/input/willow_30min_no_sampling_execution_viz_example.yaml
 
