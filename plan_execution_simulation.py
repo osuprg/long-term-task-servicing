@@ -119,6 +119,6 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
     print(strategy + " cr: " + str(competitive_ratio))
 
     if visualize:
-        imageio.mimsave(visualize_path, img_history, duration=1)
+        imageio.mimsave(visualize_path, img_history, duration=2)
 
     return total_profit, competitive_ratio, maintenance_competitive_ratio, path_history

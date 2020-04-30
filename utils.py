@@ -71,14 +71,18 @@ def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_o
 ### Visualize servicing execution over graph at given time slice
 def visualize_graph(g, base_availability_models, true_schedule, availability_observations, curr_time_index, curr_node, node_requests, nodes_delivered, curr_time, mu):
 
+    # availability_viz = 'schedule'
+    availability_viz = 'prob'
+
+
     viz_g = copy.deepcopy(g)
     for v in viz_g:
         
 
         if not(v in node_requests):
-            viz_g.nodes[v]['fillcolor'] = "white"
-        elif v in nodes_delivered:
             viz_g.nodes[v]['fillcolor'] = "gray"
+        elif v in nodes_delivered:
+            viz_g.nodes[v]['fillcolor'] = "greenyellow"
         else:
             if v in availability_observations.keys():
                 prob = combine_probabilities(base_availability_models[v][curr_time_index], mu, curr_time, availability_observations[v][0], availability_observations[v][1])
@@ -87,13 +91,24 @@ def visualize_graph(g, base_availability_models, true_schedule, availability_obs
             viz_g.nodes[v]['prob'] = prob
             viz_g.nodes[v]['schedule'] = true_schedule[v][curr_time_index]
 
-            # unavailable
-            if viz_g.nodes[v]['schedule'] == 0:
-                viz_g.nodes[v]['fillcolor'] = "firebrick1"
-            
-            # available
+            if availability_viz == 'schedule':
+                # unavailable
+                if viz_g.nodes[v]['schedule'] == 0:
+                    viz_g.nodes[v]['fillcolor'] = "/blues9/1"
+                
+                # available
+                else:
+                    viz_g.nodes[v]['fillcolor'] = "/blues9/9"
+
             else:
-                viz_g.nodes[v]['fillcolor'] = "green"
+                color_prob = int(round(viz_g.nodes[v]['prob']*10))
+                if color_prob == 0:
+                    viz_g.nodes[v]['fillcolor'] = "white"
+                elif color_prob == 10:
+                    viz_g.nodes[v]['fillcolor'] = "/blues9/9"
+                else:
+                    viz_g.nodes[v]['fillcolor'] = "/blues9/" + str(color_prob)
+
 
         if v == curr_node:
             viz_g.nodes[v]['label'] = v
