@@ -8,7 +8,7 @@ import networkx as nx
 from utils import load_params, read_graph_from_file
 from td_op import Graph
 from world_generation import generate_graph
-from schedule_generation import generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, generate_schedule, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file, generate_simple_models, generate_simple_schedules
+from schedule_generation import generate_windows, generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, generate_schedule, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file, generate_simple_models, generate_simple_schedules
 from plan_execution_simulation import plan_and_execute
 from planners import visualize_path_willow
 
@@ -180,7 +180,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                         node_requests = params['rooms'][0:num_deliveries]
                     
                     ## base availability models
-                    base_availability_models, base_model_variances = generate_window_base_availability_models_with_bernoulli_variance(node_requests, params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
+                    base_availability_models, base_model_variances = generate_windows(node_requests, params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
                         
                     ## true availability models
                     true_availability_models = sample_model_parameters(node_requests, base_availability_models, base_model_variances, params['sampling_method'])
