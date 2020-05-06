@@ -80,7 +80,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, base
                     true_availability_models.append(sampled_avails)
 
                     ## true schedules
-                    true_schedules.append(generate_schedule(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['schedule_generation_method']))
+                    true_schedules.append(generate_schedule(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency']))
                     # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
 
                     save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
