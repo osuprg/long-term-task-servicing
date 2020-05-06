@@ -34,6 +34,90 @@ def persistence_prob(mu, delta_t, last_observation):
     else:
         return 1.0 - math.exp(-(1.0/mu)*(delta_t))
 
+def generate_simple_models(node_requests, start_time, availability_percent, budget, time_interval, availability_length, availability_chance):
+    base_availability_models = {}
+    model_variances = {}
+    for request in node_requests:
+        available_time = budget*availability_percent 
+
+        avails = []
+        variances = []
+        t = start_time
+        num_intervals = int((budget - start_time)/time_interval)
+        for i in range(num_intervals):
+            avail = availability_chance
+            avails.append(avail)
+            variances.append(bernoulli_variance(avail))
+            t += time_interval
+        base_availability_models[request] = avails
+        model_variances[request] = variances
+
+    return base_availability_models, model_variances
+
+
+def generate_simple_schedules(node_requests, sampled_avails, mu, num_intervals, schedule_generation_method):
+    schedules = {}
+    schedule1 = []
+    schedule2 = []
+    for i in range(int(num_intervals/2)):
+        schedule1.append(0)
+        schedule2.append(1)
+
+    for i in range(int(num_intervals/2)):
+        schedule1.append(1)
+        schedule2.append(0)
+
+    schedules[node_requests[0]] = schedule1
+    schedules[node_requests[1]] = schedule2
+
+    return schedules
+
+
+def generate_windows(node_requests, start_time, availability_percent, budget, time_interval, availability_length, availability_chance):
+
+    # generate base availability model with corresponding variance
+    base_availability_models = {}
+    model_variances = {}
+    for request in node_requests:   
+
+        available_time = budget*availability_percent
+        num_windows = max(1, int(round(float(available_time)/availability_length)))
+        new_availability_length = int(float(available_time)/num_windows)
+        ave_window_offset = float(budget - available_time)/num_windows
+
+        max_shift = ave_window_offset*.1
+        max_additional_spread = new_availability_length*.1
+
+        initial_shift = int(start_time + random.random()*ave_window_offset/2.0)
+        window_high = min(int(initial_shift + new_availability_length + random.random()*2*max_additional_spread - max_additional_spread), start_time + budget)
+        old_window_high = window_high
+        windows = [[initial_shift, window_high]]
+        for window in range(num_windows):
+            window_low = max(start_time, int(old_window_high + ave_window_offset + random.random()*2*max_shift - max_shift))
+            window_high = min(int(window_low + new_availability_length + random.random()*2*max_additional_spread - max_additional_spread), start_time + budget)
+            old_window_high = window_high
+            windows.append([window_low, window_high])
+        def window_check(x, windows):
+            available = 1.0 - availability_chance
+            for window in windows:
+                if (window_low <= x <= window_high):
+                    available = availability_chance
+            return available
+        
+        avails = []
+        variances = []
+        t = start_time
+        num_intervals = int((budget - start_time)/time_interval)
+        for i in range(num_intervals):
+            avail = window_check(t, windows)
+            avails.append(avail)
+            variances.append(bernoulli_variance(avail))
+            t += time_interval
+        base_availability_models[request] = avails
+        model_variances[request] = variances
+
+    return base_availability_models, model_variances
+
 
 ### Generate base availability models with corresponding Bernoulli variance. To be used as planner models or sampled to produce "true" simulator model.
 def generate_window_base_availability_models_with_bernoulli_variance(node_requests, start_time, availability_percent, budget, time_interval, availability_length, availability_chance):
