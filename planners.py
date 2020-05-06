@@ -10,7 +10,7 @@ from schedule_generation import sample_occupancy, persistence_prob, generate_sch
 
 ### Path planning for sampling based methods
 def sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, budget, time_interval, num_intervals, curr_time, curr_node, maintenance_node,
-        mu, maintenance_reward, deliver_reward, num_paths, num_worlds, incorporate_observation, incorporate_observation_hack, variance_bias, multiple_visits, replan):
+        mu, maintenance_reward, deliver_reward, num_paths, num_worlds, incorporate_observation, incorporate_observation_hack, variance_bias, multiple_visits, replan, schedule_generation_method):
 
     # generate potential solutions
     solution_set = []
@@ -40,7 +40,7 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
         true_availability_models = {}
         for request in requests_left_to_deliver:
             true_availability_models[request] = sample_bernoulli_avialability_model(base_availability_models[request])
-        sim_worlds[world_index] = generate_schedule(requests_left_to_deliver, true_availability_models, mu, params['num_intervals'], params['schedule_generation_method'], incorporate_observation)
+        sim_worlds[world_index] = generate_schedule(requests_left_to_deliver, true_availability_models, mu, num_intervals, schedule_generation_method, incorporate_observation)
 
 
     # evaluate potential solutions
@@ -371,15 +371,15 @@ def plan_path_with_observe(g, base_availability_models, base_model_variances, av
 
 def plan_path_with_observe_sampling(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
     path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, params['maintenance_node'],
-            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, 0.0, False, True)
+            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, 0.0, False, True, params['schedule_generation_method'])
     return path
 
 def plan_path_replan_with_observe_sampling_variance_bias(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
     path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, params['maintenance_node'],
-            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, params['variance_bias'], False, True)
+            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, params['variance_bias'], False, True, params['schedule_generation_method'])
     return path
 
 def plan_path_replan_with_observe_sampling_mult_visits(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
     path = sample_best_path(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, params['budget'], params['time_interval'], params['num_intervals'], curr_time, curr_node, params['maintenance_node'],
-            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, 0.0, True, True)
+            mu, params['maintenance_reward'], params['deliver_reward'], params['num_paths'], params['num_worlds'], True, False, 0.0, True, True, params['schedule_generation_method'])
     return path
