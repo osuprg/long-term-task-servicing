@@ -47,9 +47,9 @@ def load_params(world_config_file, schedule_config_file, planner_config_file):
 ### Temporal persistence per Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.
 def persistence_prob(mu, delta_t, last_observation):
     if last_observation == 1:
-        return math.exp(-(1.0/mu)*(delta_t))
+        return .5 + .5*(math.exp(-(1.0/mu)*(delta_t)))
     else:
-        return 1.0 - math.exp(-(1.0/mu)*(delta_t))
+        return .5 - .5*(math.exp(-(1.0/mu)*(delta_t)))
 
 
 ### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)

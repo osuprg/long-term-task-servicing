@@ -436,9 +436,9 @@ def add_random_noise(availability_model, noise_amplitude, availability_chance):
 ### Temporal persistence per Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.
 def persistence_prob(mu, delta_t, last_observation):
     if last_observation == 1:
-        return math.exp(-(1.0/mu)*(delta_t))
+        return .5 + .5*(math.exp(-(1.0/mu)*(delta_t)))
     else:
-        return 1.0 - math.exp(-(1.0/mu)*(delta_t))
+        return .5 - .5*(math.exp(-(1.0/mu)*(delta_t)))
 
 def bernoulli_variance(availability_prob):
     return availability_prob*(1-availability_prob)
