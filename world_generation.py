@@ -6,6 +6,7 @@ def generate_graph(graph_generator_type, filepath, filename, max_rooms, max_trav
         return g
     elif graph_generator_type == 'simple_hallway':
         g = generate_simple_hallway(max_rooms, max_traversal_cost)
+        return g
     else:
         raise ValueError(graph_generator_type)
 
@@ -38,7 +39,7 @@ def read_graph_from_file(input_filename):
 
 def generate_simple_hallway(num_nodes, traversal_cost):
     g = nx.Graph()
-    old_node = str(0)
+    old_node = "R" + str(1)
     g.add_node(old_node)
     for i in range(num_nodes)[1:]:
         new_node = "R" + str(i+1)

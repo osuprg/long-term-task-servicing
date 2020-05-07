@@ -1,0 +1,7 @@
+rooms: [R1, R3]
+start_node_id: R2
+maintenance_node: R2
+max_rooms: 3
+max_traversal_cost: 1
+graph_generator_type: simple_hallway
+graph_filename: None

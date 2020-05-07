@@ -69,7 +69,24 @@ def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_o
 
 
 ### Visualize servicing execution over graph at given time slice
-def visualize_graph(g, base_availability_models, true_schedule, availability_observations, curr_time_index, curr_node, node_requests, nodes_delivered, curr_time, mu):
+def visualize_graph(g, base_availability_models, true_schedule, availability_observations, curr_time_index, curr_node, node_requests, nodes_delivered, curr_time, mu, strategy):
+
+    if strategy == 'no_temp':
+        incorporate_observation = False
+    elif strategy == 'no_replan':
+        incorporate_observation = False
+    elif strategy == 'replan_no_observe':
+        incorporate_observation = False
+    elif strategy == 'hack_observe':
+        incorporate_observation = True
+    elif strategy == 'observe':
+        incorporate_observation = True
+    elif strategy == 'observe_sampling':
+        incorporate_observation = True
+    elif strategy == 'observe_sampling_variance_bias':
+        incorporate_observation = True
+    elif strategy == 'observe_sampling_mult_visits':
+        incorporate_observation = True
 
     # availability_viz = 'schedule'
     availability_viz = 'prob'
@@ -84,8 +101,11 @@ def visualize_graph(g, base_availability_models, true_schedule, availability_obs
         elif v in nodes_delivered:
             viz_g.nodes[v]['fillcolor'] = "greenyellow"
         else:
-            if v in availability_observations.keys():
-                prob = combine_probabilities(base_availability_models[v][curr_time_index], mu, curr_time, availability_observations[v][0], availability_observations[v][1])
+            if incorporate_observation:
+                if v in availability_observations.keys():
+                    prob = combine_probabilities(base_availability_models[v][curr_time_index], mu, curr_time, availability_observations[v][0], availability_observations[v][1])
+                else:
+                    prob = base_availability_models[v][curr_time_index]
             else:
                 prob = base_availability_models[v][curr_time_index]
             viz_g.nodes[v]['prob'] = prob

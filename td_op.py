@@ -280,21 +280,24 @@ class SpatioTemporalGraph:
 
                         st_node.successors.append(neighbor_name)
                 # add self vertex
-                if v not in requests_left_to_deliver:
-                    dist = 1
-                    if (st_node.t + dist) <= (graph_start_time + self.budget):
-                        neighbor_name = v + "_" + str(st_node.t + dist)
-                        if neighbor_name in self.vertices:
-                            neighbor_node = self.vertices[neighbor_name]
-                        else:
-                            neighbor_node = STGraphNode()
-                            neighbor_node.id = v
-                            neighbor_node.t = st_node.t + dist
-                            neighbor_node.name = neighbor_name
-                        neighbor_node.indegree += 1
-                        self.vertices[neighbor_name] = neighbor_node
+                # if v not in requests_left_to_deliver:
+                dist = 1
+                if (st_node.t + dist) <= (graph_start_time + self.budget):
+                    neighbor_name = v + "_" + str(st_node.t + dist)
+                    if neighbor_name in self.vertices:
+                        neighbor_node = self.vertices[neighbor_name]
+                    else:
+                        neighbor_node = STGraphNode()
+                        neighbor_node.id = v
+                        neighbor_node.t = st_node.t + dist
+                        neighbor_node.name = neighbor_name
+                    neighbor_node.indegree += 1
+                    self.vertices[neighbor_name] = neighbor_node
 
-                        st_node.successors.append(neighbor_name)
+                    st_node.successors.append(neighbor_name)
+
+                # # add self vertex for start node
+                # if ((v + "_" + str(t)) == self.start_node) and (v in requests_left_to_deliver):
 
                 self.vertices[node_name] = st_node
 
@@ -339,7 +342,7 @@ class SpatioTemporalGraph:
 
                 # if successor is a delivery node and has not been already visited up to that point
                 if successor.id in node_requests: 
-                    if successor.id not in node.path:
+                    if (successor.id not in node.path[1:]):
 
                         # if going through node is the best way to get to successor, update successors parent
                         if (node.sum + successor.profit) > successor.sum:
@@ -369,7 +372,7 @@ class SpatioTemporalGraph:
                                 self.vertices[successor_name] = successor
 
                         else:
-                            if (node.sum + successor_profit) > successor.sum:
+                            if (node.sum + successor.profit) > successor.sum:
                                 successor.sum = node.sum + 0.0
                                 successor.parent = node_name
                                 successor.path = node.path + [successor.id]
