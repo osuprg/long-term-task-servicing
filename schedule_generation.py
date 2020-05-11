@@ -83,16 +83,24 @@ def generate_windows(node_requests, start_time, availability_percent, budget, ti
         available_time = budget*availability_percent
         num_windows = max(1, int(round(float(available_time)/availability_length)))
         new_availability_length = int(float(available_time)/num_windows)
-        ave_window_offset = float(budget - available_time)/num_windows
+        ave_window_offset = min(float(budget - available_time)/num_windows, float(budget - available_time)/2)
 
         max_shift = ave_window_offset*.1
         max_additional_spread = new_availability_length*.1
 
+
         initial_shift = int(start_time + random.random()*ave_window_offset/2.0)
+
+        print ("num windows: " + str(num_windows))
+        print ("new availability lengtht: " + str(new_availability_length))
+        print ("ave window offset: " + str(ave_window_offset))
+        print ("initial shift: " + str(initial_shift))
+        # print ()
+
         window_high = min(int(initial_shift + new_availability_length + random.random()*2*max_additional_spread - max_additional_spread), start_time + budget)
         old_window_high = window_high
         windows = [[initial_shift, window_high]]
-        for window in range(num_windows):
+        for window in range(num_windows-1):
             window_low = max(start_time, int(old_window_high + ave_window_offset + random.random()*2*max_shift - max_shift))
             window_high = min(int(window_low + new_availability_length + random.random()*2*max_additional_spread - max_additional_spread), start_time + budget)
             old_window_high = window_high
@@ -100,9 +108,15 @@ def generate_windows(node_requests, start_time, availability_percent, budget, ti
         def window_check(x, windows):
             available = 1.0 - availability_chance
             for window in windows:
+                window_low = window[0]
+                window_high = window[1]
                 if (window_low <= x <= window_high):
                     available = availability_chance
             return available
+
+        print ("windows: ")
+        print (windows)
+        print()
         
         avails = []
         variances = []
@@ -131,21 +145,23 @@ def generate_window_base_availability_models_with_bernoulli_variance(node_reques
         num_windows = max(1, int(round(float(available_time)/availability_length)))
         ave_window_offset = float(budget - available_time)/num_windows
 
-        max_shift = ave_window_offset*.1
-        max_additional_spread = availability_length*.1
+        max_shift = ave_window_offset*.25
+        max_additional_spread = availability_length*.25
 
-        initial_shift = int(start_time + random.random()*availability_length/2.0)
+        initial_shift = int(start_time + random.random()*availability_length)
         window_high = min(int(initial_shift + availability_length + random.random()*2*max_additional_spread - max_additional_spread), start_time + budget)
         old_window_high = window_high
         windows = [[initial_shift, window_high]]
         for window in range(num_windows):
-            window_low = max(start_time, int(old_window_high + random.random()*2*max_shift - max_shift))
+            window_low = min(max(start_time, int(old_window_high + random.random()*2*max_shift - max_shift)), start_time + budget)
             window_high = min(int(window_low + availability_length + random.random()*2*max_additional_spread - max_additional_spread), start_time + budget)
             old_window_high = window_high
             windows.append([window_low, window_high])
         def window_check(x, windows):
             available = 1.0 - availability_chance
             for window in windows:
+                window_low = window[0]
+                window_high = window[1]
                 if (window_low <= x <= window_high):
                     available = availability_chance
             return available
