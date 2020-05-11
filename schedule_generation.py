@@ -91,10 +91,10 @@ def generate_windows(node_requests, start_time, availability_percent, budget, ti
 
         initial_shift = int(start_time + random.random()*ave_window_offset/2.0)
 
-        print ("num windows: " + str(num_windows))
-        print ("new availability lengtht: " + str(new_availability_length))
-        print ("ave window offset: " + str(ave_window_offset))
-        print ("initial shift: " + str(initial_shift))
+        # print ("num windows: " + str(num_windows))
+        # print ("new availability lengtht: " + str(new_availability_length))
+        # print ("ave window offset: " + str(ave_window_offset))
+        # print ("initial shift: " + str(initial_shift))
         # print ()
 
         window_high = min(int(initial_shift + new_availability_length + random.random()*2*max_additional_spread - max_additional_spread), start_time + budget)
@@ -114,9 +114,9 @@ def generate_windows(node_requests, start_time, availability_percent, budget, ti
                     available = availability_chance
             return available
 
-        print ("windows: ")
-        print (windows)
-        print()
+        # print ("windows: ")
+        # print (windows)
+        # print()
         
         avails = []
         variances = []
