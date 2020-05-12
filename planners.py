@@ -320,6 +320,8 @@ def plan_path(strategy, g, base_availability_models, base_model_variances, avail
         return plan_path_with_hack_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     elif strategy == 'observe':
         return plan_path_with_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
+    elif strategy == 'observe_mult_visits':
+        return plan_path_with_observe_mult_visits(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     elif strategy == 'observe_sampling':
         return plan_path_with_observe_sampling(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
     elif strategy == 'observe_sampling_variance_bias':
@@ -367,6 +369,13 @@ def plan_path_with_observe(g, base_availability_models, base_model_variances, av
     st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, False, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path(L, requests_left_to_deliver, False)
+    return path
+
+def plan_path_with_observe_mult_visits(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
+    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'])
+    st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, False, False)
+    L = st_g.topological_sort()
+    path = st_g.calc_max_profit_path(L, requests_left_to_deliver, True)
     return path
 
 def plan_path_with_observe_sampling(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
