@@ -72,6 +72,64 @@ def generate_simple_schedules(node_requests, sampled_avails, mu, num_intervals, 
 
     return schedules
 
+def generate_windows_overlapping(node_requests, start_time, availability_percent, budget, time_interval, availability_length, availability_chance):
+
+    # generate base availability model with corresponding variance
+    base_availability_models = {}
+    model_variances = {}
+    for request in node_requests:   
+
+        available_time = budget*availability_percent
+        num_windows = max(1, int(round(float(available_time)/availability_length)))
+        new_availability_length = int(float(available_time)/num_windows)
+        ave_window_offset = min(float(budget - available_time)/num_windows, float(budget - available_time)/2)
+
+        max_shift = ave_window_offset*.25
+        max_additional_spread = new_availability_length*.25
+
+
+        # initial_shift = int(start_time + random.random()*ave_window_offset/2.0)
+
+        # print ("num windows: " + str(num_windows))
+        # print ("new availability lengtht: " + str(new_availability_length))
+        # print ("ave window offset: " + str(ave_window_offset))
+        # print ("initial shift: " + str(initial_shift))
+        # print ()
+
+        # window_high = min(int(initial_shift + new_availability_length + random.random()*2*max_additional_spread - max_additional_spread), start_time + budget)
+        # old_window_high = window_high
+        windows = []
+        for window in range(num_windows):
+            window_low = random.random()*(budget - new_availability_length - start_time) + start_time
+            window_high = min(int(window_low + new_availability_length + random.random()*2*max_additional_spread - max_additional_spread), start_time + budget)
+            windows.append([window_low, window_high])
+        def window_check(x, windows):
+            available = 1.0 - availability_chance
+            for window in windows:
+                window_low = window[0]
+                window_high = window[1]
+                if (window_low <= x <= window_high):
+                    available = availability_chance
+            return available
+
+        # print ("windows: ")
+        # print (windows)
+        # print()
+        
+        avails = []
+        variances = []
+        t = start_time
+        num_intervals = int((budget - start_time)/time_interval)
+        for i in range(num_intervals):
+            avail = window_check(t, windows)
+            avails.append(avail)
+            variances.append(bernoulli_variance(avail))
+            t += time_interval
+        base_availability_models[request] = avails
+        model_variances[request] = variances
+
+    return base_availability_models, model_variances
+
 
 def generate_windows(node_requests, start_time, availability_percent, budget, time_interval, availability_length, availability_chance):
 
