@@ -34,7 +34,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
         replan = True
 
     # multiple visits planned
-    if strategy == 'observe_sampling_mult_visits':
+    if (strategy == 'observe_sampling_mult_visits') or ('observe_mult_visits'):
         multiple_visits = True
     else:
         multiple_visits = False
