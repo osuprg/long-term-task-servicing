@@ -79,14 +79,15 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         
                         ## base availability models
                         avails, variances = generate_windows_overlapping(node_requests[stat_run], params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
-                        
-                        x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
-                        gp = GP(None, x_in, avails, params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
+                        gps = {}
+                        for request in node_requests[stat_run]:
+                            x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
+                            gps[request] = GP(None, x_in, avails[request], params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
 
                         # base_availability_models.append(avails)
                         base_model_variances.append(variances)
 
-                        base_availability_models.append(gp)
+                        base_availability_models.append(gps)
 
                         ## true availability models
                         # sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
