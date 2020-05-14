@@ -2,6 +2,21 @@ import torch
 import gpytorch
 import numpy as np
 
+
+
+# We will use the simplest form of GP model, exact inference
+class ExactGPModel(gpytorch.models.ExactGP):
+    def __init__(self, train_x, train_y, likelihood):
+        super(ExactGPModel, self).__init__(train_x, train_y, likelihood)
+        self.mean_module = gpytorch.means.ConstantMean()
+        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+
+    def forward(self, x):
+        mean_x = self.mean_module(x)
+        covar_x = self.covar_module(x)
+        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        
+
 class GP():
 
     def __init__(self, true_function, x_in, y_in, budget, spacing, noise_scaling, initialize, input_form='values'):
@@ -151,10 +166,10 @@ class GP():
             with torch.no_grad(), gpytorch.settings.fast_pred_var():
                 test_x = torch.as_tensor(np.array([vist_time]), dtype=torch.float32)
 
-                # observed_pred = self.likelihood(self.model(test_x))
-                # pred = observed_pred.mean.numpy()
+                observed_pred = self.likelihood(self.model(test_x))
+                pred = observed_pred.mean.numpy()
 
-                pred = self.model(test_x)
+                # pred = self.model(test_x)
 
         return pred
 
