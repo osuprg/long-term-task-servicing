@@ -460,5 +460,7 @@ def sample_bernoulli_avialability_model(availability_model):
 ### Artificially increase expected reward from reliable (low variance) nodes
 def bernoulli_variance_biasing(prob, variance_bias, deliver_reward):
     reward = deliver_reward*prob - variance_bias*bernoulli_variance(prob)
-    assert(reward >= 0)
+    if reward < 0:
+        reward = 0.0
+    # assert(reward >= 0)
     return reward
