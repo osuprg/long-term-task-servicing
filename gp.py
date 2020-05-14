@@ -164,7 +164,7 @@ class GP():
             self.likelihood.eval()
 
             with torch.no_grad(), gpytorch.settings.fast_pred_var():
-                test_x = torch.as_tensor(np.array([vist_time]), dtype=torch.float32)
+                test_x = torch.as_tensor(np.array([visit_time]), dtype=torch.float32)
 
                 observed_pred = self.likelihood(self.model(test_x))
                 pred = observed_pred.mean.numpy()
