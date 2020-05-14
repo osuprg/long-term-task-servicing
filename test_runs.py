@@ -6,6 +6,7 @@ import os.path
 import csv
 import networkx as nx  
 from utils import load_params, read_graph_from_file
+from gp import GP
 from td_op import Graph
 from world_generation import generate_graph
 from schedule_generation import generate_windows_overlapping, generate_windows, generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, generate_schedule, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file, generate_simple_models, generate_simple_schedules
@@ -78,8 +79,14 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, base
                         
                         ## base availability models
                         avails, variances = generate_windows_overlapping(node_requests[stat_run], params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
-                        base_availability_models.append(avails)
+                        
+                        x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
+                        gp = GP(None, x_in, avails, params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
+
+                        # base_availability_models.append(avails)
                         base_model_variances.append(variances)
+
+                        base_availability_models.append(gp)
 
                         ## true availability models
                         # sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
@@ -92,8 +99,8 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, base
                         true_schedules.append(generate_schedule(node_requests[stat_run], avails, mu, params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency']))
                         # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
 
-                        save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
-                        save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
+                        # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
+                        # save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
 
 
                     elif params['availabilities'] == 'simple':

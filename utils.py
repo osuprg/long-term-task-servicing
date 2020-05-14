@@ -5,7 +5,7 @@ import math
 from io import BytesIO
 from PIL import Image
 
-def load_params(world_config_file, schedule_config_file, planner_config_file):
+def load_params(world_config_file, schedule_config_file, planner_config_file, model_config_file):
     params = {}
     with open(world_config_file) as f:
         world_params = yaml.load(f, Loader=yaml.FullLoader)
@@ -40,6 +40,11 @@ def load_params(world_config_file, schedule_config_file, planner_config_file):
     params['variance_bias'] = float(planner_params['variance_bias'])
     params['num_paths'] = int(planner_params['num_paths'])
     params['num_worlds'] = int(planner_params['num_worlds'])
+
+    with open(model_config_file) as f:
+        model_params = yaml.load(f, Loader=yaml.FullLoader)
+    params['spacing'] = int(model_params['spacing'])
+    params['noise_scaling'] = float(model_params['noise_scaling'])
 
     return params
 

@@ -14,6 +14,7 @@ def main(num_stat_runs, input_file, output_file):
     world_config_file = filepath + inputs['world_config_file']
     schedule_config_file = filepath + inputs['schedule_config_file']
     planner_config_file = filepath + inputs['planner_config_file']
+    model_config_file = filepath + inputs['model_config_file']
     base_model_filepath = filepath + inputs['base_model_filepath']
     schedule_filepath = filepath + inputs['schedule_filepath']
     strategies = inputs['strategies']
