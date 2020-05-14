@@ -26,8 +26,8 @@ class GP():
             self.train_y = self.true_function(self.train_x) + torch.randn(self.train_x.size()) * self.noise_scaling
             # self.train_y = self.true_function(self.train_x)
         elif input_form == 'values':
-            self.train_x = np.array(self.x_in[::self.spacing])
-            self.train_y = np.array(self.y_in[::self.spacing]) + torch.randn(self.train_x.size()) * self.noise_scaling
+            self.train_x = torch.from_numpy(np.array(self.x_in[::self.spacing]))
+            self.train_y = torch.from_numpy(np.array(self.y_in[::self.spacing])) + torch.randn(self.train_x.size()) * self.noise_scaling
             for i in range(self.train_y.shape[0]):
                 self.train_y[i] = max(self.train_y[i], .01)
                 self.train_y[i] = min(self.train_y[i], .99)
