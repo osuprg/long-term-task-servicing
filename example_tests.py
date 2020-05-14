@@ -30,7 +30,7 @@ def main(num_stat_runs, input_file, output_file):
     visualize_path = filepath + inputs['visualize_path']
 
     # planning and execution
-    stat_runs(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries, availability_percents, num_stat_runs, visualize, visualize_path)
+    stat_runs(world_config_file, schedule_config_file, planner_config_file, model_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries, availability_percents, num_stat_runs, visualize, visualize_path)
 
 
 if __name__ == "__main__":

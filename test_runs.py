@@ -15,7 +15,7 @@ from planners import visualize_path_willow
 
 
 ### High level code for running stat runs of task planning and simulated execution
-def stat_runs(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries_runs, availability_percents, num_stat_runs, visualize, visualize_path):
+def stat_runs(world_config_file, schedule_config_file, planner_config_file, model_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries_runs, availability_percents, num_stat_runs, visualize, visualize_path):
 
     if output_file == None:
         record_output = False
@@ -23,7 +23,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, base
         record_output = True
 
     ## params
-    params = load_params(world_config_file, schedule_config_file, planner_config_file)
+    params = load_params(world_config_file, schedule_config_file, planner_config_file, model_config_file)
 
     ## load world
     # g = Graph()
