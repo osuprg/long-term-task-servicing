@@ -1,7 +1,6 @@
 import sys
 import yaml
 import os.path
-from test_runs import stat_runs
 from plotting import generate_plots
 
 
