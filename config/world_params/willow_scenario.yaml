@@ -7,3 +7,4 @@ max_rooms: 43
 max_traversal_cost: 0
 graph_generator_type: read
 graph_filename: /config/world_params/willow_distance_file.txt
+distance_scaling: 5

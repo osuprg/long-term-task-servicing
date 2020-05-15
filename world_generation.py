@@ -1,8 +1,8 @@
 import networkx as nx    
 
-def generate_graph(graph_generator_type, filepath, filename, max_rooms, max_traversal_cost):
+def generate_graph(graph_generator_type, filepath, filename, max_rooms, max_traversal_cost, distance_scaling):
     if graph_generator_type == 'read':
-        g = read_graph_from_file(filepath+filename)
+        g = read_graph_from_file(filepath+filename, distance_scaling)
         return g
     elif graph_generator_type == 'simple_hallway':
         g = generate_simple_hallway(max_rooms, max_traversal_cost)
@@ -10,7 +10,7 @@ def generate_graph(graph_generator_type, filepath, filename, max_rooms, max_trav
     else:
         raise ValueError(graph_generator_type)
 
-def read_graph_from_file(input_filename):
+def read_graph_from_file(input_filename, distance_scaling):
     g = nx.Graph()
 
     # read known connections
@@ -21,6 +21,7 @@ def read_graph_from_file(input_filename):
         node_b = line[1]
         dist = float(line[2])
         dist = max(int(round(float(dist)/60)), 1)           # convert seconds to minutes
+        dist = distance_scaling*dist
 
         # add nodes
         if not(g.has_node(node_a)):

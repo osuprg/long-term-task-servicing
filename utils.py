@@ -15,6 +15,7 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
     params['max_rooms'] = int(world_params['max_rooms'])
     params['max_traversal_cost'] = int(world_params['max_traversal_cost'])
     params['graph_generator_type'] = world_params['graph_generator_type']
+    params['distance_scaling'] = world_params['distance_scaling']
     if 'graph_filename' in world_params.keys():
         params['graph_filename'] = world_params['graph_filename']
 
