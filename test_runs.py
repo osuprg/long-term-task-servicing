@@ -87,7 +87,8 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         # base_availability_models.append(avails)
                         base_model_variances.append(variances)
 
-                        base_availability_models.append(gps)
+                        # base_availability_models.append(gps)
+                        base_availability_models.append(avails)
 
                         ## true availability models
                         # sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
