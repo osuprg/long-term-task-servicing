@@ -14,6 +14,7 @@ def main(stat_run, input_file):
     world_config_file = filepath + inputs['world_config_file']
     schedule_config_file = filepath + inputs['schedule_config_file']
     planner_config_file = filepath + inputs['planner_config_file']
+    model_config_file = filepath + inputs['model_config_file']
     base_model_filepath = filepath + inputs['base_model_filepath']
     schedule_filepath = filepath + inputs['schedule_filepath']
     strategies = inputs['strategies']
@@ -27,7 +28,7 @@ def main(stat_run, input_file):
     visualize_path = filepath + inputs['visualize_path']
 
     # planning and execution
-    vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries, availability_percents, stat_run, visualize, visualize_path)
+    vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, model_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries, availability_percents, stat_run, visualize, visualize_path)
 
 
 if __name__ == "__main__":

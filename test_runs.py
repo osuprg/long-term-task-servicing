@@ -6,7 +6,7 @@ import os.path
 import csv
 import networkx as nx  
 from utils import load_params, read_graph_from_file
-from gp import GP
+# from gp import GP
 from td_op import Graph
 from world_generation import generate_graph
 from schedule_generation import generate_windows_overlapping, generate_windows, generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, generate_schedule, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file, generate_simple_models, generate_simple_schedules
@@ -42,7 +42,14 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 # num_windows = max(int(round(float(available_time)/params['availability_length'])), 1)
                 # ave_window_offset = float(params['budget'] - available_time)/num_windows
                 # mu = max(ave_window_offset, 1)
-                mu = int(params['availability_length']/2)
+
+                available_time = params['budget']*availability_percent
+                num_windows = max(1, int(round(float(available_time)/params['availability_length'])))
+                # new_availability_length = int(float(available_time)/num_windows)
+                ave_window_offset = min(float(params['budget'] - available_time)/num_windows, float(params['budget'] - available_time)/2)
+                mu = int(ave_window_offset/2)
+                
+                # mu = int(params['availability_length']/2)
             elif params['availabilities'] == 'simple':
                 mu = int(params['availability_length']/2)
             else:
@@ -79,16 +86,18 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         
                         ## base availability models
                         avails, variances = generate_windows_overlapping(node_requests[stat_run], params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
-                        gps = {}
-                        for request in node_requests[stat_run]:
-                            x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
-                            gps[request] = GP(None, x_in, avails[request], params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
+                        if params['use_gp']:
+                            from gp import GP
+                            gps = {}
+                            for request in node_requests[stat_run]:
+                                x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
+                                gps[request] = GP(None, x_in, avails[request], params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
+                            base_availability_models.append(gps)
+                        else:
+                            base_availability_models.append(avails)
 
                         # base_availability_models.append(avails)
                         base_model_variances.append(variances)
-
-                        base_availability_models.append(gps)
-                        # base_availability_models.append(avails)
 
                         ## true availability models
                         # sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
@@ -152,10 +161,10 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
 
 ### High level function for visualizing simulated execution
-def vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries_runs, availability_percents, stat_run, visualize, visualize_path):
+def vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, model_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries_runs, availability_percents, stat_run, visualize, visualize_path):
 
     ## params
-    params = load_params(world_config_file, schedule_config_file, planner_config_file)
+    params = load_params(world_config_file, schedule_config_file, planner_config_file, model_config_file)
     
 
     ## import world
@@ -163,7 +172,8 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
     # g.read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
 
     # g = read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
-    g = generate_graph(params['graph_generator_type'], os.path.dirname(os.path.abspath(__file__)), params['graph_filename'], params['max_rooms'], params['max_traversal_cost'])
+    g = generate_graph(params['graph_generator_type'], os.path.dirname(os.path.abspath(__file__)), params['graph_filename'], params['max_rooms'], params['max_traversal_cost'], params['distance_scaling'])
+
 
     for num_deliveries in num_deliveries_runs:
         for availability_percent in availability_percents:
@@ -174,7 +184,14 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                 # num_windows = max(int(round(float(available_time)/params['availability_length'])), 1)
                 # ave_window_offset = float(params['budget'] - available_time)/num_windows
                 # mu = max(ave_window_offset, 1)
-                mu = int(params['availability_length']/2)
+
+                available_time = params['budget']*availability_percent
+                num_windows = max(1, int(round(float(available_time)/params['availability_length'])))
+                # new_availability_length = int(float(available_time)/num_windows)
+                ave_window_offset = min(float(params['budget'] - available_time)/num_windows, float(params['budget'] - available_time)/2)
+                mu = int(ave_window_offset/2)
+
+                # mu = int(params['availability_length']/2)
             elif params['availabilities'] == 'simple':
                 mu = int(params['availability_length']/2)
             else:
@@ -198,17 +215,27 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                         node_requests = params['rooms'][0:num_deliveries]
                     
                     ## base availability models
-                    base_availability_models, base_model_variances = generate_windows_overlapping(node_requests, params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
-                        
+                    avails, base_model_variances = generate_windows_overlapping(node_requests, params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
+                    
+                    if params['use_gp']:
+                        from gp import GP
+                        gps = {}
+                        for request in node_requests[stat_run]:
+                            x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
+                            gps[request] = GP(None, x_in, avails[request], params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
+                        base_availability_models = gps
+                    else:
+                        base_availability_models = avails
+
                     ## true availability models
                     # sampled_availability_models = sample_model_parameters(node_requests, base_availability_models, base_model_variances, params['sampling_method'])
-                    true_availability_models = base_availability_models
+                    true_availability_models = avails
 
                     ## true schedules
                     true_schedules = generate_schedule(node_requests, true_availability_models, mu, params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency'])
 
-                    save_base_models_to_file(base_model_filepath, base_availability_models, base_model_variances, node_requests, num_deliveries, availability_percent, stat_run)
-                    save_schedules_to_file(schedule_filepath, true_availability_models, true_schedules, node_requests, num_deliveries, availability_percent, stat_run)
+                    # save_base_models_to_file(base_model_filepath, base_availability_models, base_model_variances, node_requests, num_deliveries, availability_percent, stat_run)
+                    # save_schedules_to_file(schedule_filepath, true_availability_models, true_schedules, node_requests, num_deliveries, availability_percent, stat_run)
 
 
                 elif params['availabilities'] == 'simple':

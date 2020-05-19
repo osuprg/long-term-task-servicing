@@ -46,6 +46,7 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
         model_params = yaml.load(f, Loader=yaml.FullLoader)
     params['spacing'] = int(model_params['spacing'])
     params['noise_scaling'] = float(model_params['noise_scaling'])
+    params['use_gp'] = bool(int(model_params['use_gp']))
 
     return params
 
