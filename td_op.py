@@ -234,8 +234,8 @@ class SpatioTemporalGraph:
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)       # should be updated to handle more than bernoulli variance
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                             else:
-                                st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
-                                # st_node.prob = self.availability_models[v].get_prediction(st_node.t)
+                                # st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                                st_node.prob = self.availability_models[v].get_prediction(st_node.t)
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                         else:
@@ -246,13 +246,13 @@ class SpatioTemporalGraph:
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                             else:
-                                st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
-                                # st_node.prob = self.availability_models[v].get_prediction(st_node.t)
+                                # st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                                st_node.prob = self.availability_models[v].get_prediction(st_node.t)
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                     else:
-                        st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
-                        # st_node.prob = self.availability_models[v].get_prediction(st_node.t)
+                        # st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                        st_node.prob = self.availability_models[v].get_prediction(st_node.t)
                         st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                         st_node.serviced_probs[st_node.id] = st_node.prob
                 elif v == self.maintenance_node:
@@ -408,8 +408,8 @@ class SpatioTemporalGraph:
 
     ### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)
     def combine_probabilities(self, node_id, curr_time, last_observation, last_observation_time):
-        a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
-        # a_priori_prob = self.availability_models[node_id].get_prediction(curr_time)
+        # a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
+        a_priori_prob = self.availability_models[node_id].get_prediction(curr_time)
 
         likelihood = persistence_prob(self.mu, curr_time-last_observation_time, last_observation)
         # if last_observation == 1:
@@ -425,8 +425,8 @@ class SpatioTemporalGraph:
 
     ### Simplistic method for accounting for observations. Zeroes out probability for fixed amount following negative observation
     def combine_probabilities_hack(self, node_id, curr_time, last_observation, last_observation_time):
-        a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
-        # a_priori_prob = self.availability_models[node_id].get_prediction(curr_time)
+        # a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
+        a_priori_prob = self.availability_models[node_id].get_prediction(curr_time)
         new_prob = a_priori_prob
         if last_observation == 0:
             if curr_time < (last_observation_time + (self.mu/2)):
