@@ -37,12 +37,15 @@ class GP():
     def initialize_model(self, input_form):
 
         if input_form == 'function':
-            self.train_x = torch.linspace(0, int(self.budget), self.spacing)
+            train_x = torch.linspace(0, int(self.budget), self.spacing)
             self.train_y = self.true_function(self.train_x) + torch.randn(self.train_x.size()) * self.noise_scaling
             # self.train_y = self.true_function(self.train_x)
         elif input_form == 'values':
-            self.train_x = torch.from_numpy(np.array(self.x_in[::self.spacing], dtype=np.float32))
-            self.train_y = torch.from_numpy(np.array(self.y_in[::self.spacing], dtype=np.float32)) + torch.randn(self.train_x.size()) * self.noise_scaling
+            train_x = np.array(self.x_in[::self.spacing], dtype=np.float32)
+            self.train_y = torch.from_numpy(np.array(self.y_in[::self.spacing], dtype=np.float32) + np.randn(train_x.shape)*self.noise_scaling)
+            # self.train_y = torch.from_numpy(np.array(self.y_in[::self.spacing], dtype=np.float32)) + torch.randn(self.train_x.size()) * self.noise_scaling
+            self.train_x = torch.from_numpy(train_x)
+
             for i in range(self.train_y.shape[0]):
                 self.train_y[i] = max(self.train_y[i], .01)
                 self.train_y[i] = min(self.train_y[i], .99)
