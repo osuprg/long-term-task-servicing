@@ -42,7 +42,7 @@ class GP():
             # self.train_y = self.true_function(self.train_x)
         elif input_form == 'values':
             train_x = np.array(self.x_in[::self.spacing], dtype=np.float32)
-            self.train_y = torch.from_numpy(np.array(self.y_in[::self.spacing], dtype=np.float32) + np.random.randn(train_x.shape[0])*self.noise_scaling)
+            self.train_y = torch.from_numpy(np.array(self.y_in[::self.spacing], dtype=np.float32) + np.random.randn(train_x.shape[0]).astype(np.float32)*self.noise_scaling)
             # self.train_y = torch.from_numpy(np.array(self.y_in[::self.spacing], dtype=np.float32)) + torch.randn(self.train_x.size()) * self.noise_scaling
             self.train_x = torch.from_numpy(train_x)
 
