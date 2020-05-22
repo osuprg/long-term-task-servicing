@@ -338,13 +338,15 @@ def plan_path_no_temp_info(g, base_availability_models, base_model_variances, av
     for request in requests_left_to_deliver:
         avails = []
         variances = []
-        for i in range(len(base_availability_models[request])):
+        num_intervals = int(params['budget']/params['time_interval'])
+        # for i in range(len(base_availability_models[request])):
+        for i in range(num_intervals):
             avails.append(1.0)
             variances.append(0.0)
         constant_availability_models[request] = avails
         constant_availability_models[request] = variances
 
-    st_g = SpatioTemporalGraph(constant_availability_models, constant_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['use_gp'])
+    st_g = SpatioTemporalGraph(constant_availability_models, constant_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], False)
     st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, False, False, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path(L, requests_left_to_deliver, False)
