@@ -3,8 +3,9 @@ import random
 import copy
 import math
 import networkx as nx  
-import matplotlib.pyplot as plt
 import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from td_op import SpatioTemporalGraph, sample_bernoulli_avialability_model
 from schedule_generation import sample_occupancy, persistence_prob, generate_schedule
 
@@ -151,8 +152,6 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
 
 ### Path visualization function specific to willow scenario
 def visualize_path_willow(strategies, paths, availabilities, schedules, node_requests, maintenance_node, start_time, budget, time_interval, out_img):
-
-    matplotlib.use('Agg')
    
     # time axis 
     X = np.array(list(range(int((budget-start_time)/time_interval))))
