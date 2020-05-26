@@ -149,7 +149,7 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
 
 
 ### Path visualization function specific to willow scenario
-def visualize_path_willow(strategies, paths, availabilities, schedules, node_requests, maintenance_node, start_time, budget, time_interval):
+def visualize_path_willow(strategies, paths, availabilities, schedules, node_requests, maintenance_node, start_time, budget, time_interval, out_img):
    
     # time axis 
     X = np.array(list(range(int((budget-start_time)/time_interval))))
@@ -252,8 +252,8 @@ def visualize_path_willow(strategies, paths, availabilities, schedules, node_req
         cbar.ax.set_ylabel("Availability", rotation=-90, va="bottom")
 
     plt.suptitle("Path Trace vs Node Availability Probabilities")
-    # plt.savefig(out_img + "_avail.jpg")
-    plt.show()
+    plt.savefig(out_img + "_avail.jpg")
+    # plt.show()
 
 
 
@@ -301,8 +301,8 @@ def visualize_path_willow(strategies, paths, availabilities, schedules, node_req
         cbar.ax.set_ylabel("Availability", rotation=-90, va="bottom")
 
     plt.suptitle("Path Trace vs Node Schedules")
-    # plt.savefig(out_img + "_schedule.jpg")
-    plt.show()
+    plt.savefig(out_img + "_schedule.jpg")
+    # plt.show()
 
 
 

@@ -161,7 +161,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
 
 ### High level function for visualizing simulated execution
-def vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, model_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries_runs, availability_percents, stat_run, visualize, visualize_path):
+def vizualize_sample_execution(world_config_file, schedule_config_file, planner_config_file, model_config_file, base_model_filepath, schedule_filepath, strategies, num_deliveries_runs, availability_percents, stat_run, visualize, out_gif_path, out_img_path):
 
     ## params
     params = load_params(world_config_file, schedule_config_file, planner_config_file, model_config_file)
@@ -272,7 +272,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
             # plan and execute paths for specified strategies
             visit_traces = {}
             for strategy in strategies:
-                total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params, visualize, visualize_path)
+                total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params, visualize, out_gif_path)
                 visit_traces[strategy] = path_history
 
-            visualize_path_willow(strategies, visit_traces, base_availability_models, true_schedules, node_requests, params['maintenance_node'], params['start_time'], params['budget'], params['time_interval'])
+            visualize_path_willow(strategies, visit_traces, base_availability_models, true_schedules, node_requests, params['maintenance_node'], params['start_time'], params['budget'], params['time_interval'], out_img_path)
