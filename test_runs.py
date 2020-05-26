@@ -206,6 +206,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                 # load pre-generated schedules/models
                 base_availability_models, base_model_variances, node_requests = load_base_models_from_file(base_model_filepath, num_deliveries, availability_percent, stat_run)
                 true_availability_models, true_schedules = load_schedules_from_file(schedule_filepath, num_deliveries, availability_percent, stat_run)
+                availabilities = base_availability_models
             else:
 
                 if params['availabilities'] == 'windows':
@@ -221,12 +222,15 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                     if params['use_gp']:
                         from gp import GP
                         gps = {}
+                        availabilities = {}
                         for request in node_requests:
                             x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
                             gps[request] = GP(None, x_in, avails[request], params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
+                            availabilities[request] = gps[request].get_preds(x_in)
                         base_availability_models = gps
                     else:
                         base_availability_models = avails
+                        availabilities = avails
 
                     ## true availability models
                     # sampled_availability_models = sample_model_parameters(node_requests, base_availability_models, base_model_variances, params['sampling_method'])
@@ -249,7 +253,8 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                     
                     ## base availability models
                     base_availability_models, base_model_variances = generate_simple_models(node_requests, params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
-                                            
+                    availabilities = base_availability_models
+                                          
                     # ## true availability models
                     # sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
                     # true_availability_models.append(sampled_avails)
@@ -276,4 +281,4 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                 total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params, visualize, out_gif_path)
                 visit_traces[strategy] = path_history
 
-            visualize_path_willow(strategies, visit_traces, base_availability_models, true_schedules, node_requests, params['maintenance_node'], params['start_time'], params['budget'], params['time_interval'], out_img_path)
+            visualize_path_willow(strategies, visit_traces, availabilities, true_schedules, node_requests, params['maintenance_node'], params['start_time'], params['budget'], params['time_interval'], out_img_path)
