@@ -170,7 +170,7 @@ class GP():
                 test_x = torch.as_tensor(np.array([visit_time]), dtype=torch.float32)
 
                 observed_pred = self.likelihood(self.model(test_x))
-                pred = observed_pred.mean.numpy()
+                pred = observed_pred.mean.numpy()[0]
 
                 # pred = self.model(test_x)
 
