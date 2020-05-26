@@ -199,6 +199,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
 
 
             # base models, true schedules
+            stat_run = 0
             model_file_exists = os.path.exists(base_model_filepath  + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml")
             schedule_file_exists = os.path.exists(schedule_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml")
             if model_file_exists and schedule_file_exists:
@@ -220,7 +221,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                     if params['use_gp']:
                         from gp import GP
                         gps = {}
-                        for request in node_requests[stat_run]:
+                        for request in node_requests:
                             x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
                             gps[request] = GP(None, x_in, avails[request], params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
                         base_availability_models = gps
