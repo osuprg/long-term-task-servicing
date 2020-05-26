@@ -114,16 +114,25 @@ def visualize_graph(g, base_availability_models, true_schedule, availability_obs
                 if v in availability_observations.keys():
                     if use_gp:
                         prob = combine_probabilities(base_availability_models[v].get_prediction(curr_time), mu, curr_time, availability_observations[v][0], availability_observations[v][1])
+                        print ("pred: ")
+                        print (prob)
+                        print ()
                     else:
                         prob = combine_probabilities(base_availability_models[v][curr_time_index], mu, curr_time, availability_observations[v][0], availability_observations[v][1])
                 else:
                     if use_gp:
                         prob = base_availability_models[v].get_prediction(curr_time)
+                        print ("pred: ")
+                        print (prob)
+                        print ()
                     else:
                         prob = base_availability_models[v][curr_time_index]
             else:
                 if use_gp:
                     prob = base_availability_models[v].get_prediction(curr_time)
+                    print ("pred: ")
+                    print (prob)
+                    print ()
                 else:
                     prob = base_availability_models[v][curr_time_index]
             viz_g.nodes[v]['prob'] = prob
