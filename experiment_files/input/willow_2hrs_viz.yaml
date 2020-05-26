@@ -9,8 +9,8 @@ num_deliveries: [40]
 # availability_percents: [.1, .2, .3, .4, .5, .6, .7, .8, .9]
 availability_percents: [.5]
 # strategies: [no_temp, no_replan, replan_no_observe, hack_observe, observe, observe_sampling, observe_sampling_variance_bias, observe_sampling_mult_visits]
-strategies: [observe]
+strategies: [no_replan]
 # strategies: [observe]
 visualize: 1
-visualize_path: /experiment_files/output/animations/willow_2hrs_mr_.1_noise_1_nd40_avail_.5_observe.gif
-out_img_path: /experiment_files/output/imgs/willow_2hrs_mr_.1_noise_1_nd40_avail_.5_observe
+visualize_path: /experiment_files/output/animations/willow_2hrs_mr_.1_noise_1_nd40_avail_.5_no_replan.gif
+out_img_path: /experiment_files/output/imgs/willow_2hrs_mr_.1_noise_1_nd40_avail_.5_no_replan
