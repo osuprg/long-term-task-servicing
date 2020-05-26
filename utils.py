@@ -76,7 +76,7 @@ def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_o
 
 
 ### Visualize servicing execution over graph at given time slice
-def visualize_graph(g, base_availability_models, true_schedule, availability_observations, curr_time_index, curr_node, node_requests, nodes_delivered, curr_time, mu, strategy):
+def visualize_graph(g, base_availability_models, true_schedule, availability_observations, curr_time_index, curr_node, node_requests, nodes_delivered, curr_time, mu, strategy, use_gp):
 
     if strategy == 'no_temp':
         incorporate_observation = False
@@ -87,6 +87,8 @@ def visualize_graph(g, base_availability_models, true_schedule, availability_obs
     elif strategy == 'hack_observe':
         incorporate_observation = True
     elif strategy == 'observe':
+        incorporate_observation = True
+    elif strategy == 'observe_mult_visits':
         incorporate_observation = True
     elif strategy == 'observe_sampling':
         incorporate_observation = True
@@ -110,11 +112,20 @@ def visualize_graph(g, base_availability_models, true_schedule, availability_obs
         else:
             if incorporate_observation:
                 if v in availability_observations.keys():
-                    prob = combine_probabilities(base_availability_models[v][curr_time_index], mu, curr_time, availability_observations[v][0], availability_observations[v][1])
+                    if use_gp:
+                        prob = combine_probabilities(base_availability_models[v].get_prediction(curr_time), mu, curr_time, availability_observations[v][0], availability_observations[v][1])
+                    else:
+                        prob = combine_probabilities(base_availability_models[v][curr_time_index], mu, curr_time, availability_observations[v][0], availability_observations[v][1])
+                else:
+                    if use_gp:
+                        prob = base_availability_models[v].get_prediction(curr_time)
+                    else:
+                        prob = base_availability_models[v][curr_time_index]
+            else:
+                if use_gp:
+                    prob = base_availability_models[v].get_prediction(curr_time)
                 else:
                     prob = base_availability_models[v][curr_time_index]
-            else:
-                prob = base_availability_models[v][curr_time_index]
             viz_g.nodes[v]['prob'] = prob
             viz_g.nodes[v]['schedule'] = true_schedule[v][curr_time_index]
 

@@ -101,7 +101,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                             breakout = True
 
                 if visualize:
-                    img = visualize_graph(g, base_availability_models, true_schedules, availability_observations, curr_time_index, curr_node, node_requests, nodes_delivered, curr_time, mu, strategy)
+                    img = visualize_graph(g, base_availability_models, true_schedules, availability_observations, curr_time_index, curr_node, node_requests, nodes_delivered, curr_time, mu, strategy, params['use_gp'])
                     img_history.append(img)
 
                 if breakout:
