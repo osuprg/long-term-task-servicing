@@ -12,5 +12,5 @@ availability_percents: [.5]
 strategies: [replan_no_observe]
 # strategies: [observe]
 visualize: 1
-visualize_path: /experiment_files/output/animations/willow_2hrs_mr_.1_noise_1_nd40_avail_.5_replan_no_observe.gif
-out_img_path: /experiment_files/output/imgs/willow_2hrs_mr_.1_noise_1_nd40_avail_.5_replan_no_observe
+visualize_path: /experiment_files/output/animations/willow_2hrs_mr_.1_noise_.01_nd40_avail_.5_observe.gif
+out_img_path: /experiment_files/output/imgs/willow_2hrs_mr_.1_noise_.01_nd40_avail_.5_observe
