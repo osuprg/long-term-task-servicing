@@ -180,13 +180,20 @@ class STGraphNode:
         self.successors = []
         self.indegree = 0
         self.path = []
+        self.serviced_nodes = []
         self.serviced_probs = {}
+
+class STGraphEdge:
+    def __init__(self, edge_type, profit):
+        self.edge_type = edge_type
+        self.profit = profit
 
 
 ### Modification of representation proposed in Ma, Zhibei, et al. "A Spatio-Temporal Representation for the Orienteering Problem with Time-Varying Profits." IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). 2017
 class SpatioTemporalGraph:
     def __init__(self, availability_models, model_variances, mu, num_intervals, budget, time_interval, maintenance_node, maintenance_reward, deliver_reward, use_gp):
         self.vertices = {}
+        self.edges = {}
         self.start_node = None
         self.availability_models = availability_models
         self.model_variances = model_variances
@@ -198,6 +205,104 @@ class SpatioTemporalGraph:
         self.maintenance_reward = maintenance_reward
         self.deliver_reward = deliver_reward
         self.use_gp = use_gp
+
+    def add_edge(self, source_name, dest_name, edge_type, profit):
+        if source_name not in self.edges:
+            self.edges[source_name] = {}
+        if dest_name not in self.edges[source_name]:
+            self.edges[source_name][dest_name] = STGraphEdge(edge_type, profit)
+
+    def create_node(self, v, node_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack):
+        if v in requests_left_to_deliver:
+            st_node = self.create_delivery_node(v, node_time, observations, incorporate_observation, incorporate_observation_hack)
+        elif v == self.maintenance_node:
+            st_node = self.create_maintenance_node(v, node_time)
+        else:
+            st_node = self.create_transit_node(v, node_time)
+        return st_node
+
+    def create_delivery_node(self, v, node_time, observations, incorporate_observation, incorporate_observation_hack):
+        st_node = STGraphNode()
+        st_node.id = v
+        st_node.t = node_time
+        st_node.name = v + "_" + str(st_node.t)
+
+        if incorporate_observation:
+            if incorporate_observation_hack:
+                if st_node.id in observations.keys():
+                    last_observation = observations[v][0]
+                    last_observation_time = observations[v][1]
+                    st_node.prob = self.combine_probabilities_hack(v, st_node.t, last_observation, last_observation_time)
+                    st_node.uncertainty = bernoulli_variance(st_node.prob)
+                    st_node.observation_profit = observation_profit(st_node.uncertainty)
+                    st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
+                    st_node.serviced_probs[st_node.id] = st_node.prob
+                else:
+                    if self.use_gp:
+                        st_node.prob = self.availability_models[v].get_prediction(st_node.t)
+                        st_node.uncertainty = self.availability_models[v].get_uncertainty(st_node.t)
+                    else:
+                        st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                        st_node.uncertainty = bernoulli_variance(st_node.prob)
+                    st_node.observation_profit = observation_profit(st_node.uncertainty)
+                    st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
+                    st_node.serviced_probs[st_node.id] = st_node.prob
+            else:
+                if st_node.id in observations.keys():
+                    last_observation = observations[v][0]
+                    last_observation_time = observations[v][1]
+                    st_node.prob = self.combine_probabilities(v, st_node.t, last_observation, last_observation_time)
+                    st_node.uncertainty = self.combined_uncertainty(node_id, curr_time, st_node.prob)
+                    st_node.observation_profit = observation_profit(st_node.uncertainty)
+                    st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
+                    st_node.serviced_probs[st_node.id] = st_node.prob
+                else:
+                    if self.use_gp:
+                        st_node.prob = self.availability_models[v].get_prediction(st_node.t)
+                        st_node.uncertainty = self.availability_models[v].get_uncertainty(st_node.t)
+                    else:
+                        st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                        st_node.uncertainty = bernoulli_variance(st_node.prob)
+                    st_node.observation_profit = observation_profit(st_node.uncertainty)
+                    st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
+                    st_node.serviced_probs[st_node.id] = st_node.prob
+        else:
+            if self.use_gp:
+                st_node.prob = self.availability_models[v].get_prediction(st_node.t)
+                st_node.uncertainty = self.availability_models[v].get_uncertainty(st_node.t)
+            else:
+                st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                st_node.uncertainty = bernoulli_variance(st_node.prob)
+            st_node.observation_profit = observation_profit(st_node.uncertainty)
+            st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
+            st_node.serviced_probs[st_node.id] = st_node.prob
+
+        st_node.weight = st_node.delivery_profit
+        return st_node
+
+
+    def create_maintenance_node(self, v, node_time):
+        st_node = STGraphNode()
+        st_node.id = v
+        st_node.t = node_time
+        st_node.name = v + "_" + str(st_node.t)
+
+        st_node.profit = self.maintenance_reward
+        st_node.weight = st_node.profit
+        return st_node
+
+
+    def create_transit_node(self, v, node_time):
+        st_node = STGraphNode()
+        st_node.id = v
+        st_node.t = node_time
+        st_node.name = v + "_" + str(st_node.t)
+
+        st_node.profit = 0.0
+        st_node.weight = st_node.profit
+        return st_node
+
+
 
     ### Create STGraph, node for each spatial node/time slice. Edges connect nodes at different time slices according to traversal costs.
     def build_graph(self, spatial_graph, graph_start_node_id, graph_start_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, variance_bias):
@@ -382,14 +487,15 @@ class SpatioTemporalGraph:
                                 self.vertices[successor_name] = successor
 
                         else:
-                            if (node.sum + successor.profit) > successor.sum:
+                            # if (node.sum + successor.profit) > successor.sum:
+                            if (node.sum + 0.0) > successor.sum:
                                 successor.sum = node.sum + 0.0
                                 successor.parent = node_name
                                 successor.path = node.path + [successor.id]
                                 self.vertices[successor_name] = successor
 
                 else:
-                    # if going through node is the best way to get to successor, update successors parent
+                    # if going through node is the best way to get to successor, update successor's parent
                     successor_profit = 0.0
                     if successor.id == self.maintenance_node:
                         successor_profit = self.maintenance_reward
@@ -413,6 +519,185 @@ class SpatioTemporalGraph:
         return path
 
 
+
+    ### Create STGraph, node for each spatial node/time slice. Edges connect nodes at different time slices according to traversal costs.
+    def build_graph_single_delivery(self, spatial_graph, graph_start_node_id, graph_start_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, variance_bias):
+        graph_start_node = STGraphNode()
+        graph_start_node.id = graph_start_node_id
+        graph_start_node.t = graph_start_time
+        graph_start_node.name = graph_start_node_id + "_" + str(graph_start_time)
+        graph_start_node.sum = 0.0
+        if graph_start_node.id == self.maintenance_node:
+            graph_start_node.profit = self.maintenance_reward
+            graph_start_node.weight = self.maintenance_reward
+            graph_start_node.sum = self.maintenance_reward
+        self.vertices[graph_start_node.name] = graph_start_node
+        self.start_node = graph_start_node.name
+
+        # for v in spatial_graph.vertices.keys():
+        for v in spatial_graph:
+            for t in range(self.num_intervals):
+                node_time = self.vertices[self.start_node].t + (t*self.time_interval)
+                node_name = v + "_" + str(node_time)
+                if node_name in self.vertices:
+                    st_node = self.vertices[node_name]
+                else:
+                    st_node = self.create_node(v, node_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+
+                ## Transit action to neighbors
+                # for each neighbor
+                # neighbors = spatial_graph.vertices[v].get_neighbors()
+                # for neighbor in neighbors:
+                for neighbor in spatial_graph.neighbors(v):
+                    # dist = spatial_graph.get_distance(v, neighbor)
+                    dist = spatial_graph[v][neighbor]['weight']
+
+                    # if travel cost doesnt exceed budget add neighbor to dag and increase its indegree
+                    if (st_node.t + dist) <= (graph_start_time + self.budget):
+                        neighbor_name = neighbor + "_" + str(st_node.t + dist)
+                        if neighbor_name in self.vertices:
+                            neighbor_node = self.vertices[neighbor_name]
+                        else:
+                            neighbor_node = self.create_node(neighbor, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+
+                        neighbor_node.indegree += 1
+                        self.vertices[neighbor_name] = neighbor_node
+                        st_node.successors.append(neighbor_name)
+                        self.add_edge(st_node.name, neighbor_name, 'transit', 0.0)
+
+
+                # add self vertex
+                if v in requests_left_to_deliver:
+
+                    # observation action
+                    dist = 1
+                    if (st_node.t + dist) <= (graph_start_time + self.budget):
+                        neighbor_name = v + "_" + str(st_node.t + dist)
+                        if neighbor_name in self.vertices:
+                            neighbor_node = self.vertices[neighbor_name]
+                        else:
+                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+                        
+                        neighbor_node.indegree += 1
+                        self.vertices[neighbor_name] = neighbor_node
+                        st_node.successors.append(neighbor_name)
+                        self.add_edge(st_node.name, neighbor_name, 'observe', st_node.observation_profit)
+
+                    # service action
+                    dist = 2*spatial_graph.ucs(v, graph_start_node_id)
+                    if (st_node.t + dist) <= (graph_start_time + self.budget):
+                        neighbor_name = v + "_" + str(st_node.t + dist)
+                        if neighbor_name in self.vertices:
+                            neighbor_node = self.vertices[neighbor_name]
+                        else:
+                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+
+                        neighbor_node.indegree += 1
+                        self.vertices[neighbor_name] = neighbor_node
+                        st_node.successors.append(neighbor_name)
+                        self.add_edge(st_node.name, neighbor_name, 'service', neighbor_node.delivery_profit)
+
+
+                # non delivery non self-transit
+                else:
+                    dist = 1
+                    if (st_node.t + dist) <= (graph_start_time + self.budget):
+                        neighbor_name = v + "_" + str(st_node.t + dist)
+                        if neighbor_name in self.vertices:
+                            neighbor_node = self.vertices[neighbor_name]
+                        else:
+                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+                        neighbor_node.indegree += 1
+                        self.vertices[neighbor_name] = neighbor_node
+                        st_node.successors.append(neighbor_name)
+                        self.add_edge(st_node.name, neighbor_name, 'transit', 0.0)
+
+                # # add self vertex for start node
+                # if ((v + "_" + str(t)) == self.start_node) and (v in requests_left_to_deliver):
+
+                self.vertices[node_name] = st_node
+
+
+
+    ### DP based calculation of max profit path from starting node within budget
+    def calc_max_profit_path_single_delivery(self, L, node_requests, multiple_visits):
+
+        # for each node in topological order
+        for node_name in L:
+            node = self.vertices[node_name]
+
+            # for each successor
+            successors = node.successors
+
+            for successor_name in successors:
+                successor = self.vertices[successor_name]
+
+                # if successor is a delivery node and has not been already serviced up to that point
+                if successor.id in node_requests: 
+                    if (successor.id not in node.serviced_nodes):
+
+                        # if going through node is the best way to get to successor, update successors parent
+                        if (node.sum + self.edges[node][sucessor].profit) > successor.sum:
+                            sucessor.sum = node.sum + self.edges[node][sucessor]
+                            successor.parent = node_name
+                            successor.path = node.path + [successor.id]
+                            successor.serviced_probs = copy.deepcopy(node.serviced_probs)
+                            successor.serviced_nodes = node.serviced_nodes
+                            if self.edges[node].edge_type == 'service':
+                                successor.serviced_nodes = node.serviced_nodes + [successor.id]
+                                successor.serviced_probs = copy.deepcopy(node.serviced_probs)
+                                successor.serviced_probs[successor.id] = successor.prob
+                            self.vertices[successor_name] = successor
+
+                    else:
+                        if multiple_visits:
+                            not_visited = 1.0 - node.serviced_probs[successor.id]
+                            successor_profit = not_visited*self.edges[node][sucessor].profit
+                                
+                            if (node.sum + successor_profit) > successor.sum:
+                                successor.sum = node.sum + successor_profit
+                                successor.parent = node_name
+                                successor.path = node.path + [successor.id]
+                                successor.serviced_probs = copy.deepcopy(node.serviced_probs)
+                                successor.serviced_nodes = node.serviced_nodes
+                                if self.edges[node].edge_type == 'service':
+                                    successor.serviced_probs[successor.id] = node.serviced_probs[successor.id] + not_visited*successor.prob
+                                self.vertices[successor_name] = successor
+
+                        else:
+                            if (node.sum + 0.0) > successor.sum:
+                                successor.sum = node.sum + 0.0
+                                successor.parent = node_name
+                                successor.path = node.path + [successor.id]
+                                self.vertices[successor_name] = successor
+
+                else:
+                    # if going through node is the best way to get to successor, update successor's parent
+                    successor_profit = 0.0
+                    if successor.id == self.maintenance_node:
+                        successor_profit = self.maintenance_reward
+                    if (node.sum + successor_profit) > successor.sum:
+                        successor.sum = node.sum + successor_profit
+                        successor.parent = node_name
+                        successor.path = node.path + [successor.id]
+                        successor.serviced_probs = copy.deepcopy(node.serviced_probs)
+                        successor.serviced_nodes = node.serviced_nodes
+                        self.vertices[successor_name] = successor
+
+        max_sum = -float("inf")
+        end_node = None
+        for node_name in self.vertices.keys():
+            node = self.vertices[node_name]
+            if node.sum > max_sum:
+                max_sum = node.sum
+                end_node = node_name
+
+        # backtrack from end node to get path
+        path = self.vertices[end_node].path
+        return path
+
+
+
     ### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)
     def combine_probabilities(self, node_id, curr_time, last_observation, last_observation_time):
         if self.use_gp:
@@ -431,6 +716,14 @@ class SpatioTemporalGraph:
         else:
             new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
         return new_prob
+
+    def combined_uncertainty(self, node_id, curr_time, prob):
+        if self.use_gp:
+            gp_uncertainty = self.availability_models[node_id].get_uncertainty(curr_time)
+            uncertainty = gp_uncertainty        #FIXME!!
+        else:
+            uncertainty = bernoulli_variance(prob)
+        return uncertainty
 
     ### Simplistic method for accounting for observations. Zeroes out probability for fixed amount following negative observation
     def combine_probabilities_hack(self, node_id, curr_time, last_observation, last_observation_time):
@@ -475,3 +768,10 @@ def bernoulli_variance_biasing(prob, variance_bias, deliver_reward):
         reward = 0.0
     # assert(reward >= 0)
     return reward
+
+def observation_profit(uncertainty):
+    return uncertainty
+
+def deliver_profit(prob, deliver_reward):
+    profit = deliver_reward*prob
+    return profit
