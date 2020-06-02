@@ -58,10 +58,10 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
         if path_length > 1:
 
             path_visits = 1
-            for next_step in path[1:]:
-                vist = next_step[0]
-                action = next_step[1]
-                dist = next_step[2]
+            for visit in path[1:]:
+                # vist = next_step[0]
+                # action = next_step[1]
+                # dist = next_step[2]
                 path_history.append(visit)
                 # if curr_node == visit:
                 #     dist = 1
@@ -82,6 +82,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                     curr_time_index = params['num_intervals']-1
                 assert(curr_time_index <= (params['num_intervals'] - 1))
 
+                action = 'service'
                 if (visit in requests_left_to_deliver) and (action=='service'):
                     available = true_schedules[visit][curr_time_index]
                     if bool(available):
