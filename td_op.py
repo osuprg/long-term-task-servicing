@@ -184,9 +184,10 @@ class STGraphNode:
         self.serviced_probs = {}
 
 class STGraphEdge:
-    def __init__(self, edge_type, profit):
+    def __init__(self, edge_type, profit, edge_dist):
         self.edge_type = edge_type
         self.profit = profit
+        self.edge_dist = edge_dist
 
 
 ### Modification of representation proposed in Ma, Zhibei, et al. "A Spatio-Temporal Representation for the Orienteering Problem with Time-Varying Profits." IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). 2017
@@ -206,11 +207,11 @@ class SpatioTemporalGraph:
         self.deliver_reward = deliver_reward
         self.use_gp = use_gp
 
-    def add_edge(self, source_name, dest_name, edge_type, profit):
+    def add_edge(self, source_name, dest_name, edge_type, profit, edge_dist):
         if source_name not in self.edges:
             self.edges[source_name] = {}
         if dest_name not in self.edges[source_name]:
-            self.edges[source_name][dest_name] = STGraphEdge(edge_type, profit)
+            self.edges[source_name][dest_name] = STGraphEdge(edge_type, profit, edge_dist)
 
     def create_node(self, v, node_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack):
         if v in requests_left_to_deliver:
@@ -563,7 +564,7 @@ class SpatioTemporalGraph:
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
                         st_node.successors.append(neighbor_name)
-                        self.add_edge(st_node.name, neighbor_name, 'transit', 0.0)
+                        self.add_edge(st_node.name, neighbor_name, 'transit', 0.0, 1)
 
 
                 # add self vertex
@@ -581,7 +582,7 @@ class SpatioTemporalGraph:
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
                         st_node.successors.append(neighbor_name)
-                        self.add_edge(st_node.name, neighbor_name, 'observe', st_node.observation_profit)
+                        self.add_edge(st_node.name, neighbor_name, 'observe', st_node.observation_profit, 1)
 
                     # service action
                     dist = 2*spatial_graph.ucs(v, graph_start_node_id)
@@ -595,7 +596,7 @@ class SpatioTemporalGraph:
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
                         st_node.successors.append(neighbor_name)
-                        self.add_edge(st_node.name, neighbor_name, 'service', neighbor_node.delivery_profit)
+                        self.add_edge(st_node.name, neighbor_name, 'service', neighbor_node.delivery_profit, dist)
 
 
                 # non delivery non self-transit
@@ -610,7 +611,7 @@ class SpatioTemporalGraph:
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
                         st_node.successors.append(neighbor_name)
-                        self.add_edge(st_node.name, neighbor_name, 'transit', 0.0)
+                        self.add_edge(st_node.name, neighbor_name, 'transit', 0.0, 1)
 
                 # # add self vertex for start node
                 # if ((v + "_" + str(t)) == self.start_node) and (v in requests_left_to_deliver):
@@ -640,7 +641,7 @@ class SpatioTemporalGraph:
                         if (node.sum + self.edges[node][sucessor].profit) > successor.sum:
                             sucessor.sum = node.sum + self.edges[node][sucessor]
                             successor.parent = node_name
-                            successor.path = node.path + [successor.id]
+                            successor.path = node.path.append([successor.id, self.edges[node][sucessor].edge_type, self.edges[node][sucessor].edge_dist])
                             successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                             successor.serviced_nodes = node.serviced_nodes
                             if self.edges[node].edge_type == 'service':
@@ -657,7 +658,7 @@ class SpatioTemporalGraph:
                             if (node.sum + successor_profit) > successor.sum:
                                 successor.sum = node.sum + successor_profit
                                 successor.parent = node_name
-                                successor.path = node.path + [successor.id]
+                                successor.path = node.path.append([successor.id, self.edges[node][sucessor].edge_type, self.edges[node][sucessor].edge_dist])
                                 successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                                 successor.serviced_nodes = node.serviced_nodes
                                 if self.edges[node].edge_type == 'service':
@@ -668,7 +669,7 @@ class SpatioTemporalGraph:
                             if (node.sum + 0.0) > successor.sum:
                                 successor.sum = node.sum + 0.0
                                 successor.parent = node_name
-                                successor.path = node.path + [successor.id]
+                                successor.path = node.path.append([successor.id, self.edges[node][sucessor].edge_type, self.edges[node][sucessor].edge_dist])
                                 self.vertices[successor_name] = successor
 
                 else:
@@ -679,7 +680,7 @@ class SpatioTemporalGraph:
                     if (node.sum + successor_profit) > successor.sum:
                         successor.sum = node.sum + successor_profit
                         successor.parent = node_name
-                        successor.path = node.path + [successor.id]
+                        successor.path = node.path.append([successor.id, self.edges[node][sucessor].edge_type, self.edges[node][sucessor].edge_dist])
                         successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                         successor.serviced_nodes = node.serviced_nodes
                         self.vertices[successor_name] = successor
