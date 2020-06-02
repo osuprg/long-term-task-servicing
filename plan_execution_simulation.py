@@ -63,11 +63,11 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                 # action = next_step[1]
                 # dist = next_step[2]
                 path_history.append(visit)
-                # if curr_node == visit:
-                #     dist = 1
-                # else:
-                #     # dist = g.get_distance(curr_node, visit)
-                #     dist = g[curr_node][visit]['weight']
+                if curr_node == visit:
+                    dist = 1
+                else:
+                    # dist = g.get_distance(curr_node, visit)
+                    dist = g[curr_node][visit]['weight']
                 curr_time += dist
                 curr_node = visit
                 path_visits += 1
