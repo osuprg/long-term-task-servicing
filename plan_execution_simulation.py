@@ -59,7 +59,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
 
             path_visits = 1
             for next_step in path[1:]:
-                vist = next_step[0]
+                visit = next_step[0]
                 action = next_step[1]
                 dist = next_step[2]
                 path_history.append(visit)
