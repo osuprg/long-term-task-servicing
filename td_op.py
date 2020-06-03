@@ -642,7 +642,8 @@ class SpatioTemporalGraph:
                         if (node.sum + self.edges[node_name][successor_name].profit) > successor.sum:
                             sucessor.sum = node.sum + self.edges[node_name][successor_name].profit
                             successor.parent = node_name
-                            successor.path = node.path.append([successor.id, self.edges[node][sucessor].edge_type, self.edges[node_name][successor_name].edge_dist])
+                            successor.path = node.path
+                            successor.path.append([successor.id, self.edges[node][sucessor].edge_type, self.edges[node_name][successor_name].edge_dist])
                             successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                             successor.serviced_nodes = node.serviced_nodes
                             if self.edges[node_name].edge_type == 'service':
@@ -659,7 +660,8 @@ class SpatioTemporalGraph:
                             if (node.sum + successor_profit) > successor.sum:
                                 successor.sum = node.sum + successor_profit
                                 successor.parent = node_name
-                                successor.path = node.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
+                                successor.path = node.path
+                                successor.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
                                 successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                                 successor.serviced_nodes = node.serviced_nodes
                                 if self.edges[node_name].edge_type == 'service':
@@ -670,7 +672,8 @@ class SpatioTemporalGraph:
                             if (node.sum + 0.0) > successor.sum:
                                 successor.sum = node.sum + 0.0
                                 successor.parent = node_name
-                                successor.path = node.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
+                                successor.path = node.path
+                                successor.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
                                 self.vertices[successor_name] = successor
 
                 else:
@@ -681,7 +684,8 @@ class SpatioTemporalGraph:
                     if (node.sum + successor_profit) > successor.sum:
                         successor.sum = node.sum + successor_profit
                         successor.parent = node_name
-                        successor.path = node.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
+                        successor.path = node.path
+                        successor.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
                         successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                         successor.serviced_nodes = node.serviced_nodes
                         self.vertices[successor_name] = successor
