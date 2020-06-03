@@ -640,10 +640,10 @@ class SpatioTemporalGraph:
 
                         # if going through node is the best way to get to successor, update successors parent
                         if (node.sum + self.edges[node_name][successor_name].profit) > successor.sum:
-                            sucessor.sum = node.sum + self.edges[node_name][successor_name].profit
+                            successor.sum = node.sum + self.edges[node_name][successor_name].profit
                             successor.parent = node_name
                             successor.path = node.path
-                            successor.path.append([successor.id, self.edges[node][sucessor].edge_type, self.edges[node_name][successor_name].edge_dist])
+                            successor.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
                             successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                             successor.serviced_nodes = node.serviced_nodes
                             if self.edges[node_name].edge_type == 'service':
