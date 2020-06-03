@@ -4,6 +4,7 @@ import copy
 import math
 import heapq
 import networkx as nx  
+from utils import ucs
 
 
 
@@ -585,7 +586,7 @@ class SpatioTemporalGraph:
                         self.add_edge(st_node.name, neighbor_name, 'observe', st_node.observation_profit, 1)
 
                     # service action
-                    dist = 2*spatial_graph.ucs(v, graph_start_node_id)
+                    dist = 2*ucs(spatial_graph, v, graph_start_node_id)
                     if (st_node.t + dist) < (graph_start_time + self.budget):
                         neighbor_name = v + "_" + str(st_node.t + dist)
                         if neighbor_name in self.vertices:

@@ -4,6 +4,7 @@ import copy
 import math
 from io import BytesIO
 from PIL import Image
+import heapq
 
 def load_params(world_config_file, schedule_config_file, planner_config_file, model_config_file):
     params = {}
@@ -72,6 +73,38 @@ def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_o
     else:
         new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
     return new_prob
+
+
+def ucs(g, start, end):
+    closed_list = []
+    h = []
+
+    # enqueue
+    closed_list.append(start)
+    # neighbors = g.vertices[start].get_neighbors()
+    neighbors = g.neighbors(start)
+    for neighbor in neighbors:
+        # dist = g.get_distance(start, neighbor)
+        dist = g[start][neighbor]['weight']
+        heapq.heappush(h, (dist, neighbor))
+
+    while len(h) != 0:
+        top = heapq.heappop(h)
+        if top[1] == end:
+            return top[0]
+        else:
+            # enqueue
+            closed_list.append(top[1])
+            # neighbors = g.vertices[top[1]].get_neighbors()
+            neighbors = g.neighbors(top[1])
+            for neighbor in neighbors:
+                if neighbor not in closed_list:
+                    # dist = g.get_distance(top[1], neighbor)
+                    dist = g[top[1]][neighbor]['weight']
+                    heapq.heappush(h, (top[0] + dist, neighbor))
+
+    print ("COULD NOT CONNECT: " + str(start) + ' ' + str(end))
+    return float("inf")
 
 
 
