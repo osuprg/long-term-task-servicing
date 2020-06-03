@@ -174,7 +174,7 @@ class STGraphNode:
         self.t = 0.0
         self.name = None
         self.prob = 0.0
-        self.st_node.uncertainty = None
+        self.uncertainty = None
         self.profit = 0.0
         self.observation_profit = None
         self.delivery_profit = None
