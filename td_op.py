@@ -646,7 +646,7 @@ class SpatioTemporalGraph:
                             successor.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
                             successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                             successor.serviced_nodes = node.serviced_nodes
-                            if self.edges[node_name].edge_type == 'service':
+                            if self.edges[node_name][successor_name].edge_type == 'service':
                                 successor.serviced_nodes = node.serviced_nodes + [successor.id]
                                 successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                                 successor.serviced_probs[successor.id] = successor.prob
@@ -664,7 +664,7 @@ class SpatioTemporalGraph:
                                 successor.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
                                 successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                                 successor.serviced_nodes = node.serviced_nodes
-                                if self.edges[node_name].edge_type == 'service':
+                                if self.edges[node_name][successor_name].edge_type == 'service':
                                     successor.serviced_probs[successor.id] = node.serviced_probs[successor.id] + not_visited*successor.prob
                                 self.vertices[successor_name] = successor
 
