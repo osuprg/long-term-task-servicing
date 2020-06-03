@@ -349,16 +349,16 @@ def plan_path_no_temp_info(g, base_availability_models, base_model_variances, av
         constant_availability_models[request] = variances
 
     st_g = SpatioTemporalGraph(constant_availability_models, constant_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], False)
-    st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, False, False, False)
+    st_g.build_graph_single_delivery(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, False, False, False)
     L = st_g.topological_sort()
-    path = st_g.calc_max_profit_path(L, requests_left_to_deliver, False)
+    path = st_g.calc_max_profit_path_single_delivery(L, requests_left_to_deliver, False)
     return path
 
 def plan_path_no_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
     st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['use_gp'])
-    st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, False, False, False)
+    st_g.build_graph_single_delivery(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, False, False, False)
     L = st_g.topological_sort()
-    path = st_g.calc_max_profit_path(L, requests_left_to_deliver, False)
+    path = st_g.calc_max_profit_path_single_delivery(L, requests_left_to_deliver, False)
     return path
 
 def plan_path_with_hack_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
@@ -370,16 +370,16 @@ def plan_path_with_hack_observe(g, base_availability_models, base_model_variance
 
 def plan_path_with_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
     st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['use_gp'])
-    st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, False, False)
+    st_g.build_graph_single_delivery(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, False, False)
     L = st_g.topological_sort()
-    path = st_g.calc_max_profit_path(L, requests_left_to_deliver, False)
+    path = st_g.calc_max_profit_path_single_delivery(L, requests_left_to_deliver, False)
     return path
 
 def plan_path_with_observe_mult_visits(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
     st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['use_gp'])
-    st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, False, False)
+    st_g.build_graph_single_delivery(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, False, False)
     L = st_g.topological_sort()
-    path = st_g.calc_max_profit_path(L, requests_left_to_deliver, True)
+    path = st_g.calc_max_profit_path_single_delivery(L, requests_left_to_deliver, True)
     return path
 
 def plan_path_with_observe_sampling(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):

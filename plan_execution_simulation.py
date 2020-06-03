@@ -58,16 +58,16 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
         if path_length > 1:
 
             path_visits = 1
-            for visit in path[1:]:
-                # vist = next_step[0]
-                # action = next_step[1]
-                # dist = next_step[2]
+            for next_step in path[1:]:
+                vist = next_step[0]
+                action = next_step[1]
+                dist = next_step[2]
                 path_history.append(visit)
-                if curr_node == visit:
-                    dist = 1
-                else:
-                    # dist = g.get_distance(curr_node, visit)
-                    dist = g[curr_node][visit]['weight']
+                # if curr_node == visit:
+                #     dist = 1
+                # else:
+                #     # dist = g.get_distance(curr_node, visit)
+                #     dist = g[curr_node][visit]['weight']
                 curr_time += dist
                 curr_node = visit
                 path_visits += 1
@@ -82,24 +82,44 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                     curr_time_index = params['num_intervals']-1
                 assert(curr_time_index <= (params['num_intervals'] - 1))
 
-                action = 'service'
-                if (visit in requests_left_to_deliver) and (action=='service'):
-                    available = true_schedules[visit][curr_time_index]
-                    if bool(available):
-                        requests_left_to_deliver.remove(visit)
-                        total_profit += params['deliver_reward']
-                        delivery_history.append([visit, curr_time])
-                        nodes_delivered.append(visit)
-                        availability_observations[visit] = [1, curr_time]
+                if visit in requests_left_to_deliver:
+                    if action == 'service':
+                        available = true_schedules[visit][curr_time_index]
+                        if bool(available):
+                            requests_left_to_deliver.remove(visit)
+                            total_profit += params['deliver_reward']
+                            delivery_history.append([visit, curr_time])
+                            nodes_delivered.append(visit)
+                            availability_observations[visit] = [1, curr_time]
 
-                        if multiple_visits:
+                            if multiple_visits:
+                                if replan:
+                                    path_visits = 0
+                                    path_length = 1
+                                    breakout = True
+                        else:
+                            # observation
+                            availability_observations[visit] = [0, curr_time]
+
+                            # put package back
+                            if (curr_time + dist/2) <= (params['start_time'] + params['budget']):
+                                curr_time += dist/2
+                            else:
+                                curr_time = params['start_time'] + params['budget']
+                            curr_node = params['start_node_id']
+                            path_visits += 1
+                            path_history.append(curr_node)
+
                             if replan:
                                 path_visits = 0
                                 path_length = 1
                                 breakout = True
-                    else:
+
+                    # Break out after every observation
+                    if action == 'observe':
+                        available = true_schedules[visit][curr_time_index]
+                        availability_observations[visit] = [available, curr_time]
                         if replan:
-                            availability_observations[visit] = [0, curr_time]
                             path_visits = 0
                             path_length = 1
                             breakout = True
