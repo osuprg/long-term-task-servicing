@@ -175,6 +175,8 @@ class STGraphNode:
         self.name = None
         self.prob = 0.0
         self.profit = 0.0
+        self.observation_profit = None
+        self.delivery_profit = None
         self.weight = 0.0
         self.sum = -float("inf")
         self.parent = -1
@@ -583,6 +585,7 @@ class SpatioTemporalGraph:
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
                         st_node.successors.append(neighbor_name)
+                        assert not(st_node.observation_profit is None)
                         self.add_edge(st_node.name, neighbor_name, 'observe', st_node.observation_profit, 1)
 
                     # service action
