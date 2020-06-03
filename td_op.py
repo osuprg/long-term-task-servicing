@@ -554,7 +554,7 @@ class SpatioTemporalGraph:
                     dist = spatial_graph[v][neighbor]['weight']
 
                     # if travel cost doesnt exceed budget add neighbor to dag and increase its indegree
-                    if (st_node.t + dist) <= (graph_start_time + self.budget):
+                    if (st_node.t + dist) < (graph_start_time + self.budget):
                         neighbor_name = neighbor + "_" + str(st_node.t + dist)
                         if neighbor_name in self.vertices:
                             neighbor_node = self.vertices[neighbor_name]
@@ -572,7 +572,7 @@ class SpatioTemporalGraph:
 
                     # observation action
                     dist = 1
-                    if (st_node.t + dist) <= (graph_start_time + self.budget):
+                    if (st_node.t + dist) < (graph_start_time + self.budget):
                         neighbor_name = v + "_" + str(st_node.t + dist)
                         if neighbor_name in self.vertices:
                             neighbor_node = self.vertices[neighbor_name]
@@ -586,7 +586,7 @@ class SpatioTemporalGraph:
 
                     # service action
                     dist = 2*spatial_graph.ucs(v, graph_start_node_id)
-                    if (st_node.t + dist) <= (graph_start_time + self.budget):
+                    if (st_node.t + dist) < (graph_start_time + self.budget):
                         neighbor_name = v + "_" + str(st_node.t + dist)
                         if neighbor_name in self.vertices:
                             neighbor_node = self.vertices[neighbor_name]
@@ -602,7 +602,7 @@ class SpatioTemporalGraph:
                 # non delivery non self-transit
                 else:
                     dist = 1
-                    if (st_node.t + dist) <= (graph_start_time + self.budget):
+                    if (st_node.t + dist) < (graph_start_time + self.budget):
                         neighbor_name = v + "_" + str(st_node.t + dist)
                         if neighbor_name in self.vertices:
                             neighbor_node = self.vertices[neighbor_name]
