@@ -209,7 +209,7 @@ class GP():
 
 
 
-    def get_score(self, vist_time):
+    def get_uncertainty(self, vist_time):
         max_value = 1000.0
 
         if self.model is None:
