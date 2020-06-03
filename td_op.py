@@ -781,6 +781,7 @@ def bernoulli_variance_biasing(prob, variance_bias, deliver_reward):
     return reward
 
 def observation_profit(uncertainty):
+    assert not(isNone uncertainty)
     return uncertainty
 
 def deliver_profit(prob, deliver_reward):
