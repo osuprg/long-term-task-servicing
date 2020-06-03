@@ -174,6 +174,7 @@ class STGraphNode:
         self.t = 0.0
         self.name = None
         self.prob = 0.0
+        self.st_node.uncertainty = None
         self.profit = 0.0
         self.observation_profit = None
         self.delivery_profit = None
@@ -600,6 +601,7 @@ class SpatioTemporalGraph:
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
                         st_node.successors.append(neighbor_name)
+                        assert not(neighbor_node.delivery_profit is None)
                         self.add_edge(st_node.name, neighbor_name, 'service', neighbor_node.delivery_profit, dist)
 
 
