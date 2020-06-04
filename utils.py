@@ -76,6 +76,8 @@ def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_o
 
 
 def ucs(g, start, end):
+    if start == end:
+        return 1
     closed_list = []
     h = []
 
