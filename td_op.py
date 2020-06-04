@@ -586,6 +586,7 @@ class SpatioTemporalGraph:
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
                         st_node.successors.append(neighbor_name)
+                        assert (st_node.id in requests_left_to_deliver)
                         assert not(st_node.observation_profit is None)
                         self.add_edge(st_node.name, neighbor_name, 'observe', st_node.observation_profit, 1)
 
