@@ -257,7 +257,7 @@ class SpatioTemporalGraph:
                     last_observation = observations[v][0]
                     last_observation_time = observations[v][1]
                     st_node.prob = self.combine_probabilities(v, st_node.t, last_observation, last_observation_time)
-                    st_node.uncertainty = self.combined_uncertainty(node_id, curr_time, st_node.prob)
+                    st_node.uncertainty = self.combined_uncertainty(st_node.id, curr_time, st_node.prob, last_observation, last_observation_time)
                     st_node.observation_profit = observation_profit(st_node.uncertainty)
                     st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
                     st_node.serviced_probs[st_node.id] = st_node.prob
@@ -729,7 +729,7 @@ class SpatioTemporalGraph:
             new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
         return new_prob
 
-    def combined_uncertainty(self, node_id, curr_time, prob):
+    def combined_uncertainty(self, node_id, curr_time, prob, last_observation, last_observation_time):
         if self.use_gp:
             gp_uncertainty = self.availability_models[node_id].get_uncertainty(curr_time)
             uncertainty = gp_uncertainty        #FIXME!!
