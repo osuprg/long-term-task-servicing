@@ -80,7 +80,10 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                 if curr_time_index > (params['num_intervals'] - 1):
                     print("Curr time index exceeds num intervals: " + str(curr_time_index))
                     curr_time_index = params['num_intervals']-1
-                assert(curr_time_index <= (params['num_intervals'] - 1))
+                    path_visits = 0
+                    path_length = 0
+                    break
+                # assert(curr_time_index <= (params['num_intervals'] - 1))
 
                 if visit in requests_left_to_deliver:
                     if action == 'service':
