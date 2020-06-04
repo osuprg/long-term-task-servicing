@@ -257,7 +257,7 @@ class SpatioTemporalGraph:
                     last_observation = observations[v][0]
                     last_observation_time = observations[v][1]
                     st_node.prob = self.combine_probabilities(v, st_node.t, last_observation, last_observation_time)
-                    st_node.uncertainty = self.combined_uncertainty(st_node.id, curr_time, st_node.prob, last_observation, last_observation_time)
+                    st_node.uncertainty = self.combined_uncertainty(st_node.id, node_time, st_node.prob, last_observation, last_observation_time)
                     st_node.observation_profit = observation_profit(st_node.uncertainty)
                     st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
                     st_node.serviced_probs[st_node.id] = st_node.prob
