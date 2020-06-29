@@ -20,8 +20,6 @@ from utils import ucs
 class MCTS_Node:
 
 	def __init__(self, id, pose_id, time, observations, requests_left_to_deliver, requests_delivered):
-	(self, robot_pose, time, tasks, action_taken, reward)
-
 		self.id = id
 		self.pose_id = pose_id
 		self.time = time

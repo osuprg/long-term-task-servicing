@@ -170,7 +170,6 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
     # path_length = path_length       # FIXME
     path_visits = 0
     maintenance_reward_collected_current_plan = 0.0
-    strategy = 'mcts'
 
     # # replan
     # if (strategy == 'no_temp') or (strategy == 'no_replan'):
