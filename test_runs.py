@@ -10,7 +10,7 @@ from utils import load_params, read_graph_from_file
 from td_op import Graph
 from world_generation import generate_graph
 from schedule_generation import generate_windows_overlapping, generate_windows, generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, generate_schedule, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file, generate_simple_models, generate_simple_schedules
-from plan_execution_simulation import plan_and_execute
+from plan_execution_simulation import plan_and_execute, create_policy_and_execute
 from planners import visualize_path_willow
 
 
@@ -150,7 +150,10 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
             # plan and execute paths for specified strategies
             for strategy in strategies:
                 for stat_run in range(num_stat_runs):
-                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, visualize_path)
+                    if strategy == 'mcts':
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, visualize_path)
+                    else:
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, visualize_path)
                     
                     if record_output:
                         with open(output_file, 'a', newline='') as csvfile:

@@ -12,6 +12,7 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
         world_params = yaml.load(f, Loader=yaml.FullLoader)
     params['rooms'] = world_params['rooms']
     params['start_node_id'] = world_params['start_node_id']
+    params['distribution_node'] = world_params['distribution_node']
     params['maintenance_node'] = world_params['maintenance_node']
     params['max_rooms'] = int(world_params['max_rooms'])
     params['max_traversal_cost'] = int(world_params['max_traversal_cost'])
@@ -42,6 +43,10 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
     params['variance_bias'] = float(planner_params['variance_bias'])
     params['num_paths'] = int(planner_params['num_paths'])
     params['num_worlds'] = int(planner_params['num_worlds'])
+    params['max_iterations'] = int(planner_params['max_iterations'])
+    params['planning_horizon'] = int(planner_params['planning_horizon'])
+    params['min_expansions'] = int(planner_params['min_expansions'])
+    params['discovery_factor'] = float(planner_params['discovery_factor'])
 
     with open(model_config_file) as f:
         model_params = yaml.load(f, Loader=yaml.FullLoader)
@@ -73,6 +78,28 @@ def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_o
     else:
         new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
     return new_prob
+
+
+def calculate_best_delivery_time(node_avails, last_observation, start_time, end_time, mu):
+    if start_time < end_time:
+
+        if last_observation is None:
+            for time in list(range(start_time, end_time)):
+                prob = node_avails.get_prediction(time)
+                if prob > best_prob:
+                    best_prob = prob
+        else:
+            last_observation_value = last_observation[0]
+            last_observation_time = last_observation[1]
+            best_prob = -float("inf")
+            for time in list(range(start_time, end_time)):
+                a_priori_prob = node_avails.get_prediction(time)
+                prob = combine_probabilities(a_priori_prob, mu, time, last_observation_value, last_observation_time)
+                if prob > best_prob:
+                    best_prob = prob
+    else:
+        best_prob = 0.0
+    return best_prob
 
 
 def ucs(g, start, end):

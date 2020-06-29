@@ -1,3 +1,7 @@
 variance_bias: 0.1
 num_paths: 5
 num_worlds: 5
+max_iterations: 1000
+planning_horizon: 60
+min_expansions: 5
+discovery_factor: 1.41421356237
