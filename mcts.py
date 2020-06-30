@@ -467,7 +467,7 @@ class MCTS:
 			dist = self.spatial_graph[node.pose_id][neighbor]['weight']
 			time = node.time + dist
 			if time <= (self.start_time + self.budget):
-				neighbor_node_id = id_form(neighbor, time, node.observations, node.requests_left_to_deliver)
+				neighbor_node_id = self.id_form(neighbor, time, node.observations, node.requests_left_to_deliver)
 				if not(neighbor_node_id in self.nodes):
 					neighbor_node = MCTS_Node(neighbor_node_id, neighbor, time, node.observations, node.requests_left_to_deliver, node.requests_delivered)
 					self.nodes[neighbor_node_id] = neighbor_node
