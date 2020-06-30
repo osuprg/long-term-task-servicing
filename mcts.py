@@ -243,7 +243,7 @@ class MCTS:
 		self.nodes[node_id] = node
 		return reward
 
-	def calculate_expected_future_delivery_reward(self):
+	def calculate_expected_future_delivery_reward(self, node_id):
 		node = self.nodes[node_id]
 		expected_reward = 0.0
 		for request in node.requests_left_to_deliver:
