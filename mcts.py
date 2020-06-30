@@ -221,7 +221,7 @@ class MCTS:
 	def expand(self, node_id, planning_horizon, maintenance_reward_collected):
 		node = self.nodes[node_id]
 		if node.expanded == False:
-			self.populate_children(node)
+			self.populate_children(node_id)
 			node.expanded = True
 
 		if (planning_horizon > 0) and (node.state.time < budget):
