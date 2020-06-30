@@ -224,7 +224,7 @@ class MCTS:
 			self.populate_children(node_id)
 			node.expanded = True
 
-		if (planning_horizon > 0) and (node.time < budget):
+		if (planning_horizon > 0) and (node.time < self.budget):
 			child_id = self.choose_action_for_exploration(node_id, maintenance_reward_collected)
 			if node.children[child_id][0] == 'maintenance':
 				maintenance_reward_collected += self.maintenance_reward
@@ -250,7 +250,7 @@ class MCTS:
 			last_observation = None
 			if request in node.observations.keys():
 				last_observation = node.observations[request]
-			best_prob = calculate_best_delivery_time(self.avails[node.pose_id], last_observation, node.time + ucs(self.spatial_graph, node.pose_id, request), self.start_time+budget, self.mu)
+			best_prob = calculate_best_delivery_time(self.avails[node.pose_id], last_observation, node.time + ucs(self.spatial_graph, node.pose_id, request), self.start_time+self.budget, self.mu)
 			expected_reward += best_prob*self.deliver_reward
 		return expected_reward
 
