@@ -210,6 +210,7 @@ class MCTS:
 
 	def exploration_score(self, expected_reward, num_parent_visits, num_visits):
 		# ucb
+		assert (num_visits >= 1)
 		discovery_operand = self.discovery_factor * sqrt(log(num_parent_visits) / (num_visits or 1))
 		return expected_reward + discovery_operand
 
