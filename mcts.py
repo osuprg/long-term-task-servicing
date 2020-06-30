@@ -167,7 +167,7 @@ class MCTS:
 		self.nodes = {}
 		self.spatial_graph = spatial_graph
 		self.avails = avails
-		self.root_node_id = id_form(start_pose, start_time, observations, requests_left_to_deliver)
+		self.root_node_id = self.id_form(start_pose, start_time, observations, requests_left_to_deliver)
 		self.start_time = start_time
 		self.budget = budget
 		self.max_iterations = max_iterations
@@ -480,7 +480,7 @@ class MCTS:
 		dist = 1
 		time = node.time + dist
 		if time <= (self.start_time + self.budget):
-			neighbor_node_id = id_form(neighbor, time, node.observations, node.requests_left_to_deliver)
+			neighbor_node_id = self.id_form(neighbor, time, node.observations, node.requests_left_to_deliver)
 			if not(neighbor_node_id in self.nodes):
 				neighbor_node = MCTS_Node(neighbor_node_id, neighbor, time, node.observations, node.requests_left_to_deliver, node.requests_delivered)
 				self.nodes[neighbor_node_id] = neighbor_node
@@ -495,7 +495,7 @@ class MCTS:
 			dist = 1
 			time = node.time + dist
 			if time <= (self.start_time + self.budget):
-				neighbor_node_id = id_form(neighbor, time, node.observations, node.requests_left_to_deliver)
+				neighbor_node_id = self.id_form(neighbor, time, node.observations, node.requests_left_to_deliver)
 				if not(neighbor_node_id in self.nodes):
 					neighbor_node = MCTS_Node(neighbor_node_id, neighbor, time, node.observations, node.requests_left_to_deliver, node.requests_delivered)
 					self.nodes[neighbor_node_id] = neighbor_node
@@ -512,7 +512,7 @@ class MCTS:
 				# available
 				available_observations = copy.deepcopy(node.observations)
 				available_observations[node.pose_id] = [1, node.time]
-				available_node_id = id_form(neighbor, time, available_observations, node.requests_left_to_deliver)
+				available_node_id = self.id_form(neighbor, time, available_observations, node.requests_left_to_deliver)
 				if not(available_node_id in self.nodes):
 					available_node = MCTS_Node(available_node_id, neighbor, time, available_observations, node.requests_left_to_deliver, node.requests_delivered)
 					self.nodes[available_node_id] = available_node
@@ -520,7 +520,7 @@ class MCTS:
 				# unavailable
 				unavailable_observations = copy.deepcopy(node.observations)
 				unavailable_observations[node.pose_id] = [0, node.time]
-				unavailable_node_id = id_form(neighbor, time, unavailable_observations, node.requests_left_to_deliver)
+				unavailable_node_id = self.id_form(neighbor, time, unavailable_observations, node.requests_left_to_deliver)
 				if not(unavailable_node_id in self.nodes):
 					unavailable_node = MCTS_Node(unavailable_node_id, neighbor, time, unavailable_observations, node.requests_left_to_deliver, node.requests_delivered)
 					self.nodes[unavailable_node_id] = unavailable_node
@@ -539,7 +539,7 @@ class MCTS:
 				success_requests_left_to_deliver.remove(node.pose_id)
 				success_requests_delivered = node.requests_delivered
 				success_requests_delivered.append(node.pose_id)
-				success_node_id = id_form(node.pose_id, success_time, node.observations, success_requests_left_to_deliver, success_requests_delivered)
+				success_node_id = self.id_form(node.pose_id, success_time, node.observations, success_requests_left_to_deliver, success_requests_delivered)
 				if not(success_node_id in self.nodes):
 					success_node = MCTS_Node(success_node_id, node.pose_id, success_time, node.observations, success_requests_left_to_deliver, success_requests_delivered)
 					self.nodes[success_node_id] = success_node
@@ -549,7 +549,7 @@ class MCTS:
 				failure_observations[node.pose_id] = [0, node.time + dist*2]
 				if failure_time > (self.start_time + self.budget):
 					failure_time = self.start_time + self.budget
-				failure_node_id = id_form(self.distribution_node, failure_time, failure_observations, node.requests_left_to_deliver, node.requests_delivered)
+				failure_node_id = self.id_form(self.distribution_node, failure_time, failure_observations, node.requests_left_to_deliver, node.requests_delivered)
 				if not(failure_node_id in self.nodes):
 					failure_node = MCTS_Node(failure_node_id, self.distribution_node, failure_time, failure_observations, node.requests_left_to_deliver, node.requests_delivered)
 					self.nodes[failure_node_id] = failure_node
