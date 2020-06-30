@@ -54,6 +54,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 mu = int(params['availability_length']/2)
             else:
                 mu = 30
+            params['mu'] = mu
 
 
             # base models, true schedules
