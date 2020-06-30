@@ -224,7 +224,7 @@ class MCTS:
 			self.populate_children(node_id)
 			node.expanded = True
 
-		if (planning_horizon > 0) and (node.state.time < budget):
+		if (planning_horizon > 0) and (node.time < budget):
 			child_id = self.choose_action_for_exploration(node_id, maintenance_reward_collected)
 			if node.children[child_id][0] == 'maintenance':
 				maintenance_reward_collected += self.maintenance_reward
