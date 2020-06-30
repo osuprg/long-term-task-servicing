@@ -464,7 +464,7 @@ class MCTS:
 
 		### move actions
 		for neighbor in self.spatial_graph.neighbors(node.pose_id):
-			dist = self.spatial_graph[v][neighbor]['weight']
+			dist = self.spatial_graph[node.pose_id][neighbor]['weight']
 			time = node.time + dist
 			if time <= (self.start_time + self.budget):
 				neighbor_node_id = id_form(neighbor, time, node.observations, node.requests_left_to_deliver)
