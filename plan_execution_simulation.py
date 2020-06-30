@@ -4,6 +4,7 @@ import copy
 import math
 import networkx as nx  
 from planners import plan_path
+from mcts import MCTS
 from utils import visualize_graph
 import imageio
 
