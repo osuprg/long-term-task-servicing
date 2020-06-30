@@ -397,11 +397,10 @@ class MCTS:
 		else:
 			best_score = -float("inf")
 			best_child_index = None
-			for i in range(len(children)):
-				child = children[i]
-				action = child[0]
-				num_visits = child[1]
-				next_states = child[2]
+			for i in range(len(node.children)):
+				action = node.children[i][0]
+				num_visits = node.children[i][1]
+				next_states = node.children[i][2]
 
 				if action == 'move':
 					future_state = next_states[0]
