@@ -203,8 +203,8 @@ class MCTS:
 		return req
 
 	def id_form(self, curr_node, curr_time, observations, requests_left_to_deliver):
-		obs = self.obs_standard_form(observations)
-		req = self.req_standard_form(requests_left_to_deliver)
+		obs = self.observations_standard_form(observations)
+		req = self.requests_left_to_deliver_standard_form(requests_left_to_deliver)
 		return str(curr_node) + '_' + str(curr_time) + '_' +  obs + '_' +  req
 
 
