@@ -83,6 +83,7 @@ def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_o
 def calculate_best_delivery_time(node_avails, last_observation, start_time, end_time, mu):
     if start_time < end_time:
 
+        best_prob = -float("inf")
         if last_observation is None:
             for time in list(range(start_time, end_time)):
                 prob = node_avails.get_prediction(time)
@@ -91,7 +92,6 @@ def calculate_best_delivery_time(node_avails, last_observation, start_time, end_
         else:
             last_observation_value = last_observation[0]
             last_observation_time = last_observation[1]
-            best_prob = -float("inf")
             for time in list(range(start_time, end_time)):
                 a_priori_prob = node_avails.get_prediction(time)
                 prob = combine_probabilities(a_priori_prob, mu, time, last_observation_value, last_observation_time)
