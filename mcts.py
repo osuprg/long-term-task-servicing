@@ -250,7 +250,7 @@ class MCTS:
 			last_observation = None
 			if request in node.observations.keys():
 				last_observation = node.observations[request]
-			best_prob = calculate_best_delivery_time(self.avails[node.pose_id], last_observation, node.time + ucs(self.spatial_graph, node.pose_id, request), self.start_time+self.budget, self.mu)
+			best_prob = calculate_best_delivery_time(self.avails[request], last_observation, node.time + ucs(self.spatial_graph, node.pose_id, request), self.start_time+self.budget, self.mu)
 			expected_reward += best_prob*self.deliver_reward
 		return expected_reward
 
