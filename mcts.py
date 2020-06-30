@@ -276,14 +276,14 @@ class MCTS:
 			return 0
 
 
-	def simulate_action(self, node_id, child):
+	def simulate_action(self, node_id, child_id):
 		node = self.nodes[node_id]
-		child = node.children[child_id]
 
 		if child_id in node.unexplored_children_indices:
 			node.unexplored_children_indices.remove(child_index)
-		node.children[child_id][1] += 1
+		node.children[child_id][1] = node.children[child_id][1] + 1
 
+		child = node.children[child_id]
 		action = child[0]
 		next_states = child[2]
 		if action == 'move':
@@ -309,6 +309,7 @@ class MCTS:
 
 
 		self.nodes[node_id] = node
+		return next_state
 
 
 	def expected_reward(self, node_id, maintenance_reward_collected):
