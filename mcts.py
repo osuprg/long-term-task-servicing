@@ -257,7 +257,7 @@ class MCTS:
 
 	def rollout(self, node_id, maintenance_reward_collected):
 		node = self.nodes[node_id]
-		delivery_reward = len(node.requests_delivered)*self.delivery_reward
+		delivery_reward = len(node.requests_delivered)*self.deliver_reward
 		expected_future_delivery_reward = self.calculate_expected_future_delivery_reward(node_id)
 		return delivery_reward + expected_future_delivery_reward + maintenance_reward_collected
 
