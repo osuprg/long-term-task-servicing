@@ -463,7 +463,7 @@ class MCTS:
 		node = self.nodes[node_id]
 
 		### move actions
-		for neighbor in spatial_graph.neighbors(node.pose_id):
+		for neighbor in self.spatial_graph.neighbors(node.pose_id):
 			dist = spatial_graph[v][neighbor]['weight']
 			time = node.time + dist
 			if time <= (self.start_time + self.budget):
