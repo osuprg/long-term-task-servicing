@@ -277,16 +277,14 @@ class MCTS:
 			return 0
 
 
-	def simulate_action(self, node_id, child_id):
+	def simulate_action(self, node_id, child_index):
 		node = self.nodes[node_id]
 
-		if child_id in node.unexplored_children_indices:
+		if child_index in node.unexplored_children_indices:
 			node.unexplored_children_indices.remove(child_index)
-		node.children[child_id][1] = node.children[child_id][1] + 1
+		node.children[child_index][1] += 1
 
-		assert (node.children[child_id][1] >= 0)
-
-		child = node.children[child_id]
+		child = node.children[child_index]
 		action = child[0]
 		next_states = child[2]
 		if action == 'move':
