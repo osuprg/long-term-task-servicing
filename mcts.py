@@ -284,6 +284,8 @@ class MCTS:
 			node.unexplored_children_indices.remove(child_index)
 		node.children[child_id][1] = node.children[child_id][1] + 1
 
+		assert (node.children[child_id][1] >= 0)
+
 		child = node.children[child_id]
 		action = child[0]
 		next_states = child[2]
@@ -400,6 +402,10 @@ class MCTS:
 			best_score = -float("inf")
 			best_child_index = None
 			for i in range(len(node.children)):
+				print (node.children[i])
+				print (i)
+				print (node.unexplored_children_indices)
+				print ()
 				action = node.children[i][0]
 				num_visits = node.children[i][1]
 				next_states = node.children[i][2]
