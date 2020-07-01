@@ -301,7 +301,7 @@ class MCTS:
 				next_state = next_states[1]
 
 		if action == 'deliver':
-			deliver_time = node.time + 2*ucs(node.pose_id, self.distribution_node)
+			deliver_time = node.time + 2*ucs(self.spatial_graph, node.pose_id, self.distribution_node)
 			available = self.sample_occupancy(node.pose_id, deliver_time, node.observations)
 			if available:
 				next_state = next_states[0]
@@ -531,7 +531,7 @@ class MCTS:
 
 		### deliver action
 		if node.pose_id in node.requests_left_to_deliver:
-			dist = ucs(node.pose_id, self.distribution_node)
+			dist = ucs(self.spatial_graph, node.pose_id, self.distribution_node)
 			success_time = node.time + dist*2
 			failure_time = node.time + dist*3
 			if success_time <= (self.start_time + self.budget):
