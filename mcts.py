@@ -230,7 +230,7 @@ class MCTS:
 			if node.children[child_id][0] == 'maintenance':
 				maintenance_reward_collected += self.maintenance_reward
 			next_state = self.simulate_action(node_id, child_id)
-			reward = expand(next_state, planning_horizon-1, maintenance_reward_collected)
+			reward = self.expand(next_state, planning_horizon-1, maintenance_reward_collected)
 			# cumulative_future_reward += future_reward
 			node.visits += 1
 			node.num_expansions += 1
