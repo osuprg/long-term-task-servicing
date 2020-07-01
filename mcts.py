@@ -402,10 +402,6 @@ class MCTS:
 			best_score = -float("inf")
 			best_child_index = None
 			for i in range(len(node.children)):
-				print (node.children[i])
-				print (i)
-				print (node.unexplored_children_indices)
-				print ()
 				action = node.children[i][0]
 				num_visits = node.children[i][1]
 				next_states = node.children[i][2]
@@ -563,7 +559,7 @@ class MCTS:
 				next_states.append(failure_node_id)
 				node.children.append(['deliver', 0, next_states, [dist*2, dist*3]])
 
-		node.unexplored_indices = list(range(len(node.children)))
+		node.unexplored_children_indices = list(range(len(node.children)))
 		self.nodes[node_id] = node
 		return
 
