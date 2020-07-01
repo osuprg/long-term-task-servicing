@@ -540,7 +540,7 @@ class MCTS:
 				success_requests_left_to_deliver.remove(node.pose_id)
 				success_requests_delivered = node.requests_delivered
 				success_requests_delivered.append(node.pose_id)
-				success_node_id = self.id_form(node.pose_id, success_time, node.observations, success_requests_left_to_deliver, success_requests_delivered)
+				success_node_id = self.id_form(node.pose_id, success_time, node.observations, success_requests_left_to_deliver)
 				if not(success_node_id in self.nodes):
 					success_node = MCTS_Node(success_node_id, node.pose_id, success_time, node.observations, success_requests_left_to_deliver, success_requests_delivered)
 					self.nodes[success_node_id] = success_node
@@ -550,7 +550,7 @@ class MCTS:
 				failure_observations[node.pose_id] = [0, node.time + dist*2]
 				if failure_time > (self.start_time + self.budget):
 					failure_time = self.start_time + self.budget
-				failure_node_id = self.id_form(self.distribution_node, failure_time, failure_observations, node.requests_left_to_deliver, node.requests_delivered)
+				failure_node_id = self.id_form(self.distribution_node, failure_time, failure_observations, node.requests_left_to_deliver)
 				if not(failure_node_id in self.nodes):
 					failure_node = MCTS_Node(failure_node_id, self.distribution_node, failure_time, failure_observations, node.requests_left_to_deliver, node.requests_delivered)
 					self.nodes[failure_node_id] = failure_node
