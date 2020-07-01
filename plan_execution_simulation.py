@@ -201,8 +201,11 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                 end_reached = True
                 break
 
+
+            start_time = time.time()
             mcts = MCTS(g, base_availability_models, availability_observations, requests_left_to_deliver, curr_node, curr_time, params['budget'], params['max_iterations'], params['planning_horizon'], params['maintenance_reward'], params['deliver_reward'], params['mu'], params['discovery_factor'], params['distribution_node'], params['maintenance_node'])
             end_reached = mcts.create_policy()
+            print ("MCTS plan time: " + str(time.time() - start_time))
 
             path_visits = 1
             curr_state = mcts.root_node_id
