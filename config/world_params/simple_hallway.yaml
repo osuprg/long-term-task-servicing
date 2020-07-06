@@ -6,3 +6,4 @@ max_rooms: 3
 max_traversal_cost: 1
 graph_generator_type: simple_hallway
 graph_filename: None
+distance_scaling: 1
