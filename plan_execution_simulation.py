@@ -7,6 +7,7 @@ from planners import plan_path
 from mcts import MCTS
 from utils import visualize_graph
 import imageio
+from timeit import default_timer as timer
 
 
 
@@ -49,11 +50,11 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
 
     while (path_visits < path_length):
 
-        # runtime_start = timer()
+        runtime_start = timer()
         path = plan_path(strategy, g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
         path_length = len(path)
-        # plan_time = timer() - runtime_start
-        # print ("Plan time: " + str(plan_time))
+        plan_time = timer() - runtime_start
+        print ("Plan time: " + str(plan_time))
 
         ## Execute
         if path_length > 1:
@@ -144,6 +145,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
     maintenance_ratio_divisor = ((params['budget']-params['start_time'])/params['time_interval'])*params['maintenance_reward']
     maintenance_competitive_ratio = total_maintenance_profit/maintenance_ratio_divisor
 
+    print ()
     print(strategy + " cr: " + str(competitive_ratio))
 
     if visualize:
@@ -202,10 +204,11 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                 break
 
 
-            start_time = time.time()
+            runtime_start = timer()
             mcts = MCTS(g, base_availability_models, availability_observations, requests_left_to_deliver, curr_node, curr_time, params['budget'], params['max_iterations'], params['planning_horizon'], params['maintenance_reward'], params['deliver_reward'], params['mu'], params['discovery_factor'], params['distribution_node'], params['maintenance_node'])
             end_reached = mcts.create_policy()
-            print ("MCTS plan time: " + str(time.time() - start_time))
+            plan_time = timer() - runtime_start
+            print ("MCTS plan time: " + str(plan_time))
 
             path_visits = 1
             curr_state = mcts.root_node_id
@@ -309,6 +312,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
     maintenance_ratio_divisor = ((params['budget']-params['start_time'])/params['time_interval'])*params['maintenance_reward']
     maintenance_competitive_ratio = total_maintenance_profit/maintenance_ratio_divisor
 
+    print ()
     print(strategy + " cr: " + str(competitive_ratio))
 
     if visualize:
