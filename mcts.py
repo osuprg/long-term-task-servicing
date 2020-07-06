@@ -375,10 +375,10 @@ class MCTS:
 					if node.pose_id in node.observations:
 						last_observation_value = last_observation[0]
 						last_observation_time = last_observation[1]
-						a_priori_prob = self.avails[node.pose_id].get_prediction(self.states[available].time) 			# FIXME +1 minute to do delivery
-						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.states[available].time, last_observation_value, last_observation_time)
+						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time) 			# FIXME +1 minute to do delivery
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time, last_observation_value, last_observation_time)
 					else:
-						avail_prob = self.avails[node.pose_id].get_prediction(self.states[available].time)
+						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
 					score = expected_reward
@@ -445,10 +445,10 @@ class MCTS:
 					if node.pose_id in node.observations:
 						last_observation_value = last_observation[0]
 						last_observation_time = last_observation[1]
-						a_priori_prob = self.avails[node.pose_id].get_prediction(self.states[available].time) 			# FIXME +1 minute to do delivery
-						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.states[available].time, last_observation_value, last_observation_time)
+						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time) 			# FIXME +1 minute to do delivery
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time, last_observation_value, last_observation_time)
 					else:
-						avail_prob = self.avails[node.pose_id].get_prediction(self.states[available].time)
+						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
 					score = self.exploration_score(expected_reward, node.visits, num_visits)
