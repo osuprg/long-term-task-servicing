@@ -1,6 +1,7 @@
 world_config_file: /config/world_params/simple_hallway.yaml
 schedule_config_file: /config/schedule_params/hallway_window_params.yaml
 planner_config_file: /config/planner_params/planner_params_1.yaml
+model_config_file: /config/model_params/model_params_2.yaml
 base_model_filepath: /worlds/willow/models/params_hallway/
 schedule_filepath: /worlds/willow/schedules/params_hallway/
 # num_deliveries: [10, 20, 30, 40]
