@@ -38,12 +38,12 @@ def read_graph_from_file(input_filename, distance_scaling):
     return g
 
 
-def generate_simple_hallway(num_nodes, traversal_cost):
+def generate_simple_hallway(max_rooms, traversal_cost):
     g = nx.Graph()
     old_node = "R" + str(1)
     g.add_node(old_node)
-    for i in range(num_nodes)[1:]:
-        new_node = "R" + str(i+1)
+    for i in range(max_rooms):
+        new_node = "R" + str(i+2)
         g.add_node(new_node)
         g.add_edge(old_node, new_node)
         g.add_edge(new_node, old_node)
