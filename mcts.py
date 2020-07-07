@@ -355,8 +355,8 @@ class MCTS:
 					unavailable = next_states[1]
 
 					if node.pose_id in node.observations:
-						last_observation_value = last_observation[0]
-						last_observation_time = last_observation[1]
+						last_observation_value = node.observations[node.pose_id][0]
+						last_observation_time = node.observations[node.pose_id][1]
 						a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
 						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time)
 					else:
@@ -373,8 +373,8 @@ class MCTS:
 					unavailable = next_states[1]
 
 					if node.pose_id in node.observations:
-						last_observation_value = last_observation[0]
-						last_observation_time = last_observation[1]
+						last_observation_value = node.observations[node.pose_id][0]
+						last_observation_time = node.observations[node.pose_id][1]
 						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time) 			# FIXME +1 minute to do delivery
 						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time, last_observation_value, last_observation_time)
 					else:
@@ -425,8 +425,8 @@ class MCTS:
 					unavailable = next_states[1]
 
 					if node.pose_id in node.observations:
-						last_observation_value = last_observation[0]
-						last_observation_time = last_observation[1]
+						last_observation_value = node.observations[node.pose_id][0]
+						last_observation_time = node.observations[node.pose_id][1]
 						a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
 						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time)
 					else:
@@ -443,8 +443,8 @@ class MCTS:
 					unavailable = next_states[1]
 
 					if node.pose_id in node.observations:
-						last_observation_value = last_observation[0]
-						last_observation_time = last_observation[1]
+						last_observation_value = node.observations[node.pose_id][0]
+						last_observation_time = node.observations[node.pose_id][1]
 						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time) 			# FIXME +1 minute to do delivery
 						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time, last_observation_value, last_observation_time)
 					else:
