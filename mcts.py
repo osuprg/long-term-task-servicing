@@ -342,6 +342,7 @@ class MCTS:
 
 					print (action)
 					print (score)
+					print (next_states)
 
 					if score > best_score:
 						best_score = score
@@ -354,6 +355,7 @@ class MCTS:
 
 					print (action)
 					print (score)
+					print (next_states)
 
 					if score > best_score:
 						best_score = score
@@ -376,6 +378,7 @@ class MCTS:
 
 					print (action)
 					print (score)
+					print (next_states)
 
 					if score > best_score:
 						best_score = score
@@ -398,6 +401,7 @@ class MCTS:
 
 					print (action)
 					print (score)
+					print (next_states)
 
 					if score > best_score:
 						best_score = score
