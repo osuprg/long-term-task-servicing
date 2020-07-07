@@ -261,7 +261,7 @@ class MCTS:
 		delivery_reward = len(node.requests_delivered)*self.deliver_reward
 		expected_future_delivery_reward = self.calculate_expected_future_delivery_reward(node_id)
 		# return delivery_reward + expected_future_delivery_reward + maintenance_reward_collected
-		return delivery_reward
+		return delivery_reward + expected_future_delivery_reward
 
 	def sample_occupancy(self, pose_id, deliver_time, observations):
 		a_priori_prob = self.avails[pose_id].get_prediction(deliver_time)
@@ -329,7 +329,7 @@ class MCTS:
 		else:
 			best_score = -float("inf")
 			best_child_index = None
-			print ()
+			# print ()
 			for i in range(len(node.children)):
 				child = node.children[i]
 				action = child[0]
@@ -341,10 +341,10 @@ class MCTS:
 					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
 					score = expected_reward
 
-					print (action)
-					print (num_visits)
-					print (score)
-					print (next_states)
+					# print (action)
+					# print (num_visits)
+					# print (score)
+					# print (next_states)
 
 					if score > best_score:
 						best_score = score
@@ -356,10 +356,10 @@ class MCTS:
 					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
 					score = expected_reward
 
-					print (action)
-					print (num_visits)
-					print (score)
-					print (next_states)
+					# print (action)
+					# print (num_visits)
+					# print (score)
+					# print (next_states)
 
 					if score > best_score:
 						best_score = score
@@ -380,10 +380,10 @@ class MCTS:
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
 					score = expected_reward
 
-					print (action)
-					print (num_visits)
-					print (score)
-					print (next_states)
+					# print (action)
+					# print (num_visits)
+					# print (score)
+					# print (next_states)
 
 					if score > best_score:
 						best_score = score
@@ -404,10 +404,10 @@ class MCTS:
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
 					score = expected_reward
 
-					print (action)
-					print (num_visits)
-					print (score)
-					print (next_states)
+					# print (action)
+					# print (num_visits)
+					# print (score)
+					# print (next_states)
 
 					if score > best_score:
 						best_score = score
