@@ -474,6 +474,9 @@ class MCTS:
 					if expected_reward > max_score:
 						max_score = expected_reward
 
+			if max_score <= 0:
+				max_score = 1
+
 			# actual best score
 			best_score = -float("inf")
 			best_child_index = None
