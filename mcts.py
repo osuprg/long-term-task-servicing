@@ -352,8 +352,8 @@ class MCTS:
 
 				if action == 'maintenance':
 					future_state = next_states[0]
-					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
 					score = expected_reward
 
 					print (action)
@@ -439,8 +439,8 @@ class MCTS:
 
 				if action == 'maintenance':
 					future_state = next_states[0]
-					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
 					if expected_reward > max_score:
 						max_score = expected_reward
 
