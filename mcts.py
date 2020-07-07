@@ -260,8 +260,8 @@ class MCTS:
 		node = self.nodes[node_id]
 		delivery_reward = len(node.requests_delivered)*self.deliver_reward
 		expected_future_delivery_reward = self.calculate_expected_future_delivery_reward(node_id)
-		return delivery_reward + expected_future_delivery_reward + maintenance_reward_collected
-		# return delivery_reward + expected_future_delivery_reward
+		# return delivery_reward + expected_future_delivery_reward + maintenance_reward_collected
+		return delivery_reward + expected_future_delivery_reward
 
 	def sample_occupancy(self, pose_id, deliver_time, observations):
 		a_priori_prob = self.avails[pose_id].get_prediction(deliver_time)
@@ -352,8 +352,8 @@ class MCTS:
 
 				if action == 'maintenance':
 					future_state = next_states[0]
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
-					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
+					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
 					score = expected_reward
 
 					# print (action)
@@ -439,8 +439,8 @@ class MCTS:
 
 				if action == 'maintenance':
 					future_state = next_states[0]
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
-					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
+					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
 					if expected_reward > max_score:
 						max_score = expected_reward
 
@@ -563,7 +563,7 @@ class MCTS:
 		neighbor = node.pose_id
 		dist = 1
 		time = node.time + dist
-		if time <= (self.start_time + self.budget) and not(node.pose_id == self.maintenance_node): 		# never better to sit still than do maintenance
+		if time <= (self.start_time + self.budget) and (node.pose_id != self.maintenance_node): 		# never better to sit still than do maintenance
 			neighbor_node_id = self.id_form(neighbor, time, node.observations, node.requests_left_to_deliver)
 			if not(neighbor_node_id in self.nodes):
 				neighbor_node = MCTS_Node(neighbor_node_id, neighbor, time, node.observations, node.requests_left_to_deliver, node.requests_delivered)
