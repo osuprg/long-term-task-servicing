@@ -225,6 +225,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
             # did not explore or not enough visits
             if next_step == None:
                 replan = True
+                print ('Replanning')
                 continue
             else:
                 
@@ -232,27 +233,32 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                 visits = next_step[2]
                 distances = next_step[3]
 
+                print ('Curr node: ' + curr_node)
+                print ('Time: ' + str(curr_time))
+                print ('Action: ' + action)
+                print ()
+
                 if action == 'move':
                     curr_state = visits[0]
                     visit = mcts.nodes[curr_state].pose_id
                     dist = distances[0]
+                    action_history.append('move_' + visit + '_' + str(curr_time))
                     curr_time += dist
                     curr_node = visit
                     path_visits += 1
                     path_history.append(visit)
-                    action_history.append('move_' + visit)
 
                 elif action == 'maintenance':
                     curr_state = visits[0]
                     visit = mcts.nodes[curr_state].pose_id
                     dist = distances[0]
+                    action_history.append('maintenance_' + visit + '_' + str(curr_time))
                     curr_time += dist
                     curr_node = visit
                     path_visits += 1
                     path_history.append(visit)
                     total_maintenance_profit += params['maintenance_reward']
                     maintenance_reward_collected_current_plan += params['maintenance_reward']
-                    action_history.append('maintenance_' + visit)
                     
                 elif action == 'observe':
                     visit = mcts.nodes[visits[0]].pose_id
@@ -266,11 +272,11 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                         curr_state = visits[1]
                         dist = distances[1]
 
+                    action_history.append('observe_' + visit + '_' + str(curr_time))
                     curr_time += dist
                     curr_node = visit
                     path_visits += 1
                     path_history.append(visit)
-                    action_history.append('observe_' + visit)
 
                 elif action == 'deliver':
                     visit = mcts.nodes[visits[0]].pose_id
@@ -293,12 +299,12 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                         curr_state = visits[1]
                         dist = distances[1]
 
+                    action_history.append('deliver_' + visit + '_' + str(curr_time))
                     curr_time += dist
                     curr_node = visit
                     path_visits += 1
                     path_history.append(visit)
-                    action_history.append('deliver_' + visit)
-
+                    
 
                 
 
