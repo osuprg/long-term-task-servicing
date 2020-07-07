@@ -168,6 +168,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
     nodes_delivered = []
     img_history = []
     path_history = [params['start_node_id']]
+    action_history = []
     curr_time = params['start_time']
     curr_node = params['start_node_id']
     # path_length = path_length       # FIXME
@@ -239,6 +240,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                     curr_node = visit
                     path_visits += 1
                     path_history.append(visit)
+                    action_history.append('move_' + visit)
 
                 elif action == 'maintenance':
                     curr_state = visits[0]
@@ -250,6 +252,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                     path_history.append(visit)
                     total_maintenance_profit += params['maintenance_reward']
                     maintenance_reward_collected_current_plan += params['maintenance_reward']
+                    action_history.append('maintenance_' + visit)
                     
                 elif action == 'observe':
                     visit = mcts.nodes[visits[0]].pose_id
@@ -267,6 +270,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                     curr_node = visit
                     path_visits += 1
                     path_history.append(visit)
+                    action_history.append('observe_' + visit)
 
                 elif action == 'deliver':
                     visit = mcts.nodes[visits[0]].pose_id
@@ -293,6 +297,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                     curr_node = visit
                     path_visits += 1
                     path_history.append(visit)
+                    action_history.append('deliver_' + visit)
 
 
                 
@@ -325,5 +330,6 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
 
     if visualize:
         imageio.mimsave(visualize_path, img_history, duration=2)
+        print (action_history)
 
     return total_profit, competitive_ratio, maintenance_competitive_ratio, path_history
