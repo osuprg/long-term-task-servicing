@@ -328,6 +328,7 @@ class MCTS:
 		else:
 			best_score = -float("inf")
 			best_child_index = None
+			print ()
 			for i in range(len(node.children)):
 				child = node.children[i]
 				action = child[0]
@@ -338,6 +339,10 @@ class MCTS:
 					future_state = next_states[0]
 					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
 					score = expected_reward
+
+					print (action)
+					print (score)
+
 					if score > best_score:
 						best_score = score
 						best_child_index = i
@@ -346,6 +351,10 @@ class MCTS:
 					future_state = next_states[0]
 					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
 					score = expected_reward
+
+					print (action)
+					print (score)
+
 					if score > best_score:
 						best_score = score
 						best_child_index = i
@@ -364,6 +373,10 @@ class MCTS:
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
 					score = expected_reward
+
+					print (action)
+					print (score)
+
 					if score > best_score:
 						best_score = score
 						best_child_index = i
@@ -382,6 +395,10 @@ class MCTS:
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
 					score = expected_reward
+
+					print (action)
+					print (score)
+
 					if score > best_score:
 						best_score = score
 						best_child_index = i

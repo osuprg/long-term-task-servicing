@@ -10,5 +10,5 @@ num_deliveries: [3]
 availability_percents: [.5]
 # strategies: [no_temp, no_replan, replan_no_observe, hack_observe, observe, observe_sampling, observe_sampling_variance_bias, observe_sampling_mult_visits]
 strategies: [mcts]
-visualize: 1
+visualize: 0
 visualize_path: /experiment_files/output/animations/simple_example.gif
