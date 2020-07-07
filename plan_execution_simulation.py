@@ -271,6 +271,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                     else:
                         curr_state = visits[1]
                         dist = distances[1]
+                        visit = mcts.nodes[visits[1]].pose_id
 
                     action_history.append('observe_' + visit + '_' + str(curr_time))
                     curr_time += dist
@@ -298,6 +299,8 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                     else:
                         curr_state = visits[1]
                         dist = distances[1]
+                        visit = mcts.nodes[visits[1]].pose_id
+
 
                     action_history.append('deliver_' + visit + '_' + str(curr_time))
                     curr_time += dist
