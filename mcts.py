@@ -618,6 +618,7 @@ class MCTS:
 			success_time = node.time + dist*2
 			failure_time = node.time + dist*3
 			if success_time <= (self.start_time + self.budget):
+				next_states = []
 				# available
 				success_requests_left_to_deliver = node.requests_left_to_deliver
 				success_requests_left_to_deliver.remove(node.pose_id)
