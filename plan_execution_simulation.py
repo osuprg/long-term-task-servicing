@@ -205,7 +205,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
 
 
             runtime_start = timer()
-            mcts = MCTS(g, base_availability_models, availability_observations, requests_left_to_deliver, curr_node, curr_time, params['budget'], params['max_iterations'], params['planning_horizon'], params['maintenance_reward'], params['deliver_reward'], params['mu'], params['discovery_factor'], params['distribution_node'], params['maintenance_node'])
+            mcts = MCTS(g, base_availability_models, availability_observations, requests_left_to_deliver, curr_node, curr_time, params['budget']-curr_time, params['max_iterations'], params['planning_horizon'], params['maintenance_reward'], params['deliver_reward'], params['mu'], params['discovery_factor'], params['distribution_node'], params['maintenance_node'])
             mcts.create_policy()
             plan_time = timer() - runtime_start
             print ("MCTS plan time: " + str(plan_time))
@@ -271,6 +271,10 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                 elif action == 'deliver':
                     visit = mcts.nodes[visits[0]].pose_id
                     deliver_time = curr_time + distances[0]
+                    if (params['start_time'] + params['budget']):
+                        end_reached = True
+                        break
+
                     deliver_time_index = int(deliver_time/params['time_interval'])
                     available = true_schedules[visit][deliver_time_index]
                     availability_observations[visit] = [available, deliver_time]
