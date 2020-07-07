@@ -158,6 +158,8 @@ def visualize_graph(g, base_availability_models, true_schedule, availability_obs
         incorporate_observation = True
     elif strategy == 'observe_sampling_mult_visits':
         incorporate_observation = True
+    elif strategy == 'mcts':
+        incorporate_observation = True
 
     # availability_viz = 'schedule'
     availability_viz = 'prob'
