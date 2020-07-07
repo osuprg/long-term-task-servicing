@@ -22,9 +22,9 @@ class MCTS_Node:
 		self.id = id
 		self.pose_id = pose_id
 		self.time = time
-		self.observations = observations
-		self.requests_left_to_deliver = requests_left_to_deliver
-		self.requests_delivered = requests_delivered
+		self.observations = copy.deepcopy(observations)
+		self.requests_left_to_deliver = copy.deepcopy(requests_left_to_deliver)
+		self.requests_delivered = copy.deepcopy(requests_delivered)
 		self.expanded = False
 		self.children = []
 		self.unexplored_children_indices = []
