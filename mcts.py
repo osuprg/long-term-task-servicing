@@ -260,8 +260,8 @@ class MCTS:
 		node = self.nodes[node_id]
 		delivery_reward = len(node.requests_delivered)*self.deliver_reward
 		expected_future_delivery_reward = self.calculate_expected_future_delivery_reward(node_id)
-		# return delivery_reward + expected_future_delivery_reward + maintenance_reward_collected
-		return delivery_reward
+		return delivery_reward + expected_future_delivery_reward + maintenance_reward_collected
+		# return delivery_reward
 
 	def sample_occupancy(self, pose_id, deliver_time, observations):
 		a_priori_prob = self.avails[pose_id].get_prediction(deliver_time)
