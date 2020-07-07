@@ -302,8 +302,8 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                 img = visualize_graph(g, base_availability_models, true_schedules, availability_observations, curr_time_index, curr_node, node_requests, nodes_delivered, curr_time, params['mu'], strategy, params['use_gp'])
                 img_history.append(img)
 
-            if breakout:
-                break
+            # if breakout:
+            #     break
  
 
 
