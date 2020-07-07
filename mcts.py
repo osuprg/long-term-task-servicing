@@ -342,6 +342,7 @@ class MCTS:
 					score = expected_reward
 
 					print (action)
+					print (num_visits)
 					print (score)
 					print (next_states)
 
@@ -355,6 +356,7 @@ class MCTS:
 					score = expected_reward
 
 					print (action)
+					print (num_visits)
 					print (score)
 					print (next_states)
 
@@ -378,6 +380,7 @@ class MCTS:
 					score = expected_reward
 
 					print (action)
+					print (num_visits)
 					print (score)
 					print (next_states)
 
@@ -401,6 +404,7 @@ class MCTS:
 					score = expected_reward
 
 					print (action)
+					print (num_visits)
 					print (score)
 					print (next_states)
 
