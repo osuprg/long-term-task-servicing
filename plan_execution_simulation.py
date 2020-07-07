@@ -214,11 +214,11 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
             path_visits = 1
             curr_state = mcts.root_node_id
             maintenance_reward_collected_current_plan = 0.0
+            replan = False
 
         else:
             # follow policy
             next_step = mcts.choose_best_action(curr_state, params['min_expansions'], maintenance_reward_collected_current_plan)
-            print (next_step)
 
             # did not explore or not enough visits
             if next_step == None:
