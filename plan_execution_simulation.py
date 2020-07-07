@@ -281,7 +281,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                 elif action == 'deliver':
                     visit = mcts.nodes[visits[0]].pose_id
                     deliver_time = curr_time + distances[0]
-                    if (params['start_time'] + params['budget']):
+                    if deliver_time > (params['start_time'] + params['budget']):
                         end_reached = True
                         break
 
