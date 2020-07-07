@@ -328,8 +328,8 @@ class MCTS:
 		else:
 			best_score = -float("inf")
 			best_child_index = None
-			for i in range(len(children)):
-				child = children[i]
+			for i in range(len(node.children)):
+				child = node.children[i]
 				action = child[0]
 				num_visits = child[1]
 				next_states = child[2]
@@ -386,7 +386,7 @@ class MCTS:
 						best_score = score
 						best_child_index = i
 
-			return best_child_index
+			return node.children[best_child_index]
 
 	def choose_action_for_exploration(self, node_id, maintenance_reward_collected):
 		node = self.nodes[node_id]
