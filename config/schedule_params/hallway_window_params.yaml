@@ -1,4 +1,4 @@
-budget: 20
+budget: 10
 time_interval: 1
 start_time: 0
 node_closeness: sequential
