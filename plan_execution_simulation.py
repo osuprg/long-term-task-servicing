@@ -197,7 +197,6 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
 
 
     while not(end_reached):
-        print ("Curr time: " + str(curr_time))
 
         if replan:
             if curr_time >= (params['start_time'] + params['budget']):
