@@ -419,6 +419,58 @@ class MCTS:
 			best_child_index = child_index
 
 		else:
+			# normalizing factor
+			max_score = -float("inf")
+			for i in range(len(node.children)):
+				action = node.children[i][0]
+				num_visits = node.children[i][1]
+				next_states = node.children[i][2]
+
+				if action == 'move':
+					future_state = next_states[0]
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					if expected_reward > max_score:
+						max_score = expected_reward
+
+				if action == 'maintenance':
+					future_state = next_states[0]
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					if expected_reward > max_score:
+						max_score = expected_reward
+
+				if action == 'observe':
+					available = next_states[0]
+					unavailable = next_states[1]
+
+					if node.pose_id in node.observations:
+						last_observation_value = node.observations[node.pose_id][0]
+						last_observation_time = node.observations[node.pose_id][1]
+						a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time)
+					else:
+						avail_prob = self.avails[node.pose_id].get_prediction(node.time)
+
+					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
+					if expected_reward > max_score:
+						max_score = expected_reward
+
+				if action == 'deliver':
+					available = next_states[0]
+					unavailable = next_states[1]
+
+					if node.pose_id in node.observations:
+						last_observation_value = node.observations[node.pose_id][0]
+						last_observation_time = node.observations[node.pose_id][1]
+						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time) 			# FIXME +1 minute to do delivery
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time, last_observation_value, last_observation_time)
+					else:
+						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time)
+
+					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
+					if expected_reward > max_score:
+						max_score = expected_reward
+
+			# actual best score
 			best_score = -float("inf")
 			best_child_index = None
 			for i in range(len(node.children)):
@@ -429,7 +481,7 @@ class MCTS:
 				if action == 'move':
 					future_state = next_states[0]
 					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
-					score = self.exploration_score(expected_reward, node.visits, num_visits)
+					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
 					if score > best_score:
 						best_score = score
 						best_child_index = i
@@ -437,7 +489,7 @@ class MCTS:
 				if action == 'maintenance':
 					future_state = next_states[0]
 					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
-					score = self.exploration_score(expected_reward, node.visits, num_visits)
+					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
 					if score > best_score:
 						best_score = score
 						best_child_index = i
@@ -455,7 +507,7 @@ class MCTS:
 						avail_prob = self.avails[node.pose_id].get_prediction(node.time)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
-					score = self.exploration_score(expected_reward, node.visits, num_visits)
+					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
 					if score > best_score:
 						best_score = score
 						best_child_index = i
@@ -473,7 +525,7 @@ class MCTS:
 						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
-					score = self.exploration_score(expected_reward, node.visits, num_visits)
+					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
 					if score > best_score:
 						best_score = score
 						best_child_index = i
