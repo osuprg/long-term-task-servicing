@@ -174,6 +174,7 @@ class MCTS:
 		self.planning_horizon = planning_horizon
 		self.maintenance_reward = maintenance_reward
 		self.deliver_reward = deliver_reward
+		self.failed_delivery_penalty = -deliver_reward/10.0
 		self.mu = mu
 		self.discovery_factor = discovery_factor
 		self.distribution_node = distribution_node
@@ -216,10 +217,10 @@ class MCTS:
 
 	def create_policy(self):
 		for iteration in range(self.max_iterations):
-			reward = self.expand(self.root_node_id, self.planning_horizon-1, 0)
+			reward = self.expand(self.root_node_id, self.planning_horizon-1, 0, 0)
 			# self.root_node = node
 
-	def expand(self, node_id, planning_horizon, maintenance_reward_collected):
+	def expand(self, node_id, planning_horizon, maintenance_reward_collected, failure_penalty):
 		node = self.nodes[node_id]
 		if node.expanded == False:
 			self.populate_children(node_id)
@@ -229,8 +230,10 @@ class MCTS:
 			child_id = self.choose_action_for_exploration(node_id, maintenance_reward_collected)
 			if node.children[child_id][0] == 'maintenance':
 				maintenance_reward_collected += self.maintenance_reward
-			next_state = self.simulate_action(node_id, child_id)
-			reward = self.expand(next_state, planning_horizon-1, maintenance_reward_collected)
+			next_state, failed_delivery = self.simulate_action(node_id, child_id)
+			if failed_delivery:
+				failure_penalty += self.failed_delivery_penalty
+			reward = self.expand(next_state, planning_horizon-1, maintenance_reward_collected, failure_penalty)
 			# cumulative_future_reward += future_reward
 			node.visits += 1
 			node.num_expansions += 1
@@ -256,12 +259,12 @@ class MCTS:
 		return expected_reward
 
 
-	def rollout(self, node_id, maintenance_reward_collected):
+	def rollout(self, node_id, maintenance_reward_collected, failure_penalty):
 		node = self.nodes[node_id]
 		delivery_reward = len(node.requests_delivered)*self.deliver_reward
 		expected_future_delivery_reward = self.calculate_expected_future_delivery_reward(node_id)
 		# return delivery_reward + expected_future_delivery_reward + maintenance_reward_collected
-		return delivery_reward
+		return delivery_reward + maintenance_reward_collected + failure_penalty
 
 	def sample_occupancy(self, pose_id, deliver_time, observations):
 		a_priori_prob = self.avails[pose_id].get_prediction(deliver_time)
@@ -290,28 +293,34 @@ class MCTS:
 		next_states = child[2]
 		if action == 'move':
 			next_state = next_states[0]
+			failed_delivery = False
 
 		if action == 'maintenance':
 			next_state = next_states[0]
+			failed_delivery = False
 
 		if action == 'observe':
 			available = self.sample_occupancy(node.pose_id, node.time, node.observations)
 			if available:
 				next_state = next_states[0]
+				failed_delivery = False
 			else:
 				next_state = next_states[1]
+				failed_delivery = False
 
 		if action == 'deliver':
 			deliver_time = node.time + 2*ucs(self.spatial_graph, node.pose_id, self.distribution_node) + 1 		# minute to pick up
 			available = self.sample_occupancy(node.pose_id, deliver_time, node.observations)
 			if available:
 				next_state = next_states[0]
+				failed_delivery = False
 			else:
 				next_state = next_states[1]
+				failed_delivery = True
 
 
 		self.nodes[node_id] = node
-		return next_state
+		return next_state, failed_delivery
 
 
 	def expected_reward(self, node_id, maintenance_reward_collected):
@@ -352,8 +361,8 @@ class MCTS:
 
 				if action == 'maintenance':
 					future_state = next_states[0]
-					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
 					score = expected_reward
 
 					# print (action)
@@ -439,8 +448,8 @@ class MCTS:
 
 				if action == 'maintenance':
 					future_state = next_states[0]
-					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
 					if expected_reward > max_score:
 						max_score = expected_reward
 
