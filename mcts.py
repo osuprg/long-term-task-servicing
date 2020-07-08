@@ -467,10 +467,10 @@ class MCTS:
 					if node.pose_id in node.observations:
 						last_observation_value = node.observations[node.pose_id][0]
 						last_observation_time = node.observations[node.pose_id][1]
-						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time) 			# FIXME +1 minute to do delivery
-						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time, last_observation_value, last_observation_time)
+						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1) 			# minute to do delivery
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time - 1, last_observation_value, last_observation_time)
 					else:
-						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time)
+						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
 					if expected_reward > max_score:
@@ -528,10 +528,10 @@ class MCTS:
 					if node.pose_id in node.observations:
 						last_observation_value = node.observations[node.pose_id][0]
 						last_observation_time = node.observations[node.pose_id][1]
-						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time) 			# FIXME +1 minute to do delivery
-						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time, last_observation_value, last_observation_time)
+						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1) 			# minute to do delivery
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time - 1, last_observation_value, last_observation_time)
 					else:
-						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time)
+						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
 					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
@@ -615,8 +615,8 @@ class MCTS:
 		### deliver action
 		if node.pose_id in node.requests_left_to_deliver:
 			dist = ucs(self.spatial_graph, node.pose_id, self.distribution_node)
-			success_time = node.time + dist*2
-			failure_time = node.time + dist*3
+			success_time = node.time + dist*2 + 1
+			failure_time = node.time + dist*3 + 2
 			if success_time <= (self.start_time + self.budget):
 				next_states = []
 				# available
@@ -631,7 +631,7 @@ class MCTS:
 				next_states.append(success_node_id)
 				# unavailable
 				failure_observations = copy.deepcopy(node.observations)
-				failure_observations[node.pose_id] = [0, node.time + dist*2]
+				failure_observations[node.pose_id] = [0, node.time + dist*2 + 1]
 				if failure_time > (self.start_time + self.budget):
 					failure_time = self.start_time + self.budget
 				failure_node_id = self.id_form(self.distribution_node, failure_time, failure_observations, node.requests_left_to_deliver)
@@ -639,7 +639,7 @@ class MCTS:
 					failure_node = MCTS_Node(failure_node_id, self.distribution_node, failure_time, failure_observations, node.requests_left_to_deliver, node.requests_delivered)
 					self.nodes[failure_node_id] = failure_node
 				next_states.append(failure_node_id)
-				node.children.append(['deliver', 0, next_states, [dist*2, dist*3]])
+				node.children.append(['deliver', 0, next_states, [dist*2 + 1, dist*3 + 2]])
 
 		node.unexplored_children_indices = list(range(len(node.children)))
 		self.nodes[node_id] = node
