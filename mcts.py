@@ -302,7 +302,7 @@ class MCTS:
 				next_state = next_states[1]
 
 		if action == 'deliver':
-			deliver_time = node.time + 2*ucs(self.spatial_graph, node.pose_id, self.distribution_node)
+			deliver_time = node.time + 2*ucs(self.spatial_graph, node.pose_id, self.distribution_node) + 1 		# minute to pick up
 			available = self.sample_occupancy(node.pose_id, deliver_time, node.observations)
 			if available:
 				next_state = next_states[0]
@@ -615,8 +615,8 @@ class MCTS:
 		### deliver action
 		if node.pose_id in node.requests_left_to_deliver:
 			dist = ucs(self.spatial_graph, node.pose_id, self.distribution_node)
-			success_time = node.time + dist*2 + 1
-			failure_time = node.time + dist*3 + 2
+			success_time = node.time + dist*2 + 2
+			failure_time = node.time + dist*3 + 3
 			if success_time <= (self.start_time + self.budget):
 				next_states = []
 				# available
@@ -639,7 +639,7 @@ class MCTS:
 					failure_node = MCTS_Node(failure_node_id, self.distribution_node, failure_time, failure_observations, node.requests_left_to_deliver, node.requests_delivered)
 					self.nodes[failure_node_id] = failure_node
 				next_states.append(failure_node_id)
-				node.children.append(['deliver', 0, next_states, [dist*2 + 1, dist*3 + 2]])
+				node.children.append(['deliver', 0, next_states, [dist*2 + 1, dist*3 + 3]])
 
 		node.unexplored_children_indices = list(range(len(node.children)))
 		self.nodes[node_id] = node
