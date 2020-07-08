@@ -174,6 +174,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
     # path_length = path_length       # FIXME
     path_visits = 0
     maintenance_reward_collected_current_plan = 0.0
+    failure_penalty_current_plan = 0.0
 
     # # replan
     # if (strategy == 'no_temp') or (strategy == 'no_replan'):
@@ -214,11 +215,12 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
             path_visits = 1
             curr_state = mcts.root_node_id
             maintenance_reward_collected_current_plan = 0.0
+            failure_penalty_current_plan = 0.0
             replan = False
 
         else:
             # follow policy
-            next_step = mcts.choose_best_action(curr_state, params['min_expansions'], maintenance_reward_collected_current_plan)
+            next_step = mcts.choose_best_action(curr_state, params['min_expansions'], maintenance_reward_collected_current_plan, failure_penalty_current_plan)
 
             # print (next_step)
 
@@ -300,6 +302,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                         curr_state = visits[1]
                         dist = distances[1]
                         visit = mcts.nodes[visits[1]].pose_id
+                        failure_penalty_current_plan -= params['deliver_reward']/10.0
 
 
                     action_history.append('deliver_' + visit + '_' + str(curr_time))

@@ -227,7 +227,7 @@ class MCTS:
 			node.expanded = True
 
 		if (planning_horizon > 0) and (node.time < (self.start_time + self.budget)):
-			child_id = self.choose_action_for_exploration(node_id, maintenance_reward_collected)
+			child_id = self.choose_action_for_exploration(node_id, maintenance_reward_collected, failure_penalty)
 			if node.children[child_id][0] == 'maintenance':
 				maintenance_reward_collected += self.maintenance_reward
 			next_state, failed_delivery = self.simulate_action(node_id, child_id)
@@ -323,15 +323,15 @@ class MCTS:
 		return next_state, failed_delivery
 
 
-	def expected_reward(self, node_id, maintenance_reward_collected):
+	def expected_reward(self, node_id, maintenance_reward_collected, failure_penalty):
 		node = self.nodes[node_id]
 		if node.visits >= 1:
 			return node.cumulative_reward/node.visits
 		else:
-			return self.rollout(node_id, maintenance_reward_collected)
+			return self.rollout(node_id, maintenance_reward_collected, failure_penalty)
 
 
-	def choose_best_action(self, node_id, min_expansions, maintenance_reward_collected):
+	def choose_best_action(self, node_id, min_expansions, maintenance_reward_collected, failure_penalty):
 		node = self.nodes[node_id]
 		if (node.num_expansions < min_expansions) or not(len(node.unexplored_children_indices) == 0):
 			return None 	# REPLAN
@@ -347,7 +347,7 @@ class MCTS:
 
 				if action == 'move':
 					future_state = next_states[0]
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected, failure_penalty)
 					score = expected_reward
 
 					# print (action)
@@ -361,7 +361,7 @@ class MCTS:
 
 				if action == 'maintenance':
 					future_state = next_states[0]
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected, failure_penalty)
 					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
 					score = expected_reward
 
@@ -386,7 +386,7 @@ class MCTS:
 					else:
 						avail_prob = self.avails[node.pose_id].get_prediction(node.time)
 
-					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
+					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					score = expected_reward
 
 					# print (action)
@@ -410,7 +410,7 @@ class MCTS:
 					else:
 						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time)
 
-					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
+					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					score = expected_reward
 
 					# print (action)
@@ -424,7 +424,7 @@ class MCTS:
 
 			return node.children[best_child_index]
 
-	def choose_action_for_exploration(self, node_id, maintenance_reward_collected):
+	def choose_action_for_exploration(self, node_id, maintenance_reward_collected, failure_penalty):
 		node = self.nodes[node_id]
 
 		# if any child unexplored
@@ -442,13 +442,13 @@ class MCTS:
 
 				if action == 'move':
 					future_state = next_states[0]
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected, failure_penalty)
 					if expected_reward > max_score:
 						max_score = expected_reward
 
 				if action == 'maintenance':
 					future_state = next_states[0]
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected, failure_penalty)
 					# expected_reward = self.expected_reward(future_state, maintenance_reward_collected) + self.maintenance_reward
 					if expected_reward > max_score:
 						max_score = expected_reward
@@ -465,7 +465,7 @@ class MCTS:
 					else:
 						avail_prob = self.avails[node.pose_id].get_prediction(node.time)
 
-					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
+					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					if expected_reward > max_score:
 						max_score = expected_reward
 
@@ -481,7 +481,7 @@ class MCTS:
 					else:
 						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1)
 
-					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
+					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					if expected_reward > max_score:
 						max_score = expected_reward
 
@@ -498,7 +498,7 @@ class MCTS:
 
 				if action == 'move':
 					future_state = next_states[0]
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected, failure_penalty)
 					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
 					if score > best_score:
 						best_score = score
@@ -506,7 +506,7 @@ class MCTS:
 
 				if action == 'maintenance':
 					future_state = next_states[0]
-					expected_reward = self.expected_reward(future_state, maintenance_reward_collected)
+					expected_reward = self.expected_reward(future_state, maintenance_reward_collected, failure_penalty)
 					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
 					if score > best_score:
 						best_score = score
@@ -524,7 +524,7 @@ class MCTS:
 					else:
 						avail_prob = self.avails[node.pose_id].get_prediction(node.time)
 
-					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
+					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
 					if score > best_score:
 						best_score = score
@@ -542,7 +542,7 @@ class MCTS:
 					else:
 						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1)
 
-					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected)
+					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
 					if score > best_score:
 						best_score = score
