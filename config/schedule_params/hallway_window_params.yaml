@@ -6,7 +6,7 @@ availabilities: windows
 sampling_method: gauss
 temporal_consistency: 1
 availability_length: 20
-availability_chance: 0.8
+availability_chance: 0.6
 maintenance_reward: 0.001
 deliver_reward: 1.0
 max_noise_amplitude: 0.0
