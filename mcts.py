@@ -629,9 +629,9 @@ class MCTS:
 			if success_time <= (self.start_time + self.budget):
 				next_states = []
 				# available
-				success_requests_left_to_deliver = node.requests_left_to_deliver
+				success_requests_left_to_deliver = copy.deepcopy(node.requests_left_to_deliver)
 				success_requests_left_to_deliver.remove(node.pose_id)
-				success_requests_delivered = node.requests_delivered
+				success_requests_delivered = copy.deepcopy(node.requests_delivered)
 				success_requests_delivered.append(node.pose_id)
 				success_node_id = self.id_form(node.pose_id, success_time, node.observations, success_requests_left_to_deliver)
 				if not(success_node_id in self.nodes):
