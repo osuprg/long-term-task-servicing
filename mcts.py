@@ -240,7 +240,7 @@ class MCTS:
 			node.cumulative_reward += reward
 
 		else:
-			reward = self.rollout(node_id, maintenance_reward_collected)
+			reward = self.rollout(node_id, maintenance_reward_collected, failure_penalty)
 			node.visits += 1
 			node.cumulative_reward += reward
 
