@@ -174,7 +174,7 @@ class MCTS:
 		self.planning_horizon = planning_horizon
 		self.maintenance_reward = maintenance_reward
 		self.deliver_reward = deliver_reward
-		self.failed_delivery_penalty = -deliver_reward/10.0
+		self.failed_delivery_penalty = -deliver_reward
 		self.mu = mu
 		self.discovery_factor = discovery_factor
 		self.distribution_node = distribution_node

@@ -302,7 +302,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                         curr_state = visits[1]
                         dist = distances[1]
                         visit = mcts.nodes[visits[1]].pose_id
-                        failure_penalty_current_plan -= params['deliver_reward']/10.0
+                        failure_penalty_current_plan -= params['deliver_reward']
 
 
                     action_history.append('deliver_' + visit + '_' + str(curr_time))
