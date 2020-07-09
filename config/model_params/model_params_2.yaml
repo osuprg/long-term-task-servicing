@@ -1,3 +1,4 @@
 spacing: 1
-noise_scaling: 0.02
+# noise_scaling: 0.02
+noise_scaling: 0.00
 use_gp: 1
