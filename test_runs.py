@@ -282,7 +282,10 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
             # plan and execute paths for specified strategies
             visit_traces = {}
             for strategy in strategies:
-                total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params, visualize, out_gif_path)
+                if strategy == 'mcts':
+                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, visualize_path)
+                else:
+                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params, visualize, out_gif_path)
                 visit_traces[strategy] = path_history
 
             visualize_path_willow(strategies, visit_traces, availabilities, true_schedules, node_requests, params['maintenance_node'], params['start_time'], params['budget'], params['time_interval'], out_img_path)
