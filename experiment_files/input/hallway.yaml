@@ -15,3 +15,4 @@ availability_percents: [.5]
 strategies: [mcts]
 visualize: 1
 visualize_path: /experiment_files/output/animations/hallway.gif
+out_img_path: /experiment_files/output/imgs/hallway.jpg
