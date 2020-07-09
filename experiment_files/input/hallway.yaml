@@ -11,7 +11,7 @@ num_deliveries: [2]
 availability_percents: [.5]
 # availability_percents: [.4]
 # strategies: [no_temp, no_replan, replan_no_observe, hack_observe, observe, observe_mult_visits, observe_sampling, observe_sampling_variance_bias, observe_sampling_mult_visits, mcts]
-strategies: [replan_no_observe, observe_mult_visits, mcts]
-# strategies: [mcts]
-visualize: 0
+# strategies: [replan_no_observe, observe_mult_visits, mcts]
+strategies: [mcts]
+visualize: 1
 visualize_path: /experiment_files/output/animations/hallway.gif
