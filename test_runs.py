@@ -15,7 +15,7 @@ from planners import visualize_path_willow
 
 
 ### High level code for running stat runs of task planning and simulated execution
-def stat_runs(world_config_file, schedule_config_file, planner_config_file, model_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries_runs, availability_percents, num_stat_runs, visualize, visualize_path):
+def stat_runs(world_config_file, schedule_config_file, planner_config_file, model_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries_runs, availability_percents, num_stat_runs, visualize, out_gif_path):
 
     if output_file == None:
         record_output = False
@@ -152,9 +152,9 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
             for strategy in strategies:
                 for stat_run in range(num_stat_runs):
                     if strategy == 'mcts':
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, visualize_path)
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, out_gif_path)
                     else:
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, visualize_path)
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, out_gif_path)
                     
                     if record_output:
                         with open(output_file, 'a', newline='') as csvfile:
@@ -283,7 +283,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
             visit_traces = {}
             for strategy in strategies:
                 if strategy == 'mcts':
-                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, visualize_path)
+                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params, visualize, out_gif_path)
                 else:
                     total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params, visualize, out_gif_path)
                 visit_traces[strategy] = path_history

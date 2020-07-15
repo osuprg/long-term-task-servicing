@@ -235,10 +235,10 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
                 visits = next_step[2]
                 distances = next_step[3]
 
-                print ('Curr node: ' + curr_node)
-                print ('Time: ' + str(curr_time))
-                print ('Action: ' + action)
-                print ()
+                # print ('Curr node: ' + curr_node)
+                # print ('Time: ' + str(curr_time))
+                # print ('Action: ' + action)
+                # print ()
 
                 if action == 'move':
                     curr_state = visits[0]
