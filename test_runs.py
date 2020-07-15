@@ -108,7 +108,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         true_availability_models.append(avails)
 
                         ## true schedules
-                        true_schedules.append(generate_schedule(node_requests[stat_run], avails, mu, params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency']))
+                        true_schedules.append(generate_schedule(node_requests[stat_run], avails, params['mu'], params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency']))
                         # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
 
                         # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
@@ -133,7 +133,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         # true_availability_models.append(sampled_avails)
 
                         ## true schedules
-                        true_schedules.append(generate_simple_schedules(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['schedule_generation_method']))
+                        true_schedules.append(generate_simple_schedules(node_requests[stat_run], sampled_avails, params['mu'], params['num_intervals'], params['schedule_generation_method']))
                         # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
 
                         # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
@@ -152,9 +152,9 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
             for strategy in strategies:
                 for stat_run in range(num_stat_runs):
                     if strategy == 'mcts':
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, out_gif_path)
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     else:
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], mu, params, visualize, out_gif_path)
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     
                     if record_output:
                         with open(output_file, 'a', newline='') as csvfile:
@@ -200,6 +200,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                 mu = int(params['availability_length']/2)
             else:
                 mu = 30
+            params['mu'] = mu
 
 
             # base models, true schedules
@@ -241,7 +242,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                     true_availability_models = avails
 
                     ## true schedules
-                    true_schedules = generate_schedule(node_requests, true_availability_models, mu, params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency'])
+                    true_schedules = generate_schedule(node_requests, true_availability_models, params['mu'], params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency'])
 
                     # save_base_models_to_file(base_model_filepath, base_availability_models, base_model_variances, node_requests, num_deliveries, availability_percent, stat_run)
                     # save_schedules_to_file(schedule_filepath, true_availability_models, true_schedules, node_requests, num_deliveries, availability_percent, stat_run)
@@ -264,7 +265,7 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
                     # true_availability_models.append(sampled_avails)
 
                     ## true schedules
-                    true_schedules = generate_simple_schedules(node_requests, base_availability_models, mu, params['num_intervals'], params['schedule_generation_method'])
+                    true_schedules = generate_simple_schedules(node_requests, base_availability_models, params['mu'], params['num_intervals'], params['schedule_generation_method'])
                     # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
 
                     # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
@@ -283,9 +284,9 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
             visit_traces = {}
             for strategy in strategies:
                 if strategy == 'mcts':
-                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params, visualize, out_gif_path)
+                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, params['mu'], params, visualize, out_gif_path)
                 else:
-                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, mu, params, visualize, out_gif_path)
+                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models, model_variances, true_schedules, node_requests, params['mu'], params, visualize, out_gif_path)
                 visit_traces[strategy] = path_history
 
             visualize_path_willow(strategies, visit_traces, availabilities, true_schedules, node_requests, params['maintenance_node'], params['start_time'], params['budget'], params['time_interval'], out_img_path)
