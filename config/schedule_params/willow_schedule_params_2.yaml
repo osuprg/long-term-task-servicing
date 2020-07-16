@@ -6,8 +6,8 @@ availabilities: windows
 sampling_method: gauss
 temporal_consistency: 1
 availability_length: 10
-availability_chance: 0.9
-maintenance_reward: 0.01
+availability_chance: 0.6
+maintenance_reward: 0.001
 deliver_reward: 1.0
 max_noise_amplitude: 0.0
 schedule_generation_method: temporal_consistency
