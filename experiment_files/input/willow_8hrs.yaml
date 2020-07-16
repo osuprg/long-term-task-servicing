@@ -2,7 +2,7 @@ world_config_file: /config/world_params/willow_scenario.yaml
 schedule_config_file: /config/schedule_params/willow_schedule_params_1.yaml
 planner_config_file: /config/planner_params/planner_params_1.yaml
 model_config_file: /config/model_params/model_params_1.yaml
-base_model_filepath: /worlds/willow/models/params_willow_scenario_1/
+base_model_filepath: /worlds/willow/models/params_willow_scenario_2/
 schedule_filepath: /worlds/willow/schedules/params_willow_scenario_1/
 # num_deliveries: [10, 20, 30, 40]
 num_deliveries: [40]
