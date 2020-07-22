@@ -187,6 +187,7 @@ class STGraphNode:
         self.serviced_nodes = []
         self.serviced_probs = {}
         self.last_visits = {}
+        self.last_attempted_deliveries = {}
 
 class STGraphEdge:
     def __init__(self, edge_type, profit, edge_dist):
@@ -666,6 +667,7 @@ class SpatioTemporalGraph:
                     # if going through node is the best way to get to successor, update successors parent
                     if (node.sum + self.edges[node_name][successor_name].profit) > successor.sum:
                         # update last time seen delivery node
+                        successor.last_attempted_deliveries = copy.deepcopy(node.last_attempted_deliveries)
                         successor.last_visits = copy.deepcopy(node.last_visits)
                         successor.last_visits[successor.id] = successor.t
 
@@ -684,20 +686,23 @@ class SpatioTemporalGraph:
                         not_visited = 1.0
                         if successor.id in node.serviced_probs:
                             not_visited -= node.serviced_probs[successor.id]
-                        if successor.id in node.last_visits:
+                        # avail prob updated if past attempt failure
+                        if successor.id in node.last_attempted_deliveries:
                             last_observation = 0
-                            last_observation_time = node.last_visits[successor.id]
+                            last_observation_time = node.last_attempted_deliveries[successor.id]
                             prob = self.combine_probabilities(successor.id, successor.t, last_observation, last_observation_time)
                         else:
                             prob = successor.prob
-                            if successor.id in self.observations:
-                                last_observation = self.observations[successor.id][0]
-                                last_observation_time = self.observations[successor.id][1]
-                            else:
-                                last_observation = None
-                                last_observation_time = None
 
-                        successor_profit = self.confidence_penalization(not_visited, prob, successor.t, last_observation, last_observation_time)
+                        # last short term observation to inform uncertainty penalty
+                        if successor.id in node.last_visits:
+                            last_observation_time = node.last_visits[successor.id]
+                        elif successor.id in self.observations:
+                            last_observation_time = self.observations[successor.id][1]
+                        else:
+                            last_observation_time = None
+
+                        successor_profit = self.confidence_penalization(not_visited, prob, successor.t, last_observation_time)
 
                     # incorporate observation
                     elif self.incorporate_observation:
@@ -706,20 +711,17 @@ class SpatioTemporalGraph:
                             successor_profit = 0.0
                             prob = 0.0
                         else:
-                            if successor.id in node.last_visits:
-                                last_observation = 0
-                                last_observation_time = node.last_visits[successor.id]
-                                prob = self.combine_probabilities(successor.id, successor.t, last_observation, last_observation_time)
-                            else:
-                                prob = successor.prob
-                                if successor.id in self.observations:
-                                    last_observation = self.observations[successor.id][0]
-                                    last_observation_time = self.observations[successor.id][1]
-                                else:
-                                    last_observation = None
-                                    last_observation_time = None
+                            prob = successor.prob
 
-                            successor_profit = self.confidence_penalization(not_visited, prob, successor.t, last_observation, last_observation_time)
+                        # last short term observation to inform uncertainty penalty
+                        if successor.id in node.last_visits:
+                            last_observation_time = node.last_visits[successor.id]
+                        elif successor.id in self.observations:
+                            last_observation_time = self.observations[successor.id][1]
+                        else:
+                            last_observation_time = None
+
+                        successor_profit = self.confidence_penalization(not_visited, prob, successor.t, last_observation_time)
 
                     # don't incorporate observation
                     else:
@@ -739,7 +741,9 @@ class SpatioTemporalGraph:
                             successor.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
                             # update last time seen delivery node
                             successor.last_visits = copy.deepcopy(node.last_visits)
-                            successor.last_visits[successor.id] = successor.t
+                            successor.last_attempted_deliveries = copy.deepcopy(node.last_attempted_deliveries)
+                            successor.last_visits[successor.id] = [successor.t]
+                            successor.last_attempted_deliveries[successor.id] = [successor.t]
                             # update cummulative successful delivery prob
                             successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                             visited = 0
@@ -761,6 +765,7 @@ class SpatioTemporalGraph:
                         successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                         # successor.serviced_nodes = node.serviced_nodes
                         successor.last_visits = copy.deepcopy(node.last_visits)
+                        successor.last_attempted_deliveries = copy.deepcopy(node.last_attempted_deliveries)
                         self.vertices[successor_name] = successor
 
 
@@ -777,12 +782,12 @@ class SpatioTemporalGraph:
         return path
 
 
-    def confidence_penalization(self, not_visited, prob, curr_time, last_visit, last_visit_time):
+    def confidence_penalization(self, not_visited, prob, curr_time, last_observation_time):
         reward = not_visited*prob*self.deliver_reward
-        uncertainty_penalty = self.uncertainty_penalty*self.calc_uncertainty(prob)
+        uncertainty_penalty = self.uncertainty_penalty*self.calc_uncertainty(prob, curr_time, last_observation_time)
         return max(reward - uncertainty_penalty, 0)
 
-    def calc_uncertainty(self, prob):
+    def calc_uncertainty(self, prob, curr_time, last_observation_time):
         # long-term only
 
         # short-term only
@@ -790,9 +795,15 @@ class SpatioTemporalGraph:
         # combined model
 
         # only based on prob, no bayesian confidence considered
-        uncertainty = entropy(prob)
 
-        return uncertainty
+        combined_model_uncertainty = entropy(prob)
+
+        if not(last_observation_time is None):
+            short_term_uncertainty = entropy(persistence_prob(self.mu, curr_time-last_observation_time, 1))         # without loss of generality, say observation is true (only considering short term model)
+        else:
+            short_term_uncertainty = combined_model_uncertainty
+
+        return min(short_term_uncertainty, combined_model_uncertainty)      # FIXME -- hack instead of combined uncertainty
 
 
     ### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)
