@@ -835,7 +835,12 @@ class SpatioTemporalGraph:
         return new_prob
 
 def entropy(prob):
-    return -prob*math.log(prob) - (1.0-prob)*math.log(1.0-prob)
+    if prob < .0001:
+        return -(1.0-prob)*math.log(1.0-prob)
+    elif prob > .9999:
+        return -prob*math.log(prob)
+    else:
+        return -prob*math.log(prob) - (1.0-prob)*math.log(1.0-prob)
 
 ### Add random noise to availability model
 def add_random_noise(availability_model, noise_amplitude, availability_chance):
