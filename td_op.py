@@ -697,7 +697,7 @@ class SpatioTemporalGraph:
                                 last_observation = None
                                 last_observation_time = None
 
-                        successor_profit = confidence_penalization(not_visited, prob, successor.t, last_observation, last_observation_time)
+                        successor_profit = self.confidence_penalization(not_visited, prob, successor.t, last_observation, last_observation_time)
 
                     # incorporate observation
                     elif self.incorporate_observation:
@@ -719,7 +719,7 @@ class SpatioTemporalGraph:
                                     last_observation = None
                                     last_observation_time = None
 
-                            successor_profit = confidence_penalization(not_visited, prob, successor.t, last_observation, last_observation_time)
+                            successor_profit = self.confidence_penalization(not_visited, prob, successor.t, last_observation, last_observation_time)
 
                     # don't incorporate observation
                     else:
