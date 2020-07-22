@@ -625,7 +625,7 @@ class SpatioTemporalGraph:
                         self.vertices[neighbor_name] = neighbor_node
                         st_node.successors.append(neighbor_name)
                         assert not(neighbor_node.delivery_profit is None)
-                        self.add_edge(st_node.name, neighbor_name, 'service', neighbor_node.delivery_profit, dist)
+                        self.add_edge(st_node.name, neighbor_name, 'deliver', neighbor_node.delivery_profit, dist)
 
 
                 # non-delivery, non-maintenance, self-transit

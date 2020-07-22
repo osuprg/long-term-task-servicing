@@ -24,6 +24,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
     nodes_delivered = []
     img_history = []
     path_history = [params['start_node_id']]
+    action_history = []
     curr_time = params['start_time']
     curr_node = params['start_node_id']
     path_length = 1
@@ -65,6 +66,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                 action = next_step[1]
                 dist = next_step[2]
                 path_history.append(visit)
+                action_history.append(action + '_' + visit + '_' + str(curr_time))
                 # if curr_node == visit:
                 #     dist = 1
                 # else:
@@ -74,7 +76,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                 curr_node = visit
                 path_visits += 1
 
-                if visit == params['maintenance_node']:
+                if (visit == params['maintenance_node']) and (action == 'maintenance'):
                     total_maintenance_profit += params['maintenance_reward']
 
                 breakout = False
@@ -88,7 +90,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
                 # assert(curr_time_index <= (params['num_intervals'] - 1))
 
                 if visit in requests_left_to_deliver:
-                    if action == 'service':
+                    if action == 'deliver':
                         available = true_schedules[visit][curr_time_index]
                         if bool(available):
                             requests_left_to_deliver.remove(visit)
@@ -150,6 +152,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
 
     if visualize:
         imageio.mimsave(visualize_path, img_history, duration=2)
+        print (action_history)
 
     return total_profit, competitive_ratio, maintenance_competitive_ratio, path_history
 
