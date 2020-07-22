@@ -30,8 +30,8 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
     # g.read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
 
     # g = read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
-    g = generate_graph(params['graph_generator_type'], os.path.dirname(os.path.abspath(__file__)), params['graph_filename'], params['max_rooms'], params['max_traversal_cost'], params['distance_scaling'])
-
+    g, rooms = generate_graph(params['graph_generator_type'], os.path.dirname(os.path.abspath(__file__)), params['graph_filename'], params['max_rooms'], params['rooms'], params['max_traversal_cost'], params['distance_scaling'])
+    params['rooms'] = rooms
     
     for num_deliveries in num_deliveries_runs:
         for availability_percent in availability_percents:
@@ -176,8 +176,8 @@ def vizualize_sample_execution(world_config_file, schedule_config_file, planner_
     # g.read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
 
     # g = read_graph_from_file(os.path.dirname(os.path.abspath(__file__)) + params['graph_filename'])
-    g = generate_graph(params['graph_generator_type'], os.path.dirname(os.path.abspath(__file__)), params['graph_filename'], params['max_rooms'], params['max_traversal_cost'], params['distance_scaling'])
-
+    g, rooms = generate_graph(params['graph_generator_type'], os.path.dirname(os.path.abspath(__file__)), params['graph_filename'], params['max_rooms'], params['rooms'], params['max_traversal_cost'], params['distance_scaling'])
+    params['rooms'] = rooms
 
     for num_deliveries in num_deliveries_runs:
         for availability_percent in availability_percents:
