@@ -680,7 +680,7 @@ class SpatioTemporalGraph:
                 elif self.edges[node_name][successor_name].edge_type == 'deliver':
 
                     # multiple visits
-                    if multiple_visits and incorporate_observation:
+                    if multiple_visits and self.incorporate_observation:
                         not_visited = 1.0
                         if successor.id in node.serviced_probs:
                             not_visited -= node.serviced_probs[successor.id]
@@ -700,7 +700,7 @@ class SpatioTemporalGraph:
                         successor_profit = confidence_penalization(not_visited, prob, successor.t, last_observation, last_observation_time)
 
                     # incorporate observation
-                    elif incorporate_observation:
+                    elif self.incorporate_observation:
                         not_visited = 1.0
                         if successor.id in node.serviced_probs:
                             successor_profit = 0.0
