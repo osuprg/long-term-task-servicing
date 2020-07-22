@@ -572,7 +572,7 @@ class SpatioTemporalGraph:
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
                         st_node.successors.append(neighbor_name)
-                        self.add_edge(st_node.name, neighbor_name, 'move', 0.0, 1)
+                        self.add_edge(st_node.name, neighbor_name, 'move', 0.0, dist)
 
 
                 ## Add self vertex
