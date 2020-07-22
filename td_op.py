@@ -435,7 +435,7 @@ class SpatioTemporalGraph:
             node = self.vertices[node_name]
             if node.indegree == 0:
                 S.add(node_name)
-                node.path = [node.id]
+                # node.path = [node.id]
                 self.vertices[node_name] = node
 
         # while there is at least one node without incoming edges
