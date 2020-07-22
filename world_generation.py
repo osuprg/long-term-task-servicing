@@ -82,7 +82,7 @@ def generate_simple_floors(max_rooms, traversal_cost):
         old_node = new_node
 
         # rooms adjacent to floor landing
-        for j in range(num_rooms_per_floor)
+        for j in range(num_rooms_per_floor):
             new_node = "R" + str(node_index)
             node_index += 1
             g.add_node(new_node)
