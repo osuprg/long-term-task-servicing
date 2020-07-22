@@ -21,7 +21,7 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
         for request in requests_left_to_deliver:
             sample_availability_models[request] = sample_bernoulli_avialability_model(base_availability_models[request])
         
-        st_g = SpatioTemporalGraph(sample_availability_models, base_model_variances, mu, int((budget - curr_time)/time_interval), budget - curr_time, time_interval, maintenance_node, maintenance_reward, deliver_reward, uncertainty_penalty, use_gp)
+        st_g = SpatioTemporalGraph(sample_availability_models, base_model_variances, availability_observations, True, mu, int((budget - curr_time)/time_interval), budget - curr_time, time_interval, maintenance_node, maintenance_reward, deliver_reward, uncertainty_penalty, use_gp)
         st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, incorporate_observation, incorporate_observation_hack, variance_bias)
 
         ## topological sort
@@ -72,7 +72,7 @@ def sample_best_path(g, base_availability_models, base_model_variances, availabi
             while (path_visits < path_length):
 
                 if orig_path_used:
-                    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((budget - sim_time)/time_interval), budget - sim_time, time_interval, maintenance_node, maintenance_reward, deliver_reward, uncertainty_penalty, use_gp)
+                    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, availability_observations, True, mu, int((budget - sim_time)/time_interval), budget - sim_time, time_interval, maintenance_node, maintenance_reward, deliver_reward, uncertainty_penalty, use_gp)
                     st_g.build_graph(g, sim_curr_node, sim_time, sim_requests_left_to_deliver, sim_availability_observations, incorporate_observation, incorporate_observation_hack, variance_bias)
 
                     ## topological sort
@@ -348,35 +348,35 @@ def plan_path_no_temp_info(g, base_availability_models, base_model_variances, av
         constant_availability_models[request] = avails
         constant_availability_models[request] = variances
 
-    st_g = SpatioTemporalGraph(constant_availability_models, constant_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['uncertainty_penalty'], False)
+    st_g = SpatioTemporalGraph(constant_availability_models, constant_model_variances, availability_observations, False, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['uncertainty_penalty'], False)
     st_g.build_graph_single_delivery(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, False, False, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path_single_delivery(L, requests_left_to_deliver, False)
     return path
 
 def plan_path_no_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
-    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['uncertainty_penalty'], params['use_gp'])
+    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, availability_observations, False, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['uncertainty_penalty'], params['use_gp'])
     st_g.build_graph_single_delivery(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, False, False, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path_single_delivery(L, requests_left_to_deliver, False)
     return path
 
 def plan_path_with_hack_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
-    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['uncertainty_penalty'], params['use_gp'])
+    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, availability_observations, False, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['uncertainty_penalty'], params['use_gp'])
     st_g.build_graph(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, True, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path(L, requests_left_to_deliver, False)
     return path
 
 def plan_path_with_observe(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
-    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['uncertainty_penalty'], params['use_gp'])
+    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, availability_observations, True, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['uncertainty_penalty'], params['use_gp'])
     st_g.build_graph_single_delivery(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, False, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path_single_delivery(L, requests_left_to_deliver, False)
     return path
 
 def plan_path_with_observe_mult_visits(g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params):
-    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['uncertainty_penalty'], params['use_gp'])
+    st_g = SpatioTemporalGraph(base_availability_models, base_model_variances, availability_observations, True, mu, int((params['budget'] - curr_time)/params['time_interval']), params['budget'] - curr_time, params['time_interval'], params['maintenance_node'], params['maintenance_reward'], params['deliver_reward'], params['uncertainty_penalty'], params['use_gp'])
     st_g.build_graph_single_delivery(g, curr_node, curr_time, requests_left_to_deliver, availability_observations, True, False, False)
     L = st_g.topological_sort()
     path = st_g.calc_max_profit_path_single_delivery(L, requests_left_to_deliver, True)
