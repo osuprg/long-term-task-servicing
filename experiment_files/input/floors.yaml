@@ -13,6 +13,6 @@ availability_percents: [.5]
 # strategies: [no_temp, no_replan, replan_no_observe, hack_observe, observe, observe_mult_visits, observe_sampling, observe_sampling_variance_bias, observe_sampling_mult_visits, mcts]
 strategies: [replan_no_observe, observe, observe_mult_visits]
 # strategies: [observe_mult_visits]
-visualize: 0
+visualize: 1
 visualize_path: /experiment_files/output/animations/floors.gif
 out_img_path: /experiment_files/output/imgs/floors.jpg
