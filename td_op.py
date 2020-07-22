@@ -671,7 +671,7 @@ class SpatioTemporalGraph:
 
                         successor.sum = node.sum + successor_profit
                         successor.parent = node_name
-                        successor.path = node.path
+                        successor.path = copy.deepcopy(node.path)
                         successor.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
                         successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                         # successor.serviced_nodes = node.serviced_nodes
@@ -735,7 +735,7 @@ class SpatioTemporalGraph:
                     if (node.sum + successor_profit) > successor.sum:
                             successor.sum = node.sum + successor_profit
                             successor.parent = node_name
-                            successor.path = node.path
+                            successor.path = copy.deepcopy(node.path)
                             successor.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
                             # update last time seen delivery node
                             successor.last_visits = copy.deepcopy(node.last_visits)
@@ -756,10 +756,10 @@ class SpatioTemporalGraph:
                     if (node.sum + successor_profit) > successor.sum:
                         successor.sum = node.sum + successor_profit
                         successor.parent = node_name
-                        successor.path = node.path
+                        successor.path = copy.deepcopy(node.path)
                         successor.path.append([successor.id, self.edges[node_name][successor_name].edge_type, self.edges[node_name][successor_name].edge_dist])
                         successor.serviced_probs = copy.deepcopy(node.serviced_probs)
-                        successor.serviced_nodes = node.serviced_nodes
+                        # successor.serviced_nodes = node.serviced_nodes
                         successor.last_visits = copy.deepcopy(node.last_visits)
                         self.vertices[successor_name] = successor
 
