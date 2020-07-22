@@ -742,8 +742,8 @@ class SpatioTemporalGraph:
                             # update last time seen delivery node
                             successor.last_visits = copy.deepcopy(node.last_visits)
                             successor.last_attempted_deliveries = copy.deepcopy(node.last_attempted_deliveries)
-                            successor.last_visits[successor.id] = [successor.t]
-                            successor.last_attempted_deliveries[successor.id] = [successor.t]
+                            successor.last_visits[successor.id] = successor.t
+                            successor.last_attempted_deliveries[successor.id] = successor.t
                             # update cummulative successful delivery prob
                             successor.serviced_probs = copy.deepcopy(node.serviced_probs)
                             visited = 0
