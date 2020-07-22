@@ -62,7 +62,7 @@ def generate_simple_floors(max_rooms, traversal_cost):
     g = nx.Graph()
     num_rooms_per_floor = 4
 
-    num_floors = max_rooms/num_rooms_per_floor
+    num_floors = int(max_rooms/num_rooms_per_floor)
     node_index = 1
     old_node = "R" + str(node_index)
     node_index += 1
