@@ -3,7 +3,7 @@ start_node_id: R1
 distribution_node: R1
 maintenance_node: R1
 max_rooms: 12
-max_traversal_cost: 10
+max_traversal_cost: 5
 graph_generator_type: simple_floors
 graph_filename: None
 distance_scaling: 1

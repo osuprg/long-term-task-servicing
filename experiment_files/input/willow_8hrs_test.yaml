@@ -1,0 +1,11 @@
+world_config_file: /config/world_params/willow_scenario.yaml
+schedule_config_file: /config/schedule_params/willow_schedule_params_1.yaml
+planner_config_file: /config/planner_params/planner_params_1.yaml
+base_model_filepath: /worlds/willow/models/params_willow_scenario_1/
+schedule_filepath: /worlds/willow/schedules/params_willow_scenario_1/
+num_deliveries: [40]
+availability_percents: [.3]
+# strategies: [no_temp, no_replan, replan_no_observe, hack_observe, observe, observe_sampling, observe_sampling_variance_bias, observe_sampling_mult_visits]
+strategies: [observe]
+visualize: 1
+visualize_path: /experiment_files/output/animations/willow_8hrs_test_observe.gif
