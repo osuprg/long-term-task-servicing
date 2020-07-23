@@ -5,4 +5,4 @@ max_iterations: 100
 planning_horizon: 10
 min_expansions: 10
 discovery_factor: 1.41421356237
-uncertainty_penalty: 0.5
+uncertainty_penalty: 0.25
