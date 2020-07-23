@@ -1,5 +1,5 @@
 # budget: 60
-budget: 120
+budget: 60
 time_interval: 1
 start_time: 0
 node_closeness: sequential
@@ -7,7 +7,7 @@ availabilities: windows
 sampling_method: gauss
 temporal_consistency: 1
 # availability_length: 20
-availability_length: 30
+availability_length: 15
 availability_chance: 0.6
 maintenance_reward: 0.001
 deliver_reward: 1.0
