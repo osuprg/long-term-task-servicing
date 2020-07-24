@@ -6,12 +6,12 @@ base_model_filepath: /worlds/willow/models/params_floors/
 schedule_filepath: /worlds/willow/schedules/params_floors/
 # num_deliveries: [10, 20, 30, 40]
 # num_deliveries: [2]
-num_deliveries: [4]
+num_deliveries: [12]
 availability_percents: [.1, .2, .3, .4, .5, .6, .7, .8, .9]
 # availability_percents: [.5]
 # availability_percents: [.5]
 # strategies: [no_temp, no_replan, replan_no_observe, hack_observe, observe, observe_mult_visits, observe_sampling, observe_sampling_variance_bias, observe_sampling_mult_visits, mcts]
-strategies: [replan_no_observe, observe, observe_mult_visits, mcts]
+strategies: [replan_no_observe, observe, observe_mult_visits]
 # strategies: [observe_mult_visits]
 visualize: 0
 visualize_path: /experiment_files/output/animations/floors.gif
