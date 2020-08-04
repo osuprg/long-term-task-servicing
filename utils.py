@@ -48,6 +48,8 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
     params['min_expansions'] = int(planner_params['min_expansions'])
     params['discovery_factor'] = float(planner_params['discovery_factor'])
     params['uncertainty_penalty'] = float(planner_params['uncertainty_penalty'])
+    params['observation_reward'] = float(planner_params['observation_reward'])
+    params['deliver_threshold'] = float(planner_params['deliver_threshold'])
 
     with open(model_config_file) as f:
         model_params = yaml.load(f, Loader=yaml.FullLoader)

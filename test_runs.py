@@ -150,6 +150,78 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
             # plan and execute paths for specified strategies
             for strategy in strategies:
+
+                strategy_name = strategy
+
+                params['uncertainty_penalty'] = 0.0
+                params['observation_reward'] = 0.5
+                params['deliver_threshold'] = 0.0
+
+                if strategy == 'observe_mult_visits_up.1':
+                    params['uncertainty_penalty'] = 0.2
+                    params['observation_reward'] = 0.0
+                    params['deliver_threshold'] = 0.0
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up.2':
+                    params['uncertainty_penalty'] = 0.2
+                    params['observation_reward'] = 0.0
+                    params['deliver_threshold'] = 0.0
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up.3':
+                    params['uncertainty_penalty'] = 0.3
+                    params['observation_reward'] = 0.0
+                    params['deliver_threshold'] = 0.0
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up.4':
+                    params['uncertainty_penalty'] = 0.4
+                    params['observation_reward'] = 0.0
+                    params['deliver_threshold'] = 0.0
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up.5':
+                    params['uncertainty_penalty'] = 0.5
+                    params['observation_reward'] = 0.0
+                    params['deliver_threshold'] = 0.0
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up.6':
+                    params['uncertainty_penalty'] = 0.6
+                    params['observation_reward'] = 0.0
+                    params['deliver_threshold'] = 0.0
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up.7':
+                    params['uncertainty_penalty'] = 0.7
+                    params['observation_reward'] = 0.0
+                    params['deliver_threshold'] = 0.0
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+
+
+                # if strategy == 'observe_mult_visits_up0_or.1_dt_0':
+                #     params['uncertainty_penalty'] = 0.0
+                #     params['observation_reward'] = 0.1
+                #     params['deliver_threshold'] = 0.0
+                #     strategy_name = strategy
+                #     strategy = 'observe_mult_visits'
+
+                # if strategy == 'observe_mult_visits_up.5_or0_dt_0':
+                #     params['uncertainty_penalty'] = 0.5
+                #     params['observation_reward'] = 0.0
+                #     params['deliver_threshold'] = 0.0
+                #     strategy_name = strategy
+                #     strategy = 'observe_mult_visits'
+
                 for stat_run in range(num_stat_runs):
                     if strategy == 'mcts':
                         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
@@ -159,7 +231,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                     if record_output:
                         with open(output_file, 'a', newline='') as csvfile:
                             writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                            writer.writerow([strategy, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
+                            writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
 
 
 

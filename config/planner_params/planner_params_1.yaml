@@ -6,3 +6,5 @@ planning_horizon: 10
 min_expansions: 10
 discovery_factor: 1.41421356237
 uncertainty_penalty: .5
+observation_reward: 0.0
+deliver_threshold: .75
