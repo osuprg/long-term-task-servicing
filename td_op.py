@@ -686,7 +686,7 @@ class SpatioTemporalGraph:
                         else:
                             last_observation_time = None
 
-                        successor_profit = self.observation_reward(prob, node.t, last_observation_time)
+                        successor_profit = self.calc_observation_reward(prob, node.t, last_observation_time)
 
                     # incorporate observation
                     elif self.incorporate_observation:
@@ -704,7 +704,7 @@ class SpatioTemporalGraph:
                             else:
                                 last_observation_time = None
 
-                            successor_profit = self.observation_reward(prob, node.t, last_observation_time)
+                            successor_profit = self.calc_observation_reward(prob, node.t, last_observation_time)
 
                     # don't incorporate observation
                     else:
@@ -828,7 +828,7 @@ class SpatioTemporalGraph:
         return path
 
 
-    def observation_reward(self, prob, curr_time, last_observation_time):
+    def calc_observation_reward(self, prob, curr_time, last_observation_time):
         uncertainty = self.calc_uncertainty(prob, curr_time, last_observation_time)
         reward = self.observation_reward*prob*uncertainty
         return reward
