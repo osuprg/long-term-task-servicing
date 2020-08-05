@@ -157,54 +157,62 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 params['observation_reward'] = 0.5
                 params['deliver_threshold'] = 0.0
 
-                if strategy == 'observe_mult_visits_up.1':
-                    params['uncertainty_penalty'] = 0.2
-                    params['observation_reward'] = 0.0
-                    params['deliver_threshold'] = 0.0
-                    strategy_name = strategy
-                    strategy = 'observe_mult_visits'
-
-                if strategy == 'observe_mult_visits_up.2':
-                    params['uncertainty_penalty'] = 0.2
-                    params['observation_reward'] = 0.0
-                    params['deliver_threshold'] = 0.0
-                    strategy_name = strategy
-                    strategy = 'observe_mult_visits'
-
-                if strategy == 'observe_mult_visits_up.3':
-                    params['uncertainty_penalty'] = 0.3
-                    params['observation_reward'] = 0.0
-                    params['deliver_threshold'] = 0.0
-                    strategy_name = strategy
-                    strategy = 'observe_mult_visits'
-
-                if strategy == 'observe_mult_visits_up.4':
-                    params['uncertainty_penalty'] = 0.4
-                    params['observation_reward'] = 0.0
-                    params['deliver_threshold'] = 0.0
-                    strategy_name = strategy
-                    strategy = 'observe_mult_visits'
-
-                if strategy == 'observe_mult_visits_up.5':
+                if strategy == 'observe_mult_visits_up_5_or_0_dt_0':
                     params['uncertainty_penalty'] = 0.5
                     params['observation_reward'] = 0.0
                     params['deliver_threshold'] = 0.0
                     strategy_name = strategy
                     strategy = 'observe_mult_visits'
 
-                if strategy == 'observe_mult_visits_up.6':
-                    params['uncertainty_penalty'] = 0.6
+                if strategy == 'observe_mult_visits_up_5_or_0_dt_8':
+                    params['uncertainty_penalty'] = 0.5
                     params['observation_reward'] = 0.0
+                    params['deliver_threshold'] = 0.8
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up_0_or_1_dt_0':
+                    params['uncertainty_penalty'] = 0.0
+                    params['observation_reward'] = 0.1
                     params['deliver_threshold'] = 0.0
                     strategy_name = strategy
                     strategy = 'observe_mult_visits'
 
-                if strategy == 'observe_mult_visits_up.7':
-                    params['uncertainty_penalty'] = 0.7
-                    params['observation_reward'] = 0.0
+                if strategy == 'observe_mult_visits_up_0_or_5_dt_0':
+                    params['uncertainty_penalty'] = 0.0
+                    params['observation_reward'] = 0.5
                     params['deliver_threshold'] = 0.0
                     strategy_name = strategy
                     strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up_0_or_5_dt_8':
+                    params['uncertainty_penalty'] = 0.0
+                    params['observation_reward'] = 0.5
+                    params['deliver_threshold'] = 0.8
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up_0_or_10_dt_0':
+                    params['uncertainty_penalty'] = 0.0
+                    params['observation_reward'] = 1.0
+                    params['deliver_threshold'] = 0.0
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up_0_or_0_dt_8':
+                    params['uncertainty_penalty'] = 0.0
+                    params['observation_reward'] = 0.0
+                    params['deliver_threshold'] = 0.8
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
+                if strategy == 'observe_mult_visits_up_5_or_1_dt_8':
+                    params['uncertainty_penalty'] = 0.5
+                    params['observation_reward'] = 0.1
+                    params['deliver_threshold'] = 0.8
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
 
 
 
