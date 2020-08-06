@@ -13,8 +13,8 @@ availability_percents: [.2, .3, .4, .5]
 # strategies: [no_temp, no_replan, replan_no_observe, hack_observe, observe, observe_mult_visits, observe_sampling, observe_sampling_variance_bias, observe_sampling_mult_visits, mcts]
 # strategies: [replan_no_observe, observe, observe_mult_visits, observe_mult_visits_up_5_or_0_dt_0, observe_mult_visits_up_5_or_0_dt_8, observe_mult_visits_up_0_or_1_dt_0, observe_mult_visits_up_0_or_5_dt_0, 
             # observe_mult_visits_up_0_or_5_dt_8, observe_mult_visits_up_0_or_10_dt_0, observe_mult_visits_up_0_or_0_dt_8, observe_mult_visits_up_5_or_1_dt_8]
-strategies: [replan_no_observe, observe_mult_visits_up_1_or_0_dt_0, observe_mult_visits_up_2_or_0_dt_0, observe_mult_visits_up_3_or_0_dt_0, observe_mult_visits_up_4_or_0_dt_0, observe_mult_visits_up_5_or_0_dt_0,
-            observe_mult_visits_up_6_or_0_dt_0, observe_mult_visits_up_7_or_0_dt_0, observe_mult_visits_up_8_or_0_dt_0, observe_mult_visits_up_9_or_0_dt_0]
+strategies: [replan_no_observe, observe_mult_visits_up_0_or_1_dt_0, observe_mult_visits_up_0_or_2_dt_0, observe_mult_visits_up_0_or_3_dt_0, observe_mult_visits_up_0_or_4_dt_0, observe_mult_visits_up_0_or_5_dt_0,
+            observe_mult_visits_up_0_or_6_dt_0, observe_mult_visits_up_0_or_7_dt_0, observe_mult_visits_up_0_or_8_dt_0, observe_mult_visits_up_0_or_9_dt_0, observe_mult_visits_up_0_or_10_dt_0]
 visualize: 0
 visualize_path: /experiment_files/output/animations/floors.gif
 out_img_path: /experiment_files/output/imgs/floors.jpg
