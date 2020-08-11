@@ -11,7 +11,7 @@ def generate_graph(graph_generator_type, filepath, filename, max_rooms, rooms, m
         g, rooms = generate_simple_floors(max_rooms, max_traversal_cost)
         return g, rooms
     elif graph_generator_type == 'brayford':
-        g, rooms = generate_Brayford(max_traversal_cost):
+        g, rooms = generate_Brayford(max_traversal_cost)
     else:
         raise ValueError(graph_generator_type)
 
