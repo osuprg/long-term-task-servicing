@@ -69,8 +69,8 @@ def load_brayford_training_data(request, data_path):
     x_in = []
     y_in = []
     for line in lines:
-        x_in.append(int(line))
-        y_in.append(time)
+        x_in.append(time)
+        y_in.append(int(line))
         time = (time + 10)%1440     # 1 day is 1440 minutes
     x_in = np.array(x_in)
     y_in = np.array(y_in)
@@ -89,8 +89,8 @@ def load_brayford_testing_data(request, data_path, stat_run):
     x_in = []
     y_in = []
     for line in lines:
-        x_in.append(int(line))
-        y_in.append(time)
+        x_in.append(time)
+        y_in.append(int(line))
         time = (time + 10)%1440     # 1 day is 1440 minutes
     x_in = np.array(x_in)
     y_in = np.array(y_in)
