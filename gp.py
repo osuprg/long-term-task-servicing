@@ -1,6 +1,7 @@
 import torch
 import gpytorch
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 
