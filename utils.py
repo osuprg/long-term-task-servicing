@@ -38,6 +38,7 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
     params['max_noise_amplitude'] = float(schedule_params['max_noise_amplitude'])
     params['schedule_generation_method'] = schedule_params['schedule_generation_method']
     params['num_intervals'] = int(params['budget']/params['time_interval'])
+    params['data_path'] = schedule_params['data_path']
 
     with open(planner_config_file) as f:
         planner_params = yaml.load(f, Loader=yaml.FullLoader)
@@ -75,7 +76,7 @@ def load_brayford_training_data(request, data_path):
     y_in = np.array(y_in)
     return x_in, y_in
 
-def load_brayford_testing_data(request, params['data_path'], stat_run):
+def load_brayford_testing_data(request, data_path, stat_run):
     if stat_run == 0:
         path = data_path + "february_" + request + ".txt"
     elif stat_run == 1:
