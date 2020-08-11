@@ -303,46 +303,48 @@ class GP():
                 return np.sum(diff)
 
 
-    def visualize(self):
+    def visualize(self, visualize_path, request):
 
-        if self.model is None:
-            return
+        # if self.model is None:
+        #     return
 
-        elif (self.train_x.shape[0] < 2):
-            return
+        # elif (self.train_x.shape[0] < 2):
+        #     return
 
-        elif (self.train_x.shape[0] == 2) and (self.train_x[0] == self.train_x[1]):
-            return
+        # elif (self.train_x.shape[0] == 2) and (self.train_x[0] == self.train_x[1]):
+        #     return
 
-        else:
-            self.model.eval()
-            self.likelihood.eval()
+        # else:
 
-            with torch.no_grad(), gpytorch.settings.fast_pred_var():
-                test_x = torch.linspace(0, int(self.budget), int(self.budget))
-                observed_pred = self.likelihood(self.model(test_x))
+        self.model.eval()
+        self.likelihood.eval()
 
-                test_y = self.true_function(test_x)
+        with torch.no_grad(), gpytorch.settings.fast_pred_var():
+            test_x = torch.linspace(0, int(self.budget), int(self.budget))
+            observed_pred = self.likelihood(self.model(test_x))
 
-            with torch.no_grad():
-                # Initialize plot
-                f, ax = plt.subplots(1, 1, figsize=(4, 3))
+            # test_y = self.true_function(test_x)
 
-                # Get upper and lower confidence bounds
-                lower, upper = observed_pred.confidence_region()
-                # Plot training data as black stars
-                ax.plot(self.train_x.numpy(), self.train_y.numpy(), 'k*')
-                # ax.plot(test_x.numpy(), test_y.numpy(), 'k*')
-                # Plot predictive means as blue line
-                ax.plot(test_x.numpy(), observed_pred.mean.numpy(), 'b')
-                ax.plot(test_x.numpy(), test_y.numpy(), 'r')
-                # Shade between the lower and upper confidence bounds
-                ax.fill_between(test_x.numpy(), lower.numpy(), upper.numpy(), alpha=0.5)
-                ax.set_ylim([-3, 3])
-                ax.legend(['Observed Data', 'Mean', 'Confidence'])
+        with torch.no_grad():
+            # Initialize plot
+            f, ax = plt.subplots(1, 1, figsize=(4, 3))
 
-                plt.show()
-            return
+            # Get upper and lower confidence bounds
+            lower, upper = observed_pred.confidence_region()
+            # Plot training data as black stars
+            ax.plot(self.train_x.numpy(), self.train_y.numpy(), 'k*')
+            # ax.plot(test_x.numpy(), test_y.numpy(), 'k*')
+            # Plot predictive means as blue line
+            ax.plot(test_x.numpy(), observed_pred.mean.numpy(), 'b')
+            # ax.plot(test_x.numpy(), test_y.numpy(), 'r')
+            # Shade between the lower and upper confidence bounds
+            ax.fill_between(test_x.numpy(), lower.numpy(), upper.numpy(), alpha=0.5)
+            ax.set_ylim([0, 1])
+            # ax.legend(['Observed Data', 'Mean', 'Confidence'])
+
+            # plt.show()
+            plt.suptitle("Learned Availability Model: Node " + request)
+            plt.savefig(visualize_path)
 
 
     def update_model(self, curr_time):

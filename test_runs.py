@@ -86,6 +86,9 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         for request in node_requests[stat_run]:
                             x_in, y_in = load_brayford_training_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'])
                             gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+
+                            gps[request].visualize(out_gif_path + "train_" + request + ".jpg", request)
+
                         base_availability_models.append(gps)
                         base_model_variances.append({})
 
@@ -219,7 +222,6 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
 
                 for stat_run in range(num_stat_runs):
-                    print (params['start_node_id'])
                     if strategy == 'mcts':
                         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     else:
