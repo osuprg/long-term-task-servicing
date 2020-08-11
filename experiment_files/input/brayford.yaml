@@ -1,0 +1,13 @@
+world_config_file: /config/world_params/brayford_scenario.yaml
+schedule_config_file: /config/schedule_params/brayford_schedule_params.yaml
+planner_config_file: /config/planner_params/planner_params_1.yaml
+model_config_file: /config/model_params/model_params_2.yaml
+base_model_filepath: /worlds/willow/models/params_brayford/
+schedule_filepath: /worlds/willow/schedules/params_brayford/
+num_deliveries: [8]
+availability_percents: [0]
+# strategies: [no_temp, no_replan, replan_no_observe, hack_observe, observe, observe_sampling, observe_sampling_variance_bias, observe_sampling_mult_visits]
+# strategies: [no_temp, no_replan, replan_no_observe, observe, observe_mult_visits]
+strategies: [replan_no_observe, observe_mult_visits_up_0_or_7_dt_0, observe_mult_visits_up_5_or_0_dt_0, observe_mult_visits_up_5_or_7_dt_0]
+visualize: 0
+visualize_path: /

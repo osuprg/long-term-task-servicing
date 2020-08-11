@@ -10,6 +10,8 @@ def generate_graph(graph_generator_type, filepath, filename, max_rooms, rooms, m
     elif graph_generator_type == 'simple_floors':
         g, rooms = generate_simple_floors(max_rooms, max_traversal_cost)
         return g, rooms
+    elif graph_generator_type == 'brayford':
+        g, rooms = generate_Brayford(max_traversal_cost):
     else:
         raise ValueError(graph_generator_type)
 
@@ -39,6 +41,44 @@ def read_graph_from_file(input_filename, distance_scaling):
         g[node_b][node_a]['weight'] = dist
 
     return g
+
+def generate_Brayford(max_traversal_cost):
+    g = nx.Graph()
+
+    # connecting nodes
+    g.add_node("00")       # Station
+    g.add_node("01")       # Passage
+    g.add_node("02")       # Hall
+
+    # rooms
+    g.add_node("03")       # Workplace 3
+    rooms.append("03")
+    g.add_node("04")       # Workplace 4
+    rooms.append("04")
+    g.add_node("05")       # Workplace 5
+    rooms.append("05")     
+    g.add_node("06")       # Kitchennette
+    rooms.append("06")     
+    g.add_node("07")       # Workplace 6
+    rooms.append("07")     
+    g.add_node("08")       # Sofas (resting area)
+    rooms.append("08")     
+    g.add_node("09")       # Workplace 7   
+    rooms.append("09")
+    g.add_node("10")       # Workplace 8
+    rooms.append("10")
+
+    # edges
+    edges = [("00", "01"), ("01", "02"), ("00", "03"), ("01", "04"), ("02", "05"), ("02", "06"), ("02", "07"), ("02", "08"), ("06", "08"), ("01", "09"), ("00", "10")]
+    for edge in edges:
+        node1 = edge[0]
+        node2 = edge[1]
+        g.add_edge(node1, node2)
+        g.add_edge(node2, node1)
+        g[node1][node2]['weight'] = max_traversal_cost
+        g[node2][node1]['weight'] = max_traversal_cost
+
+    return g, rooms
 
 
 def generate_simple_hallway(max_rooms, traversal_cost):

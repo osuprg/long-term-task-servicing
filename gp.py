@@ -149,20 +149,64 @@ class GP():
                     best_times.append(possible_times.numpy()[index])
                 return best_times
 
+    def threshold_sample_schedule(self, start_time, budget, time_interval):
+        times = list(range(start_time, budget, time_interval))
+        schedule = []
+        for time in times:
+            pred = self.get_prediction(time)
+            if pred >= .5:
+                schedule.append(1)
+            else:
+                schedule.append(0)
+        return schedule
+
 
     def get_prediction(self, visit_time):
-        max_value = 1000.0
+        # max_value = 1000.0
 
-        if self.model is None:
-            score = max_value
+        # if self.model is None:
+        #     score = max_value
 
-        elif (self.train_x.shape[0] < 2):
-            score = max_value
+        # elif (self.train_x.shape[0] < 2):
+        #     score = max_value
 
-        elif (self.train_x.shape[0] == 2) and (self.train_x[0] == self.train_x[1]):
-            score = max_value
+        # elif (self.train_x.shape[0] == 2) and (self.train_x[0] == self.train_x[1]):
+        #     score = max_value
         
-        else:
+        # else:
+
+        self.model.eval()
+        self.likelihood.eval()
+
+        with torch.no_grad(), gpytorch.settings.fast_pred_var():
+            test_x = torch.as_tensor(np.array([visit_time]), dtype=torch.float32)
+
+            observed_pred = self.likelihood(self.model(test_x))
+            pred = observed_pred.mean.numpy()[0]
+
+            # pred = self.model(test_x)
+
+        return pred
+
+    def get_preds(self, x_in):
+        # max_value = 1000.0
+
+        preds = []
+
+        for visit_time in x_in:
+
+            # if self.model is None:
+            #     score = max_value
+
+            # elif (self.train_x.shape[0] < 2):
+            #     score = max_value
+
+            # elif (self.train_x.shape[0] == 2) and (self.train_x[0] == self.train_x[1]):
+            #     score = max_value
+            
+            # else:
+
+
             self.model.eval()
             self.likelihood.eval()
 
@@ -171,66 +215,37 @@ class GP():
 
                 observed_pred = self.likelihood(self.model(test_x))
                 pred = observed_pred.mean.numpy()[0]
+                preds.append(float(pred))
 
-                # pred = self.model(test_x)
-
-        return pred
-
-    def get_preds(self, x_in):
-        max_value = 1000.0
-
-        preds = []
-
-        for visit_time in x_in:
-
-            if self.model is None:
-                score = max_value
-
-            elif (self.train_x.shape[0] < 2):
-                score = max_value
-
-            elif (self.train_x.shape[0] == 2) and (self.train_x[0] == self.train_x[1]):
-                score = max_value
-            
-            else:
-                self.model.eval()
-                self.likelihood.eval()
-
-                with torch.no_grad(), gpytorch.settings.fast_pred_var():
-                    test_x = torch.as_tensor(np.array([visit_time]), dtype=torch.float32)
-
-                    observed_pred = self.likelihood(self.model(test_x))
-                    pred = observed_pred.mean.numpy()[0]
-                    preds.append(float(pred))
-
-                # pred = self.model(test_x)
+            # pred = self.model(test_x)
 
         return preds
 
 
 
     def get_uncertainty(self, vist_time):
-        max_value = 1000.0
+        # max_value = 1000.0
 
-        if self.model is None:
-            score = max_value
+        # if self.model is None:
+        #     score = max_value
 
-        elif (self.train_x.shape[0] < 2):
-            score = max_value
+        # elif (self.train_x.shape[0] < 2):
+        #     score = max_value
 
-        elif (self.train_x.shape[0] == 2) and (self.train_x[0] == self.train_x[1]):
-            score = max_value
+        # elif (self.train_x.shape[0] == 2) and (self.train_x[0] == self.train_x[1]):
+        #     score = max_value
         
-        else:
-            self.model.eval()
-            self.likelihood.eval()
+        # else:
 
-            with torch.no_grad(), gpytorch.settings.fast_pred_var():
-                test_x = torch.as_tensor(np.array([vist_time]), dtype=torch.float32)
+        self.model.eval()
+        self.likelihood.eval()
 
-                observed_pred = self.likelihood(self.model(test_x))
-                lower, upper = observed_pred.confidence_region()
-                score = (abs(upper.numpy()[0] - lower.numpy()[0]))
+        with torch.no_grad(), gpytorch.settings.fast_pred_var():
+            test_x = torch.as_tensor(np.array([vist_time]), dtype=torch.float32)
+
+            observed_pred = self.likelihood(self.model(test_x))
+            lower, upper = observed_pred.confidence_region()
+            score = (abs(upper.numpy()[0] - lower.numpy()[0]))
 
         return score
 

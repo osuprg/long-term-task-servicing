@@ -5,6 +5,7 @@ import math
 from io import BytesIO
 from PIL import Image
 import heapq
+import numpy as np
 
 def load_params(world_config_file, schedule_config_file, planner_config_file, model_config_file):
     params = {}
@@ -58,6 +59,41 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
     params['use_gp'] = bool(int(model_params['use_gp']))
 
     return params
+
+
+def load_brayford_training_data(request, data_path):
+    path = data_path + "learning_" + request + ".txt"
+    lines = [line.rstrip() for line in open(path)]
+    time = 0
+    x_in = []
+    y_in = []
+    for line in lines:
+        x_in.append(int(line))
+        y_in.append(time)
+        time = (time + 10)%1440     # 1 day is 1440 minutes
+    x_in = np.array(x_in)
+    y_in = np.array(y_in)
+    return x_in, y_in
+
+def load_brayford_testing_data(request, params['data_path'], stat_run):
+    if stat_run == 0:
+        path = data_path + "february_" + request + ".txt"
+    elif stat_run == 1:
+        path = data_path + "november_" + request + ".txt"
+    else:
+        raise ValueError(stat_run)
+
+    lines = [line.rstrip() for line in open(path)]
+    time = 0
+    x_in = []
+    y_in = []
+    for line in lines:
+        x_in.append(int(line))
+        y_in.append(time)
+        time = (time + 10)%1440     # 1 day is 1440 minutes
+    x_in = np.array(x_in)
+    y_in = np.array(y_in)
+    return x_in, y_in
 
 
 ### Temporal persistence per Toris, Russell, and Sonia Chernova. "Temporal Persistence Modeling for Object Search." IEEE International Conference on Robotics and Automation (ICRA). 2017.

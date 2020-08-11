@@ -77,7 +77,28 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                     true_schedules.append(schedules)
                 else:
 
-                    if params['availabilities'] == 'windows': 
+                    if params['availabilities'] == 'brayford':
+
+                        # model
+                        from gp import GP
+                        gps = {}
+                        node_requests = params['rooms']
+                        for request in node_requests:
+                            x_in, y_in = load_brayford_training_data(request, params['data_path'])
+                            gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                        base_availability_models.append(gps)
+
+
+                        # true schedule
+                        schedules = {}
+                        for request in node_requests:
+                            x_in, y_in = load_brayford_testing_data(request, params['data_path'], stat_run)
+                            test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                            schedules[request] = test_gp.threshold_sample_schedule(params['start_time'], params['budget'], params['time_interval'])
+                        true_schedules.append(schedules)
+
+
+                    elif params['availabilities'] == 'windows': 
 
                         # sample rooms for delivieries 
                         if params['node_closeness'] == 'random':
