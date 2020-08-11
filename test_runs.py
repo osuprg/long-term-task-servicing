@@ -82,11 +82,12 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         # model
                         from gp import GP
                         gps = {}
-                        node_requests = params['rooms']
+                        node_requests.append(params['rooms'])
                         for request in node_requests:
                             x_in, y_in = load_brayford_training_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'])
                             gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
                         base_availability_models.append(gps)
+                        base_model_variances.append({})
 
 
                         # true schedule
