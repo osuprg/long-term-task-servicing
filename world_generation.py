@@ -51,6 +51,7 @@ def generate_Brayford(max_traversal_cost):
     g.add_node("02")       # Hall
 
     # rooms
+    rooms = []
     g.add_node("03")       # Workplace 3
     rooms.append("03")
     g.add_node("04")       # Workplace 4
