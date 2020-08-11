@@ -5,5 +5,5 @@ maintenance_node: 00
 max_rooms: 8
 max_traversal_cost: 1
 graph_generator_type: brayford
-graph_filename: /
+graph_filename: None
 distance_scaling: 1

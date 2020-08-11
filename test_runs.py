@@ -5,7 +5,7 @@ import math
 import os.path
 import csv
 import networkx as nx  
-from utils import load_params, read_graph_from_file
+from utils import load_params, read_graph_from_file, load_brayford_training_data, load_brayford_testing_data
 # from gp import GP
 from td_op import Graph
 from world_generation import generate_graph
