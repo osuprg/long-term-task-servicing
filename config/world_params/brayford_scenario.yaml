@@ -1,7 +1,7 @@
-rooms: [03, 04, 05, 06, 07, 08, 09, 10]
-start_node_id: 00
-distribution_node: 00
-maintenance_node: 00
+rooms: ['03', '04', '05', '06', '07', '08', '09', '10']
+start_node_id: '00'
+distribution_node: '00'
+maintenance_node: '00'
 max_rooms: 8
 max_traversal_cost: 1
 graph_generator_type: brayford

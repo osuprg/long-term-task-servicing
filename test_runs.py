@@ -219,6 +219,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
 
                 for stat_run in range(num_stat_runs):
+                    print (params['start_node_id'])
                     if strategy == 'mcts':
                         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     else:
