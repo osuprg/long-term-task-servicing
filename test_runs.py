@@ -12,6 +12,7 @@ from world_generation import generate_graph
 from schedule_generation import generate_windows_overlapping, generate_windows, generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, generate_schedule, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file, generate_simple_models, generate_simple_schedules
 from plan_execution_simulation import plan_and_execute, create_policy_and_execute
 from planners import visualize_path_willow
+import matplotlib.pyplot as plt
 
 
 ### High level code for running stat runs of task planning and simulated execution
@@ -81,16 +82,16 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
                         # model
                         from gp import GP
-                        gps = {}
+                        # gps = {}
                         node_requests.append(params['rooms'])
-                        for request in node_requests[stat_run]:
-                            x_in, y_in = load_brayford_training_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'])
-                            gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                        # for request in node_requests[stat_run]:
+                        #     x_in, y_in = load_brayford_training_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'])
+                        #     gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
 
-                            # gps[request].visualize(out_gif_path + "train_" + request + ".jpg", request)
+                        #     # gps[request].visualize(out_gif_path + "train_" + request + ".jpg", request)
 
-                        base_availability_models.append(gps)
-                        base_model_variances.append({})
+                        # base_availability_models.append(gps)
+                        # base_model_variances.append({})
 
 
                         # true schedule
