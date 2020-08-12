@@ -339,8 +339,7 @@ class GP():
             # ax.plot(self.train_x.numpy(), self.train_y.numpy(), 'k*')
             # ax.plot(test_x.numpy(), test_y.numpy(), 'k*')
             # Plot predictive means as blue line
-            ax.scatter(X, Y)
-            #'b')
+            ax.scatter(X, Y, 'b')
             # plt.hold(True)
             # ax.plot(test_x.numpy(), test_y.numpy(), 'r')
             # Shade between the lower and upper confidence bounds

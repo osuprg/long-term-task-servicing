@@ -65,7 +65,7 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
 def load_brayford_training_data(request, data_path):
     path = data_path + "learning_" + request + ".txt"
     lines = [line.rstrip() for line in open(path)]
-    time = 0
+    time = 10
     x_in = []
     y_in = []
     for line in lines:
@@ -85,7 +85,7 @@ def load_brayford_testing_data(request, data_path, stat_run):
         raise ValueError(stat_run)
 
     lines = [line.rstrip() for line in open(path)]
-    time = 0
+    time = 10
     x_in = []
     y_in = []
     for line in lines:
