@@ -342,10 +342,11 @@ class GP():
             # ax.plot(self.train_x.numpy(), self.train_y.numpy(), 'k*')
             # ax.plot(test_x.numpy(), test_y.numpy(), 'k*')
             # Plot predictive means as blue line
-            ax.plot(X, Y, 'b')
+            plt.plot(X, Y, 'b')
+            plt.hold(True)
             # ax.plot(test_x.numpy(), test_y.numpy(), 'r')
             # Shade between the lower and upper confidence bounds
-            ax.fill_between(X, lower.numpy(), upper.numpy(), alpha=0.2)
+            plt.fill_between(X, lower.numpy(), upper.numpy(), alpha=0.2)
             # ax.set_ylim([0, 1])
             # ax.legend(['Observed Data', 'Mean', 'Confidence'])
 
