@@ -12,7 +12,7 @@ from world_generation import generate_graph
 from schedule_generation import generate_windows_overlapping, generate_windows, generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, generate_schedule, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file, generate_simple_models, generate_simple_schedules
 from plan_execution_simulation import plan_and_execute, create_policy_and_execute
 from planners import visualize_path_willow
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 import matplotlib
 matplotlib.use('Agg')
@@ -105,16 +105,16 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                             schedules[request] = test_gp.threshold_sample_schedule(params['start_time'], params['budget'], params['time_interval'])
 
                             # visualize:
-                            fig = plt.figure()
+                            fig = matplotlib.pyplot.figure()
                             X = np.array(schedules[request])
                             Y = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
-                            plt.plot(X, Y)
+                            matplotlib.pyplot.plot(X, Y)
                             if stat_run == 0:
-                                plt.title("Brayford Schedule Node " + request + ": February")
-                                plt.savefig(out_gif_path + "february_" + request + ".jpg")
+                                matplotlib.pyplot.title("Brayford Schedule Node " + request + ": February")
+                                matplotlib.pyplot.savefig(out_gif_path + "february_" + request + ".jpg")
                             else:
-                                plt.title("Brayford Schedule Node " + request + ": November")
-                                plt.savefig(out_gif_path + "november_" + request + ".jpg")
+                                matplotlib.pyplot.title("Brayford Schedule Node " + request + ": November")
+                                matplotlib.pyplot.savefig(out_gif_path + "november_" + request + ".jpg")
 
                         true_schedules.append(schedules)
 
