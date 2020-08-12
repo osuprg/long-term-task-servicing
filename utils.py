@@ -88,10 +88,17 @@ def load_brayford_testing_data(request, data_path, stat_run):
     time = 10
     x_in = []
     y_in = []
-    for line in lines:
+    last_val = float(lines[0])
+    x_in.append(time)
+    y_in.append(last_val)
+    for line in lines[1:]:
+        time = (time + 5)%1440
         x_in.append(time)
-        y_in.append(int(line))
-        time = (time + 10)%1440     # 1 day is 1440 minutes
+        y_in.append((float(line)+last_val)/2.0)
+        time = (time + 5)%1440     # 1 day is 1440 minutes
+        x_in.append(time)
+        y_in.append(float(line))
+        last_val = float(line)
     x_in = np.array(x_in)
     y_in = np.array(y_in)
     return x_in, y_in

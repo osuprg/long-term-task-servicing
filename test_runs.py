@@ -125,9 +125,9 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         # base_availability_models.append(avails)
                         base_model_variances.append(variances)
 
-                        ## true availability models
-                        # sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
-                        # sampled_avails = avails
+                        # true availability models
+                        sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
+                        sampled_avails = avails
                         
 
                         true_availability_models.append(avails)
@@ -221,16 +221,16 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 
 
 
-                # for stat_run in range(num_stat_runs):
-                #     if strategy == 'mcts':
-                #         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
-                #     else:
-                #         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                for stat_run in range(num_stat_runs):
+                    if strategy == 'mcts':
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                    else:
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     
-                #     if record_output:
-                #         with open(output_file, 'a', newline='') as csvfile:
-                #             writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                #             writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
+                    if record_output:
+                        with open(output_file, 'a', newline='') as csvfile:
+                            writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                            writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
 
 
 
