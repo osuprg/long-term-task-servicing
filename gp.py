@@ -321,7 +321,7 @@ class GP():
         self.likelihood.eval()
 
         with torch.no_grad(), gpytorch.settings.fast_pred_var():
-            test_x = torch.linspace(0, int(self.budget), int(self.budget))
+            test_x = torch.linspace(0, int(self.budget), int(self.budget)/10)
             observed_pred = self.likelihood(self.model(test_x))
 
             # test_y = self.true_function(test_x)
