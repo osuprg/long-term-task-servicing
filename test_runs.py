@@ -99,6 +99,19 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                             x_in, y_in = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run)
                             test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
                             schedules[request] = test_gp.threshold_sample_schedule(params['start_time'], params['budget'], params['time_interval'])
+
+                            # visualize:
+                            fig = plt.figure()
+                            X = np.array(schedules[request])
+                            Y = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+                            plt.plot(X, Y)
+                            if stat_run == 0:
+                                plt.title("Brayford Schedule Node " + request + ": February")
+                                plt.savefig(out_gif_path + "february_" + request + ".jpg")
+                            else:
+                                plt.title("Brayford Schedule Node " + request + ": November")
+                                plt.savefig(out_gif_path + "november_" + request + ".jpg")
+
                         true_schedules.append(schedules)
 
 
@@ -203,34 +216,20 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                     strategy_name = strategy
                     strategy = 'observe_mult_visits'
 
-                if strategy == 'observe_mult_visits_up_0_or_20_dt_0':
-                    params['uncertainty_penalty'] = 0.0
-                    params['observation_reward'] = 2.0
-                    params['deliver_threshold'] = 0.0
-                    strategy_name = strategy
-                    strategy = 'observe_mult_visits'
-
-                if strategy == 'observe_mult_visits_up_0_or_30_dt_0':
-                    params['uncertainty_penalty'] = 0.0
-                    params['observation_reward'] = 3.0
-                    params['deliver_threshold'] = 0.0
-                    strategy_name = strategy
-                    strategy = 'observe_mult_visits'
-
 
                 
 
 
-                for stat_run in range(num_stat_runs):
-                    if strategy == 'mcts':
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
-                    else:
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                # for stat_run in range(num_stat_runs):
+                #     if strategy == 'mcts':
+                #         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                #     else:
+                #         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     
-                    if record_output:
-                        with open(output_file, 'a', newline='') as csvfile:
-                            writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                            writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
+                #     if record_output:
+                #         with open(output_file, 'a', newline='') as csvfile:
+                #             writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                #             writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
 
 
 

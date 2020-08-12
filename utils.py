@@ -6,6 +6,7 @@ from io import BytesIO
 from PIL import Image
 import heapq
 import numpy as np
+import matplotlib.pyplot as plt
 
 def load_params(world_config_file, schedule_config_file, planner_config_file, model_config_file):
     params = {}
