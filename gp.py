@@ -335,19 +335,16 @@ class GP():
             lower, upper = observed_pred.confidence_region()
             X = test_x.numpy()
             Y = observed_pred.mean.numpy()
-            print (X.shape)
-            print (Y.shape)
-            print()
             # Plot training data as black stars
             # ax.plot(self.train_x.numpy(), self.train_y.numpy(), 'k*')
             # ax.plot(test_x.numpy(), test_y.numpy(), 'k*')
             # Plot predictive means as blue line
-            plt.plot(X, Y, 'b')
+            plt.scatter(X, Y, 'b')
             plt.hold(True)
             # ax.plot(test_x.numpy(), test_y.numpy(), 'r')
             # Shade between the lower and upper confidence bounds
             plt.fill_between(X, lower.numpy(), upper.numpy(), alpha=0.2)
-            # ax.set_ylim([0, 1])
+            ax.set_ylim([0, 1])
             # ax.legend(['Observed Data', 'Mean', 'Confidence'])
 
             # plt.show()
