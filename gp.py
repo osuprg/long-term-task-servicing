@@ -345,7 +345,7 @@ class GP():
             # ax.plot(test_x.numpy(), test_y.numpy(), 'r')
             # Shade between the lower and upper confidence bounds
             plt.fill_between(X, lower.numpy(), upper.numpy(), alpha=0.2)
-            ax.set_ylim([0, 1])
+            plt.set_ylim([0, 1])
             # ax.legend(['Observed Data', 'Mean', 'Confidence'])
 
             # plt.show()
