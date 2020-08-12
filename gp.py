@@ -328,8 +328,8 @@ class GP():
 
         # with torch.no_grad():
             # Initialize plot
-            # f, ax = plt.subplots(1, 1, figsize=(4, 3))
-            fig = plt.figure()
+            f, ax = plt.subplots(1, 1, figsize=(4, 3))
+            # fig = plt.figure()
 
             # Get upper and lower confidence bounds
             lower, upper = observed_pred.confidence_region()
@@ -339,13 +339,13 @@ class GP():
             # ax.plot(self.train_x.numpy(), self.train_y.numpy(), 'k*')
             # ax.plot(test_x.numpy(), test_y.numpy(), 'k*')
             # Plot predictive means as blue line
-            plt.scatter(X, Y)
+            ax.scatter(X, Y)
             #'b')
-            plt.hold(True)
+            # plt.hold(True)
             # ax.plot(test_x.numpy(), test_y.numpy(), 'r')
             # Shade between the lower and upper confidence bounds
-            plt.fill_between(X, lower.numpy(), upper.numpy(), alpha=0.2)
-            plt.set_ylim([0, 1])
+            ax.fill_between(X, lower.numpy(), upper.numpy(), alpha=0.2)
+            ax.set_ylim([0, 1])
             # ax.legend(['Observed Data', 'Mean', 'Confidence'])
 
             # plt.show()
