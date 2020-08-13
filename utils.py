@@ -80,12 +80,12 @@ def load_brayford_training_data(request, data_path):
     return x_in, y_in
 
 def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
-    if stat_run == 0:
-        path = data_path + "february_" + request + ".txt"
-    elif stat_run == 1:
-        path = data_path + "november_" + request + ".txt"
-    else:
-        raise ValueError(stat_run)
+    # if stat_run == 0:
+    #     path = data_path + "february_" + request + ".txt"
+    # elif stat_run == 1:
+    path = data_path + "november_" + request + ".txt"
+    # else:
+    #     raise ValueError(stat_run)
 
     lines = [line.rstrip() for line in open(path)]
     time = 10
