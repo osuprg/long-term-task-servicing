@@ -1,4 +1,6 @@
-import yaml
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as pltimport yaml
 import networkx as nx  
 import copy
 import math
@@ -6,7 +8,6 @@ from io import BytesIO
 from PIL import Image
 import heapq
 import numpy as np
-import matplotlib.pyplot as plt
 
 def load_params(world_config_file, schedule_config_file, planner_config_file, model_config_file):
     params = {}
