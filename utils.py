@@ -105,17 +105,17 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
     x_in = np.array(x_in)
     y_in = np.array(y_in)
 
-     # # visualize:
-    fig = plt.figure()
-    # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
-    # Y = np.array(schedules[request])
-    plt.scatter(x_in, y_in)
-    if stat_run == 0:
-        plt.title("Brayford Schedule Node " + request + ": February")
-        plt.savefig(out_gif_path + "february_" + request + ".jpg")
-    else:
-        plt.title("Brayford Schedule Node " + request + ": November")
-        plt.savefig(out_gif_path + "november_" + request + ".jpg")
+    #  # # visualize:
+    # fig = plt.figure()
+    # # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+    # # Y = np.array(schedules[request])
+    # plt.scatter(x_in, y_in)
+    # if stat_run == 0:
+    #     plt.title("Brayford Schedule Node " + request + ": February")
+    #     plt.savefig(out_gif_path + "february_" + request + ".jpg")
+    # else:
+    #     plt.title("Brayford Schedule Node " + request + ": November")
+    #     plt.savefig(out_gif_path + "november_" + request + ".jpg")
 
     return x_in, y_in
 
