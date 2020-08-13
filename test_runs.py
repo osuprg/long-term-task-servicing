@@ -105,8 +105,8 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
                             # visualize:
                             fig = plt.figure()
-                            X = np.array(schedules[request])
-                            Y = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+                            X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+                            Y = np.array(schedules[request])
                             plt.plot(X, Y)
                             if stat_run == 0:
                                 plt.title("Brayford Schedule Node " + request + ": February")
