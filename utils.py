@@ -93,15 +93,15 @@ def load_brayford_training_data_histogram(request, data_path, out_gif_path):
     x_in = np.array(x_in)
     y_in = np.array(y_in)
 
-    # visualize:
-    # fig = plt.figure()
-    f, ax = plt.subplots(1, 1, figsize=(4, 3))
-    # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
-    # Y = np.array(schedules[request])
-    ax.scatter(x_in, y_in)
-    ax.set_ylim([0, 1])
-    plt.title("Brayford Schedule Histogram Node " + request + ": Training")
-    plt.savefig(out_gif_path + "train_" + request + "_histogram.jpg")
+    # # visualize:
+    # # fig = plt.figure()
+    # f, ax = plt.subplots(1, 1, figsize=(4, 3))
+    # # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+    # # Y = np.array(schedules[request])
+    # ax.scatter(x_in, y_in)
+    # ax.set_ylim([0, 1])
+    # plt.title("Brayford Schedule Histogram Node " + request + ": Training")
+    # plt.savefig(out_gif_path + "train_" + request + "_histogram.jpg")
 
     return x_in, y_in
 
@@ -203,19 +203,19 @@ def load_brayford_testing_data_histogram(request, data_path, stat_run, out_gif_p
     x_in = np.array(x_in)
     y_in = np.array(y_in)
 
-     # # visualize:
-    # fig = plt.figure()
-    f, ax = plt.subplots(1, 1, figsize=(4, 3))
-    # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
-    # Y = np.array(schedules[request])
-    ax.scatter(x_in, y_in)
-    ax.set_ylim([0, 1])
-    # if stat_run == 0:
-    #     plt.title("Brayford Schedule Node " + request + ": February")
-    #     plt.savefig(out_gif_path + "february_" + request + ".jpg")
-    # else:
-    plt.title("Brayford Schedule Histogram Node " + request + ": November")
-    plt.savefig(out_gif_path + "november_" + request + "_histogram.jpg")
+    #  # # visualize:
+    # # fig = plt.figure()
+    # f, ax = plt.subplots(1, 1, figsize=(4, 3))
+    # # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+    # # Y = np.array(schedules[request])
+    # ax.scatter(x_in, y_in)
+    # ax.set_ylim([0, 1])
+    # # if stat_run == 0:
+    # #     plt.title("Brayford Schedule Node " + request + ": February")
+    # #     plt.savefig(out_gif_path + "february_" + request + ".jpg")
+    # # else:
+    # plt.title("Brayford Schedule Histogram Node " + request + ": November")
+    # plt.savefig(out_gif_path + "november_" + request + "_histogram.jpg")
 
     return x_in, y_in
 
