@@ -1,6 +1,6 @@
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+# import matplotlib
+# matplotlib.use('Agg')
+# import matplotlib.pyplot as plt
 import numpy as np
 import random
 import copy
@@ -99,23 +99,23 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         # true schedule
                         schedules = {}
                         for request in node_requests[stat_run]:
-                            x_in, y_in = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run)
-                            test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
-                            schedules[request] = test_gp.threshold_sample_schedule(params['start_time'], params['budget'], params['time_interval'])
+                            x_in, y_in = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
+                            # test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                            # schedules[request] = test_gp.threshold_sample_schedule(params['start_time'], params['budget'], params['time_interval'])
 
-                            # visualize:
-                            fig = plt.figure()
-                            X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
-                            Y = np.array(schedules[request])
-                            plt.scatter(X, Y)
-                            if stat_run == 0:
-                                plt.title("Brayford Schedule Node " + request + ": February")
-                                plt.savefig(out_gif_path + "february_" + request + ".jpg")
-                            else:
-                                plt.title("Brayford Schedule Node " + request + ": November")
-                                plt.savefig(out_gif_path + "november_" + request + ".jpg")
+                            # # visualize:
+                            # fig = plt.figure()
+                            # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+                            # Y = np.array(schedules[request])
+                            # plt.scatter(X, Y)
+                            # if stat_run == 0:
+                            #     plt.title("Brayford Schedule Node " + request + ": February")
+                            #     plt.savefig(out_gif_path + "february_" + request + ".jpg")
+                            # else:
+                            #     plt.title("Brayford Schedule Node " + request + ": November")
+                            #     plt.savefig(out_gif_path + "november_" + request + ".jpg")
 
-                        true_schedules.append(schedules)
+                        # true_schedules.append(schedules)
 
 
                     elif params['availabilities'] == 'windows': 

@@ -6,7 +6,6 @@ from io import BytesIO
 from PIL import Image
 import heapq
 import numpy as np
-import matplotlib.pyplot as plt
 
 def load_params(world_config_file, schedule_config_file, planner_config_file, model_config_file):
     params = {}
@@ -77,7 +76,7 @@ def load_brayford_training_data(request, data_path):
     y_in = np.array(y_in)
     return x_in, y_in
 
-def load_brayford_testing_data(request, data_path, stat_run):
+def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
     if stat_run == 0:
         path = data_path + "february_" + request + ".txt"
     elif stat_run == 1:
@@ -93,15 +92,28 @@ def load_brayford_testing_data(request, data_path, stat_run):
     x_in.append(time)
     y_in.append(last_val)
     for line in lines[1:]:
-        time = (time + 5)%1440
-        x_in.append(time)
-        y_in.append((float(line)+last_val)/2.0)
-        time = (time + 5)%1440     # 1 day is 1440 minutes
+        # time = (time + 5)%1440
+        # x_in.append(time)
+        # y_in.append((float(line)+last_val)/2.0)
+        time = (time + 10)%1440     # 1 day is 1440 minutes
         x_in.append(time)
         y_in.append(float(line))
-        last_val = float(line)
+        # last_val = float(line)
     x_in = np.array(x_in)
     y_in = np.array(y_in)
+
+     # # visualize:
+    fig = plt.figure()
+    # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+    # Y = np.array(schedules[request])
+    plt.scatter(x_in, y_in)
+    if stat_run == 0:
+        plt.title("Brayford Schedule Node " + request + ": February")
+        plt.savefig(out_gif_path + "february_" + request + ".jpg")
+    else:
+        plt.title("Brayford Schedule Node " + request + ": November")
+        plt.savefig(out_gif_path + "november_" + request + ".jpg")
+
     return x_in, y_in
 
 
