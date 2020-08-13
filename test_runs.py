@@ -8,7 +8,7 @@ import math
 import os.path
 import csv
 import networkx as nx  
-from utils import load_params, read_graph_from_file, load_brayford_training_data, load_brayford_testing_data
+from utils import load_params, read_graph_from_file, load_brayford_training_data, load_brayford_testing_data, load_brayford_training_data_histogram, load_brayford_testing_data_histogram
 # from gp import GP
 from td_op import Graph
 from world_generation import generate_graph
@@ -87,10 +87,10 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         gps = {}
                         node_requests.append(params['rooms'])
                         for request in node_requests[stat_run]:
-                            x_in, y_in = load_brayford_training_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], out_gif_path)
-                            gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                            x_in, y_in = load_brayford_training_data_histogram(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], out_gif_path)
+                            # gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
 
-                            gps[request].visualize(out_gif_path + "train_" + request + "_model_1.jpg", request)
+                            # gps[request].visualize(out_gif_path + "train_" + request + "_model_1.jpg", request)
 
                         # base_availability_models.append(gps)
                         # base_model_variances.append({})
@@ -99,12 +99,12 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         # true schedule
                         schedules = {}
                         for request in node_requests[stat_run]:
-                            x_in, y_in = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
-                            test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                            x_in, y_in = load_brayford_testing_data_histogram(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
+                            # test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
                             # if stat_run == 0:
                             #     test_gp.visualize(out_gif_path + "february_" + request + "_model_10.jpg", request)
                             # else:
-                            test_gp.visualize(out_gif_path + "november_" + request + "_model_1.jpg", request)
+                            # test_gp.visualize(out_gif_path + "november_" + request + "_model_1.jpg", request)
                             # schedules[request] = test_gp.threshold_sample_schedule(params['start_time'], params['budget'], params['time_interval'])
 
                             # # visualize:

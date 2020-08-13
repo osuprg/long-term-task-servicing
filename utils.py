@@ -68,6 +68,45 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
 def load_brayford_training_data(request, data_path, out_gif_path):
     path = data_path + "learning_" + request + ".txt"
     lines = [line.rstrip() for line in open(path)]
+
+    histogram = [[0.0, 0.0] for i in range(1440/10)]
+    lines = [line.rstrip() for line in open(path)]
+    time = 0
+
+    for line in lines:
+        # time = (time + 5)%1440
+        # x_in.append(time)
+        # y_in.append((float(line)+last_val)/2.0)
+        time = (time + 10)%1440     # 1 day is 1440 minutes
+        histogram[int(time/10)][0] += float(line)
+        histogram[int(time/10)][1] += 1
+        # x_in.append(time)
+        # y_in.append(float(line))
+        # last_val = float(line)
+    x_in = []
+    y_in = []
+    t = 0
+    for i in histogram:
+        x_in.append(t)
+        y_in.append(i[0]/i[1])
+        t += 10
+    x_in = np.array(x_in)
+    y_in = np.array(y_in)
+
+    # visualize:
+    fig = plt.figure()
+    # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+    # Y = np.array(schedules[request])
+    plt.scatter(x_in, y_in)
+    plt.title("Brayford Schedule Histogram Node " + request + ": Training")
+    plt.savefig(out_gif_path + "train_" + request + "_histogram.jpg")
+
+    return x_in, y_in
+
+
+def load_brayford_training_data_histogram(request, data_path, out_gif_path):
+    path = data_path + "learning_" + request + ".txt"
+    lines = [line.rstrip() for line in open(path)]
     time = 10
     x_in = []
     y_in = []
@@ -87,6 +126,7 @@ def load_brayford_training_data(request, data_path, out_gif_path):
     # plt.savefig(out_gif_path + "train_" + request + "_data.jpg")
 
     return x_in, y_in
+
 
 def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
     # if stat_run == 0:
@@ -125,6 +165,53 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
     # else:
     #     plt.title("Brayford Schedule Node " + request + ": November")
     #     plt.savefig(out_gif_path + "november_" + request + ".jpg")
+
+    return x_in, y_in
+
+
+def load_brayford_testing_data_histogram(request, data_path, stat_run, out_gif_path):
+    # if stat_run == 0:
+    #     path = data_path + "february_" + request + ".txt"
+    # elif stat_run == 1:
+    path = data_path + "november_" + request + ".txt"
+    # else:
+    #     raise ValueError(stat_run)
+
+    histogram = [[0.0, 0.0] for i in range(1440/10)]
+    lines = [line.rstrip() for line in open(path)]
+    time = 0
+
+    for line in lines:
+        # time = (time + 5)%1440
+        # x_in.append(time)
+        # y_in.append((float(line)+last_val)/2.0)
+        time = (time + 10)%1440     # 1 day is 1440 minutes
+        histogram[int(time/10)][0] += float(line)
+        histogram[int(time/10)][1] += 1
+        # x_in.append(time)
+        # y_in.append(float(line))
+        # last_val = float(line)
+    x_in = []
+    y_in = []
+    t = 0
+    for i in histogram:
+        x_in.append(t)
+        y_in.append(i[0]/i[1])
+        t += 10
+    x_in = np.array(x_in)
+    y_in = np.array(y_in)
+
+     # # visualize:
+    fig = plt.figure()
+    # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+    # Y = np.array(schedules[request])
+    plt.scatter(x_in, y_in)
+    # if stat_run == 0:
+    #     plt.title("Brayford Schedule Node " + request + ": February")
+    #     plt.savefig(out_gif_path + "february_" + request + ".jpg")
+    # else:
+    plt.title("Brayford Schedule Histogram Node " + request + ": November")
+    plt.savefig(out_gif_path + "november_" + request + "_histogram.jpg")
 
     return x_in, y_in
 
