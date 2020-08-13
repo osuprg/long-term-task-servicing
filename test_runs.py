@@ -86,9 +86,9 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         from gp import GP
                         # gps = {}
                         node_requests.append(params['rooms'])
-                        # for request in node_requests[stat_run]:
-                        #     x_in, y_in = load_brayford_training_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'])
-                        #     gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                        for request in node_requests[stat_run]:
+                            x_in, y_in = load_brayford_training_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], out_gif_path)
+                            # gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
 
                         #     # gps[request].visualize(out_gif_path + "train_" + request + ".jpg", request)
 
@@ -97,14 +97,14 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
 
                         # true schedule
-                        schedules = {}
-                        for request in node_requests[stat_run]:
-                            x_in, y_in = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
-                            test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                        # schedules = {}
+                        # for request in node_requests[stat_run]:
+                        #     x_in, y_in = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
+                        #     test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
                             # if stat_run == 0:
                             #     test_gp.visualize(out_gif_path + "february_" + request + "_model_10.jpg", request)
                             # else:
-                            test_gp.visualize(out_gif_path + "november_" + request + "_model_10.jpg", request)
+                            # test_gp.visualize(out_gif_path + "november_" + request + "_model_10.jpg", request)
                             # schedules[request] = test_gp.threshold_sample_schedule(params['start_time'], params['budget'], params['time_interval'])
 
                             # # visualize:

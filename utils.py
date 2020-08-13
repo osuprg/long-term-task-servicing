@@ -65,7 +65,7 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
     return params
 
 
-def load_brayford_training_data(request, data_path):
+def load_brayford_training_data(request, data_path, out_gif_path):
     path = data_path + "learning_" + request + ".txt"
     lines = [line.rstrip() for line in open(path)]
     time = 10
@@ -77,6 +77,15 @@ def load_brayford_training_data(request, data_path):
         time = (time + 10)%1440     # 1 day is 1440 minutes
     x_in = np.array(x_in)
     y_in = np.array(y_in)
+
+    # visualize:
+    fig = plt.figure()
+    # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+    # Y = np.array(schedules[request])
+    plt.scatter(x_in, y_in)
+    plt.title("Brayford Schedule Node " + request + ": Training")
+    plt.savefig(out_gif_path + "train_" + request + "_data.jpg")
+
     return x_in, y_in
 
 def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
