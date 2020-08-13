@@ -107,7 +107,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                             fig = plt.figure()
                             X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
                             Y = np.array(schedules[request])
-                            plt.plot(X, Y)
+                            plt.scatter(X, Y)
                             if stat_run == 0:
                                 plt.title("Brayford Schedule Node " + request + ": February")
                                 plt.savefig(out_gif_path + "february_" + request + ".jpg")
