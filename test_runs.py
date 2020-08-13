@@ -84,11 +84,11 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
                         # model
                         from gp import GP
-                        # gps = {}
+                        gps = {}
                         node_requests.append(params['rooms'])
                         for request in node_requests[stat_run]:
                             x_in, y_in = load_brayford_training_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], out_gif_path)
-                            # gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                            gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
 
                             gps[request].visualize(out_gif_path + "train_" + request + "_model_1.jpg", request)
 
