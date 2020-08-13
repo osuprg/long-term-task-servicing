@@ -1,6 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
-import matplotlib.pyplot as pltimport yaml
+import matplotlib.pyplot as plt
+import yaml
 import networkx as nx  
 import copy
 import math
