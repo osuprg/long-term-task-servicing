@@ -65,11 +65,11 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
     return params
 
 
-def load_brayford_training_data(request, data_path, out_gif_path):
+def load_brayford_training_data_histogram(request, data_path, out_gif_path):
     path = data_path + "learning_" + request + ".txt"
     lines = [line.rstrip() for line in open(path)]
 
-    histogram = [[0.0, 0.0] for i in range(1440/10)]
+    histogram = [[0.0, 0.0] for i in range(int(1440/10))]
     lines = [line.rstrip() for line in open(path)]
     time = 0
 
@@ -104,7 +104,7 @@ def load_brayford_training_data(request, data_path, out_gif_path):
     return x_in, y_in
 
 
-def load_brayford_training_data_histogram(request, data_path, out_gif_path):
+def load_brayford_training_data(request, data_path, out_gif_path):
     path = data_path + "learning_" + request + ".txt"
     lines = [line.rstrip() for line in open(path)]
     time = 10
@@ -177,7 +177,7 @@ def load_brayford_testing_data_histogram(request, data_path, stat_run, out_gif_p
     # else:
     #     raise ValueError(stat_run)
 
-    histogram = [[0.0, 0.0] for i in range(1440/10)]
+    histogram = [[0.0, 0.0] for i in range(int(1440/10))]
     lines = [line.rstrip() for line in open(path)]
     time = 0
 
