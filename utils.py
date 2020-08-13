@@ -78,13 +78,13 @@ def load_brayford_training_data(request, data_path, out_gif_path):
     x_in = np.array(x_in)
     y_in = np.array(y_in)
 
-    # visualize:
-    fig = plt.figure()
-    # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
-    # Y = np.array(schedules[request])
-    plt.scatter(x_in, y_in)
-    plt.title("Brayford Schedule Node " + request + ": Training")
-    plt.savefig(out_gif_path + "train_" + request + "_data.jpg")
+    # # visualize:
+    # fig = plt.figure()
+    # # X = np.array(list(range(params['start_time'], params['budget'], params['time_interval'])))
+    # # Y = np.array(schedules[request])
+    # plt.scatter(x_in, y_in)
+    # plt.title("Brayford Schedule Node " + request + ": Training")
+    # plt.savefig(out_gif_path + "train_" + request + "_data.jpg")
 
     return x_in, y_in
 
