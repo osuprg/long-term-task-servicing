@@ -175,13 +175,9 @@ def load_brayford_training_data(request, data_path, out_gif_path):
 
 
 def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
-    # if stat_run == 0:
-    #     path = data_path + "february_" + request + ".txt"
-    # elif stat_run == 1:
-    path = data_path + "november_" + request + ".txt"
-    # else:
-    #     raise ValueError(stat_run)
-
+    X = []
+    Y = []
+    path = data_path + "february_" + request + ".txt"
     lines = [line.rstrip() for line in open(path)]
     time = 10
     x_in = []
@@ -217,8 +213,63 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
         x_in.append(time)
         y_in.append(int(line))
         # last_val = float(line)
-    x_in = np.array(x_in)
-    y_in = np.array(y_in)
+    X.append(x_in)
+    Y.append(y_in)
+
+
+
+
+
+
+    path = data_path + "november_" + request + ".txt"
+    # else:
+    #     raise ValueError(stat_run)
+
+    lines = [line.rstrip() for line in open(path)]
+    time = 10
+    x_in = []
+    y_in = []
+    last_val = int(lines[0])
+    x_in.append(time)
+    y_in.append(last_val)
+    for line in lines[1:]:
+        # time = (time + 5)%1440
+        # x_in.append(time)
+        # y_in.append((float(line)+last_val)/2.0)
+        x_in.append((time + 1)%1440)
+        y_in.append(last_val)
+        x_in.append((time + 2)%1440)
+        y_in.append(last_val)
+        x_in.append((time + 3)%1440)
+        y_in.append(last_val)
+        x_in.append((time + 4)%1440)
+        y_in.append(last_val)
+
+        x_in.append((time + 5)%1440)
+        y_in.append(float(line))
+        x_in.append((time + 6)%1440)
+        y_in.append(float(line))
+        x_in.append((time + 7)%1440)
+        y_in.append(float(line))
+        x_in.append((time + 8)%1440)
+        y_in.append(float(line))
+        x_in.append((time + 9)%1440)
+        y_in.append(float(line))
+
+        time = time + 10
+
+        if time >= 1440:
+            time = time%1440     # 1 day is 1440 minutes
+            X.append(x_in)
+            Y.append(y_in)
+            x_in = []
+            y_in = []
+        else:
+            x_in.append(time)
+            y_in.append(int(line))
+        # last_val = float(line)
+    X = np.array(X)
+    Y = np.array(Y)
 
     #  # # visualize:
     # fig = plt.figure()
@@ -232,7 +283,7 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
     #     plt.title("Brayford Schedule Node " + request + ": November")
     #     plt.savefig(out_gif_path + "november_" + request + ".jpg")
 
-    return x_in, y_in
+    return X, Y
 
 
 def load_brayford_testing_data_histogram(request, data_path, stat_run, out_gif_path):

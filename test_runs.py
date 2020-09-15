@@ -67,11 +67,12 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
             base_model_variances = []
             true_availability_models = []
             true_schedules = []
+            num_test_runs = 0
             for stat_run in range(num_stat_runs):
                 model_file_exists = os.path.exists(base_model_filepath  + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml")
                 schedule_file_exists = os.path.exists(schedule_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml")
                 if model_file_exists and schedule_file_exists:
-                    # load pre-generated schedules/models
+                #     # load pre-generated schedules/models
                     base_avails, base_variances, requests = load_base_models_from_file(base_model_filepath, num_deliveries, availability_percent, stat_run)
                     true_avails, schedules = load_schedules_from_file(schedule_filepath, num_deliveries, availability_percent, stat_run)
                     node_requests.append(requests)
@@ -116,10 +117,16 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
 
                         # true schedule
+                        # if params['availabilities'] == 'brayford':
+
                         schedules = {}
                         for request in node_requests[stat_run]:
-                            x_in, y_in = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
-                            schedules[request] = y_in
+                            X, Y = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
+                            for i in Y.shape[0]:
+                                if not(i in schedules):
+                                    schedules[i] = {}
+                                schedules[i][request] = Y[i]
+                            num_test_runs = Y.shape[0]
                             # if params['use_gp']:
                             # from gp import GP
                             # test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
@@ -146,70 +153,70 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         true_schedules.append(schedules)
 
 
-                    elif params['availabilities'] == 'windows': 
+                    # elif params['availabilities'] == 'windows': 
 
-                        # sample rooms for delivieries 
-                        if params['node_closeness'] == 'random':
-                            node_requests.append(random.sample(params['rooms'], num_deliveries))
-                        if params['node_closeness'] == 'sequential':
-                            node_requests.append(params['rooms'][0:num_deliveries])
+                    #     # sample rooms for delivieries 
+                    #     if params['node_closeness'] == 'random':
+                    #         node_requests.append(random.sample(params['rooms'], num_deliveries))
+                    #     if params['node_closeness'] == 'sequential':
+                    #         node_requests.append(params['rooms'][0:num_deliveries])
                         
-                        ## base availability models
-                        avails, variances = generate_windows_overlapping(node_requests[stat_run], params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
-                        if params['use_gp']:
-                            from gp import GP
-                            gps = {}
-                            for request in node_requests[stat_run]:
-                                x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
-                                gps[request] = GP(None, x_in, avails[request], params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
-                            base_availability_models.append(gps)
-                        else:
-                            base_availability_models.append(avails)
+                    #     ## base availability models
+                    #     avails, variances = generate_windows_overlapping(node_requests[stat_run], params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
+                    #     if params['use_gp']:
+                    #         from gp import GP
+                    #         gps = {}
+                    #         for request in node_requests[stat_run]:
+                    #             x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
+                    #             gps[request] = GP(None, x_in, avails[request], params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
+                    #         base_availability_models.append(gps)
+                    #     else:
+                    #         base_availability_models.append(avails)
 
-                        # base_availability_models.append(avails)
-                        base_model_variances.append(variances)
+                    #     # base_availability_models.append(avails)
+                    #     base_model_variances.append(variances)
 
-                        # true availability models
-                        sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
-                        sampled_avails = avails
+                    #     # true availability models
+                    #     sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
+                    #     sampled_avails = avails
                         
 
-                        true_availability_models.append(avails)
+                    #     true_availability_models.append(avails)
 
-                        ## true schedules
-                        true_schedules.append(generate_schedule(node_requests[stat_run], avails, params['mu'], params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency']))
-                        # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
+                    #     ## true schedules
+                    #     true_schedules.append(generate_schedule(node_requests[stat_run], avails, params['mu'], params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency']))
+                    #     # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
 
-                        # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
-                        # save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
+                    #     # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
+                    #     # save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
 
 
-                    elif params['availabilities'] == 'simple':
+                    # elif params['availabilities'] == 'simple':
                             
-                        # sample rooms for delivieries 
-                        if params['node_closeness'] == 'random':
-                            node_requests.append(random.sample(params['rooms'], num_deliveries))
-                        if params['node_closeness'] == 'sequential':
-                            node_requests.append(params['rooms'][0:num_deliveries])
+                    #     # sample rooms for delivieries 
+                    #     if params['node_closeness'] == 'random':
+                    #         node_requests.append(random.sample(params['rooms'], num_deliveries))
+                    #     if params['node_closeness'] == 'sequential':
+                    #         node_requests.append(params['rooms'][0:num_deliveries])
                         
-                        ## base availability models
-                        avails, variances = generate_simple_models(node_requests[stat_run], params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
-                        base_availability_models.append(avails)
-                        base_model_variances.append(variances)
+                    #     ## base availability models
+                    #     avails, variances = generate_simple_models(node_requests[stat_run], params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
+                    #     base_availability_models.append(avails)
+                    #     base_model_variances.append(variances)
                             
-                        # ## true availability models
-                        # sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
-                        # true_availability_models.append(sampled_avails)
+                    #     # ## true availability models
+                    #     # sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
+                    #     # true_availability_models.append(sampled_avails)
 
-                        ## true schedules
-                        true_schedules.append(generate_simple_schedules(node_requests[stat_run], sampled_avails, params['mu'], params['num_intervals'], params['schedule_generation_method']))
-                        # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
+                    #     ## true schedules
+                    #     true_schedules.append(generate_simple_schedules(node_requests[stat_run], sampled_avails, params['mu'], params['num_intervals'], params['schedule_generation_method']))
+                    #     # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
 
-                        # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
-                        # save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
+                    #     # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
+                    #     # save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
                         
-                    else:
-                        raise ValueError(params['availabilities'])
+                    # else:
+                    #     raise ValueError(params['availabilities'])
                     
 
             ## "learned" availability models
@@ -245,11 +252,13 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 
 
 
-                for stat_run in range(num_stat_runs):
+                # for stat_run in range(num_stat_runs):
+                stat_run = 0
+                for test_run in range(num_test_runs):
                     if strategy == 'mcts':
                         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     else:
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run][test_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     
                     if record_output:
                         with open(output_file, 'a', newline='') as csvfile:
