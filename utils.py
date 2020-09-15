@@ -199,15 +199,15 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
         y_in.append(last_val)
 
         x_in.append((time + 5)%1440)
-        y_in.append(float(line))
+        y_in.append(int(line))
         x_in.append((time + 6)%1440)
-        y_in.append(float(line))
+        y_in.append(int(line))
         x_in.append((time + 7)%1440)
-        y_in.append(float(line))
+        y_in.append(int(line))
         x_in.append((time + 8)%1440)
-        y_in.append(float(line))
+        y_in.append(int(line))
         x_in.append((time + 9)%1440)
-        y_in.append(float(line))
+        y_in.append(int(line))
 
         time = (time + 10)%1440     # 1 day is 1440 minutes
         x_in.append(time)
@@ -246,24 +246,30 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
         y_in.append(last_val)
 
         x_in.append((time + 5)%1440)
-        y_in.append(float(line))
+        y_in.append(int(line))
         x_in.append((time + 6)%1440)
-        y_in.append(float(line))
+        y_in.append(int(line))
         x_in.append((time + 7)%1440)
-        y_in.append(float(line))
+        y_in.append(int(line))
         x_in.append((time + 8)%1440)
-        y_in.append(float(line))
+        y_in.append(int(line))
         x_in.append((time + 9)%1440)
-        y_in.append(float(line))
+        y_in.append(int(line))
 
+        last_val = int(line)
         time = time + 10
 
         if time >= 1440:
             time = time%1440     # 1 day is 1440 minutes
+            x_in.append(time)
+            y_in.append(int(line))
             X.append(x_in)
             Y.append(y_in)
+
             x_in = []
             y_in = []
+            x_in.append(time)
+            y_in.append(int(line))
         else:
             x_in.append(time)
             y_in.append(int(line))
