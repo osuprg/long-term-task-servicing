@@ -122,7 +122,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         schedules = {}
                         for request in node_requests[stat_run]:
                             X, Y = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
-                            for i in Y.shape[0]:
+                            for i in range(Y.shape[0]):
                                 if not(i in schedules):
                                     schedules[i] = {}
                                 schedules[i][request] = Y[i]
