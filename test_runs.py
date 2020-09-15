@@ -99,7 +99,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                                 gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
                             else:
                                 gmms[request] = build_gmm(x_in, y_in, params['start_time'], params['start_time'] + params['budget'], params['time_interval'], params)
-                                gmms[request].visualize(out_gif_path + "train_" + request + "_gmm_histogram_10.jpg", request)
+                                # gmms[request].visualize(out_gif_path + "train_" + request + "_gmm_histogram_10.jpg", request)
                             # mus[request] = mu_combined/mu_combined_n
                             mu += mu_combined
                             mu_n += mu_combined_n
