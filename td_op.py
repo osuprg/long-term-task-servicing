@@ -254,7 +254,8 @@ class SpatioTemporalGraph:
                         st_node.prob = self.availability_models[v].get_prediction(st_node.t)
                         st_node.uncertainty = self.availability_models[v].get_uncertainty(st_node.t)
                     else:
-                        st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                        st_node.prob = self.availability_models[v].predict(st_node.t)
+                        # st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
                         st_node.uncertainty = bernoulli_variance(st_node.prob)
                     st_node.observation_profit = observation_profit(st_node.uncertainty)
                     st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
@@ -273,7 +274,8 @@ class SpatioTemporalGraph:
                         st_node.prob = self.availability_models[v].get_prediction(st_node.t)
                         st_node.uncertainty = self.availability_models[v].get_uncertainty(st_node.t)
                     else:
-                        st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                        st_node.prob = self.availability_models[v].predict(st_node.t)
+                        # st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
                         st_node.uncertainty = bernoulli_variance(st_node.prob)
                     st_node.observation_profit = observation_profit(st_node.uncertainty)
                     st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
@@ -283,7 +285,8 @@ class SpatioTemporalGraph:
                 st_node.prob = self.availability_models[v].get_prediction(st_node.t)
                 st_node.uncertainty = self.availability_models[v].get_uncertainty(st_node.t)
             else:
-                st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                st_node.prob = self.availability_models[v].predict(st_node.t)
+                # st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
                 st_node.uncertainty = bernoulli_variance(st_node.prob)
             st_node.observation_profit = observation_profit(st_node.uncertainty)
             st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
@@ -355,7 +358,8 @@ class SpatioTemporalGraph:
                                 if self.use_gp:
                                     st_node.prob = self.availability_models[v].get_prediction(st_node.t)
                                 else:
-                                    st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                                    st_node.prob = self.availability_models[v].predict(st_node.t)
+                                    # st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                         else:
@@ -369,14 +373,16 @@ class SpatioTemporalGraph:
                                 if self.use_gp:
                                     st_node.prob = self.availability_models[v].get_prediction(st_node.t)
                                 else:
-                                    st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                                    st_node.prob = self.availability_models[v].predict(st_node.t)
+                                    # st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                     else:
                         if self.use_gp:
                             st_node.prob = self.availability_models[v].get_prediction(st_node.t)
                         else:
-                            st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
+                            st_node.prob = self.availability_models[v].predict(st_node.t)
+                            # st_node.prob = self.availability_models[v][int(st_node.t/self.time_interval)]
                         st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                         st_node.serviced_probs[st_node.id] = st_node.prob
                 elif v == self.maintenance_node:
@@ -863,7 +869,8 @@ class SpatioTemporalGraph:
         if self.use_gp:
             a_priori_prob = self.availability_models[node_id].get_prediction(curr_time)
         else:
-            a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
+            a_priori_prob = self.availability_models[node_id].predict(curr_time)
+            # a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
 
         likelihood = persistence_prob(self.mu, curr_time-last_observation_time, last_observation)
         # if last_observation == 1:
@@ -890,7 +897,8 @@ class SpatioTemporalGraph:
         if self.use_gp:
             a_priori_prob = self.availability_models[node_id].get_prediction(curr_time)
         else:
-            a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
+            a_priori_prob = self.availability_models[node_id].predict(curr_time)
+            # a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
         new_prob = a_priori_prob
         if last_observation == 0:
             if curr_time < (last_observation_time + (self.mu/2)):

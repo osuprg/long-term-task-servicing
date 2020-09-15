@@ -61,13 +61,20 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
     params['spacing'] = int(model_params['spacing'])
     params['noise_scaling'] = float(model_params['noise_scaling'])
     params['use_gp'] = bool(int(model_params['use_gp']))
+    params['separate_mus'] = bool(int(model_params['separate_mus']))
+    params['shortest_period'] = int(model_params['shortest_period'])
+    params['longest_period'] = int(model_params['longest_period'])
+    params['num_clusters'] = int(model_params['num_clusters'])
+    params['num_iterations'] = int(model_params['num_iterations'])
+    params['version'] = model_params['version']
+    params['fuzzyfier'] = int(model_params['fuzzyfier'])
+    params['lambda_param'] = int(model_params['lambda_param'])
 
     return params
 
 
 def load_brayford_training_data_histogram(request, data_path, out_gif_path):
     path = data_path + "learning_" + request + ".txt"
-    lines = [line.rstrip() for line in open(path)]
 
     histogram = [[0.0, 0.0] for i in range(int(1440/10))]
     lines = [line.rstrip() for line in open(path)]
@@ -107,15 +114,52 @@ def load_brayford_training_data_histogram(request, data_path, out_gif_path):
 
 
 def load_brayford_training_data(request, data_path, out_gif_path):
+    mu_combined = 0.0
+    mu_combined_n = 0
+
+    # mu_0_1 = 0.0
+    # mu_0_1_n = 0
+
+    # mu_1_0 = 0.0
+    # mu_1_0_n = 0
+
     path = data_path + "learning_" + request + ".txt"
     lines = [line.rstrip() for line in open(path)]
     time = 10
     x_in = []
     y_in = []
+    last_val = int(lines[0])
+    last_time = time
+    mu_tracker = 0
     for line in lines:
+
+        # mu
+        val = int(line)
+        mu_tracker += 10
+        if val != last_val:
+            if mu_tracker >= 1440:
+                delta = 1440
+            elif last_time > time:
+                delta = (time + 1440) - last_time
+            else:
+                delta = time - last_time
+            mu_combined += delta
+            mu_combined_n += 1
+            mu_tracker = 0
+
+            # if last_val == 0:
+            #     mu_0_1 += delta
+            #     mu_0_1_n += 1
+            # else:
+            #     mu_1_0 += delta
+            #     mu_1_0_n += 1
+            last_val = val
+
+        # inputs
         x_in.append(time)
-        y_in.append(int(line))
+        y_in.append(val)
         time = (time + 10)%1440     # 1 day is 1440 minutes
+
     x_in = np.array(x_in)
     y_in = np.array(y_in)
 
@@ -127,7 +171,7 @@ def load_brayford_training_data(request, data_path, out_gif_path):
     # plt.title("Brayford Schedule Node " + request + ": Training")
     # plt.savefig(out_gif_path + "train_" + request + "_data.jpg")
 
-    return x_in, y_in
+    return x_in, y_in, mu_combined, mu_combined_n
 
 
 def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
@@ -142,16 +186,36 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
     time = 10
     x_in = []
     y_in = []
-    last_val = float(lines[0])
+    last_val = int(lines[0])
     x_in.append(time)
     y_in.append(last_val)
     for line in lines[1:]:
         # time = (time + 5)%1440
         # x_in.append(time)
         # y_in.append((float(line)+last_val)/2.0)
+        x_in.append((time + 1)%1440)
+        y_in.append(last_val)
+        x_in.append((time + 2)%1440)
+        y_in.append(last_val)
+        x_in.append((time + 3)%1440)
+        y_in.append(last_val)
+        x_in.append((time + 4)%1440)
+        y_in.append(last_val)
+
+        x_in.append((time + 5)%1440)
+        y_in.append(float(line))
+        x_in.append((time + 6)%1440)
+        y_in.append(float(line))
+        x_in.append((time + 7)%1440)
+        y_in.append(float(line))
+        x_in.append((time + 8)%1440)
+        y_in.append(float(line))
+        x_in.append((time + 9)%1440)
+        y_in.append(float(line))
+
         time = (time + 10)%1440     # 1 day is 1440 minutes
         x_in.append(time)
-        y_in.append(float(line))
+        y_in.append(int(line))
         # last_val = float(line)
     x_in = np.array(x_in)
     y_in = np.array(y_in)

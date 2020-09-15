@@ -15,6 +15,7 @@ from world_generation import generate_graph
 from schedule_generation import generate_windows_overlapping, generate_windows, generate_window_base_availability_models_with_bernoulli_variance, sample_model_parameters, generate_schedule, save_base_models_to_file, save_schedules_to_file, load_base_models_from_file, load_schedules_from_file, generate_simple_models, generate_simple_schedules
 from plan_execution_simulation import plan_and_execute, create_policy_and_execute
 from planners import visualize_path_willow
+from spectral_clustering import build_gmm
 
 
 ### High level code for running stat runs of task planning and simulated execution
@@ -83,28 +84,51 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                     if params['availabilities'] == 'brayford':
 
                         # model
-                        from gp import GP
-                        gps = {}
+                        if params['use_gp']:
+                            from gp import GP
+                            gps = {}
+                        # if params['use_gmm']:
+                        gmms = {}
+                        # mus = {}
+                        mu = 0.0
+                        mu_n = 0
                         node_requests.append(params['rooms'])
                         for request in node_requests[stat_run]:
-                            x_in, y_in = load_brayford_training_data_histogram(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], out_gif_path)
-                            gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                            x_in, y_in, mu_combined, mu_combined_n = load_brayford_training_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], out_gif_path)
+                            if params['use_gp']:
+                                gps[request] = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                            else:
+                                gmms[request] = build_gmm(x_in, y_in, params['start_time'], params['start_time'] + params['budget'], params['time_interval'], params)
+                                gmms[request].visualize(out_gif_path + "train_" + request + "_gmm_histogram_10.jpg", request)
+                            # mus[request] = mu_combined/mu_combined_n
+                            mu += mu_combined
+                            mu_n += mu_combined_n
 
-                            gps[request].visualize(out_gif_path + "train_" + request + "_model_histogram_10.jpg", request)
+                            # gps[request].visualize(out_gif_path + "train_" + request + "_model_histogram_10.jpg", request)
 
-                        # base_availability_models.append(gps)
-                        # base_model_variances.append({})
+                        if params['use_gp']:
+                            base_availability_models.append(gps)
+                        else:
+                            base_availability_models.append(gmms)
+                        base_model_variances.append({})
+                        mu = mu/mu_n
+                        params['mu'] = mu
 
 
                         # true schedule
                         schedules = {}
                         for request in node_requests[stat_run]:
-                            x_in, y_in = load_brayford_testing_data_histogram(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
-                            test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                            x_in, y_in = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
+                            schedules[request] = y_in
+                            # if params['use_gp']:
+                            # from gp import GP
+                            # test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
+                            # if params['use_gmm']:
+                            #     test_gp = build_gmm(x_in, y_in, params['start_time'], params['start_time'] + params['budget'], params['time_interval'], params)
                             # if stat_run == 0:
                             #     test_gp.visualize(out_gif_path + "february_" + request + "_model_10.jpg", request)
                             # else:
-                            test_gp.visualize(out_gif_path + "november_" + request + "_model_histogram_10.jpg", request)
+                            # test_gp.visualize(out_gif_path + "november_" + request + "_model_histogram_10.jpg", request)
                             # schedules[request] = test_gp.threshold_sample_schedule(params['start_time'], params['budget'], params['time_interval'])
 
                             # # visualize:
@@ -119,7 +143,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                             #     plt.title("Brayford Schedule Node " + request + ": November")
                             #     plt.savefig(out_gif_path + "november_" + request + ".jpg")
 
-                        # true_schedules.append(schedules)
+                        true_schedules.append(schedules)
 
 
                     elif params['availabilities'] == 'windows': 
@@ -201,13 +225,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 params['uncertainty_penalty'] = 0.0
                 params['observation_reward'] = 0.0
                 params['deliver_threshold'] = 0.0
-
-                if strategy == 'observe_mult_visits_up_0_or_7_dt_0':
-                    params['uncertainty_penalty'] = 0.0
-                    params['observation_reward'] = 0.7
-                    params['deliver_threshold'] = 0.0
-                    strategy_name = strategy
-                    strategy = 'observe_mult_visits'
+                
 
                 if strategy == 'observe_mult_visits_up_5_or_0_dt_0':
                     params['uncertainty_penalty'] = 0.5
@@ -227,16 +245,16 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 
 
 
-                # for stat_run in range(num_stat_runs):
-                #     if strategy == 'mcts':
-                #         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
-                #     else:
-                #         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                for stat_run in range(num_stat_runs):
+                    if strategy == 'mcts':
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                    else:
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     
-                #     if record_output:
-                #         with open(output_file, 'a', newline='') as csvfile:
-                #             writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                #             writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
+                    if record_output:
+                        with open(output_file, 'a', newline='') as csvfile:
+                            writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                            writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
 
 
 
