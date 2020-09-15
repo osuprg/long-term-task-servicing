@@ -175,8 +175,8 @@ def load_brayford_training_data(request, data_path, out_gif_path):
 
 
 def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
-    X = []
-    Y = []
+    # X = []
+    # Y = []
     path = data_path + "february_" + request + ".txt"
     lines = [line.rstrip() for line in open(path)]
     time = 10
@@ -213,69 +213,72 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
         x_in.append(time)
         y_in.append(int(line))
         # last_val = float(line)
-    X.append(x_in)
-    Y.append(y_in)
+    # X.append(x_in)
+    # Y.append(y_in)
+
+    X = np.array(x_in)
+    Y = np.array(x_in)
 
 
 
 
 
 
-    path = data_path + "november_" + request + ".txt"
-    # else:
-    #     raise ValueError(stat_run)
+    # path = data_path + "november_" + request + ".txt"
+    # # else:
+    # #     raise ValueError(stat_run)
 
-    lines = [line.rstrip() for line in open(path)]
-    time = 10
-    x_in = []
-    y_in = []
-    last_val = int(lines[0])
-    x_in.append(time)
-    y_in.append(last_val)
-    for line in lines[1:]:
-        # time = (time + 5)%1440
-        # x_in.append(time)
-        # y_in.append((float(line)+last_val)/2.0)
-        x_in.append((time + 1)%1440)
-        y_in.append(last_val)
-        x_in.append((time + 2)%1440)
-        y_in.append(last_val)
-        x_in.append((time + 3)%1440)
-        y_in.append(last_val)
-        x_in.append((time + 4)%1440)
-        y_in.append(last_val)
+    # lines = [line.rstrip() for line in open(path)]
+    # time = 10
+    # x_in = []
+    # y_in = []
+    # last_val = int(lines[0])
+    # x_in.append(time)
+    # y_in.append(last_val)
+    # for line in lines[1:]:
+    #     # time = (time + 5)%1440
+    #     # x_in.append(time)
+    #     # y_in.append((float(line)+last_val)/2.0)
+    #     x_in.append((time + 1)%1440)
+    #     y_in.append(last_val)
+    #     x_in.append((time + 2)%1440)
+    #     y_in.append(last_val)
+    #     x_in.append((time + 3)%1440)
+    #     y_in.append(last_val)
+    #     x_in.append((time + 4)%1440)
+    #     y_in.append(last_val)
 
-        x_in.append((time + 5)%1440)
-        y_in.append(int(line))
-        x_in.append((time + 6)%1440)
-        y_in.append(int(line))
-        x_in.append((time + 7)%1440)
-        y_in.append(int(line))
-        x_in.append((time + 8)%1440)
-        y_in.append(int(line))
-        x_in.append((time + 9)%1440)
-        y_in.append(int(line))
+    #     x_in.append((time + 5)%1440)
+    #     y_in.append(int(line))
+    #     x_in.append((time + 6)%1440)
+    #     y_in.append(int(line))
+    #     x_in.append((time + 7)%1440)
+    #     y_in.append(int(line))
+    #     x_in.append((time + 8)%1440)
+    #     y_in.append(int(line))
+    #     x_in.append((time + 9)%1440)
+    #     y_in.append(int(line))
 
-        last_val = int(line)
-        time = time + 10
+    #     last_val = int(line)
+    #     time = time + 10
 
-        if time >= 1440:
-            time = time%1440     # 1 day is 1440 minutes
-            x_in.append(time)
-            y_in.append(int(line))
-            X.append(x_in)
-            Y.append(y_in)
+    #     if time >= 1440:
+    #         time = time%1440     # 1 day is 1440 minutes
+    #         x_in.append(time)
+    #         y_in.append(int(line))
+    #         X.append(x_in)
+    #         Y.append(y_in)
 
-            x_in = []
-            y_in = []
-            x_in.append(time)
-            y_in.append(int(line))
-        else:
-            x_in.append(time)
-            y_in.append(int(line))
-        # last_val = float(line)
-    X = np.array(X)
-    Y = np.array(Y)
+    #         x_in = []
+    #         y_in = []
+    #         x_in.append(time)
+    #         y_in.append(int(line))
+    #     else:
+    #         x_in.append(time)
+    #         y_in.append(int(line))
+    #     # last_val = float(line)
+    # X = np.array(X)
+    # Y = np.array(Y)
 
     #  # # visualize:
     # fig = plt.figure()

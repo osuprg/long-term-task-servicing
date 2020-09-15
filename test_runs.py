@@ -122,11 +122,12 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         schedules = {}
                         for request in node_requests[stat_run]:
                             X, Y = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
-                            for i in range(Y.shape[0]):
-                                if not(i in schedules):
-                                    schedules[i] = {}
-                                schedules[i][request] = Y[i]
-                            num_test_runs = Y.shape[0]
+                            # for i in range(Y.shape[0]):
+                            #     if not(i in schedules):
+                            #         schedules[i] = {}
+                            #     schedules[i][request] = Y[i]
+                            # num_test_runs = Y.shape[0]
+                            schedules[request] = Y
                             # if params['use_gp']:
                             # from gp import GP
                             # test_gp = GP(None, x_in, y_in, params['budget'], 1, params['noise_scaling'], True, 'values')
@@ -254,16 +255,16 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
                 # for stat_run in range(num_stat_runs):
                 stat_run = 0
-                for test_run in range(num_test_runs):
-                    if strategy == 'mcts':
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run][test_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
-                    else:
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run][test_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
-                    
-                    if record_output:
-                        with open(output_file, 'a', newline='') as csvfile:
-                            writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                            writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
+                # for test_run in range(num_test_runs):
+                if strategy == 'mcts':
+                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                else:
+                    total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                
+                if record_output:
+                    with open(output_file, 'a', newline='') as csvfile:
+                        writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                        writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
 
 
 
