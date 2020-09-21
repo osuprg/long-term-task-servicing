@@ -854,14 +854,16 @@ class SpatioTemporalGraph:
 
         # only based on prob, no bayesian confidence considered
 
-        combined_model_uncertainty = entropy(prob)
+        # combined_model_uncertainty = entropy(prob)
 
         if not(last_observation_time is None):
             short_term_uncertainty = entropy(persistence_prob(self.mu, curr_time-last_observation_time, 1))         # without loss of generality, say observation is true (only considering short term model)
         else:
-            short_term_uncertainty = combined_model_uncertainty
+            # short_term_uncertainty = combined_model_uncertainty
+            short_term_uncertainty = entropy(.5)
 
-        return min(short_term_uncertainty, combined_model_uncertainty)      # FIXME -- hack instead of combined uncertainty
+        # return min(short_term_uncertainty, combined_model_uncertainty)      # FIXME -- hack instead of combined uncertainty
+        return short_term_uncertainty
 
 
     ### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)
@@ -878,8 +880,8 @@ class SpatioTemporalGraph:
         # else:
         #     evidence_prob = 1 - availability_model(last_observation_time)
         evidence_prob = (likelihood*a_priori_prob) + (1.0-likelihood)*(1.0-a_priori_prob)
-        if evidence_prob < .001:
-            new_prob = .99
+        if (likelihood < .0001) or (a_priori_prob < .0001):
+            new_prob = .0001
         else:
             new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
         return new_prob
