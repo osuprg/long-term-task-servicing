@@ -1,6 +1,6 @@
 spacing: 1
 noise_scaling: 0.02
-use_gp: 0
+use_gp: 1
 separate_mus: 0
 shortest_period: 60
 #60
