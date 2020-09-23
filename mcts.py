@@ -267,7 +267,8 @@ class MCTS:
 		return delivery_reward + maintenance_reward_collected + failure_penalty
 
 	def sample_occupancy(self, pose_id, deliver_time, observations):
-		a_priori_prob = self.avails[pose_id].get_prediction(deliver_time)
+		# a_priori_prob = self.avails[pose_id].get_prediction(deliver_time)
+		a_priori_prob = self.avails[pose_id].predict(deliver_time)
 		if pose_id in observations:
 			last_observation = observations[pose_id][0]
 			last_observation_time = observations[pose_id][1]
@@ -381,10 +382,12 @@ class MCTS:
 					if node.pose_id in node.observations:
 						last_observation_value = node.observations[node.pose_id][0]
 						last_observation_time = node.observations[node.pose_id][1]
-						a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
+						# a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
+						a_priori_prob = self.avails[node.pose_id].predict(node.time)
 						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time)
 					else:
-						avail_prob = self.avails[node.pose_id].get_prediction(node.time)
+						# avail_prob = self.avails[node.pose_id].get_prediction(node.time)
+						avail_prob = self.avails[node.pose_id].predict(node.time)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					score = expected_reward
@@ -405,10 +408,13 @@ class MCTS:
 					if node.pose_id in node.observations:
 						last_observation_value = node.observations[node.pose_id][0]
 						last_observation_time = node.observations[node.pose_id][1]
-						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time) 			# FIXME +1 minute to do delivery
+						# a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time) 			# FIXME +1 minute to do delivery
+						a_priori_prob = self.avails[node.pose_id].predict(self.nodes[available].time)
+
 						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time, last_observation_value, last_observation_time)
 					else:
-						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time)
+						# avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time)
+						avail_prob = self.avails[node.pose_id].predict(self.nodes[available].time)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					score = expected_reward
@@ -460,10 +466,12 @@ class MCTS:
 					if node.pose_id in node.observations:
 						last_observation_value = node.observations[node.pose_id][0]
 						last_observation_time = node.observations[node.pose_id][1]
-						a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
+						# a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
+						a_priori_prob = self.avails[node.pose_id].predict(node.time)
 						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time)
 					else:
-						avail_prob = self.avails[node.pose_id].get_prediction(node.time)
+						# avail_prob = self.avails[node.pose_id].get_prediction(node.time)
+						avail_prob = self.avails[node.pose_id].predict(node.time)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					if expected_reward > max_score:
@@ -476,10 +484,11 @@ class MCTS:
 					if node.pose_id in node.observations:
 						last_observation_value = node.observations[node.pose_id][0]
 						last_observation_time = node.observations[node.pose_id][1]
-						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1) 			# minute to do delivery
+						# a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1) 			# minute to do delivery
+						a_priori_prob = self.avails[node.pose_id].predict(self.nodes[available].time - 1)
 						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time - 1, last_observation_value, last_observation_time)
 					else:
-						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1)
+						avail_prob = self.avails[node.pose_id].predict(self.nodes[available].time - 1)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					if expected_reward > max_score:
@@ -519,10 +528,12 @@ class MCTS:
 					if node.pose_id in node.observations:
 						last_observation_value = node.observations[node.pose_id][0]
 						last_observation_time = node.observations[node.pose_id][1]
-						a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
+						# a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
+						a_priori_prob = self.avails[node.pose_id].predict(node.time)
 						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time)
 					else:
-						avail_prob = self.avails[node.pose_id].get_prediction(node.time)
+						# avail_prob = self.avails[node.pose_id].get_prediction(node.time)
+						avail_prob = self.avails[node.pose_id].predict(node.time)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
@@ -537,10 +548,12 @@ class MCTS:
 					if node.pose_id in node.observations:
 						last_observation_value = node.observations[node.pose_id][0]
 						last_observation_time = node.observations[node.pose_id][1]
-						a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1) 			# minute to do delivery
+						# a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1) 			# minute to do delivery
+						a_priori_prob = self.avails[node.pose_id].predict(self.nodes[available].time - 1)
 						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time - 1, last_observation_value, last_observation_time)
 					else:
-						avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1)
+						# avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1)
+						avail_prob = self.avails[node.pose_id].predict(self.nodes[available].time - 1)
 
 					expected_reward = avail_prob*self.expected_reward(available, maintenance_reward_collected, failure_penalty) + (1.0 - avail_prob)*self.expected_reward(unavailable, maintenance_reward_collected, failure_penalty)
 					score = self.exploration_score(expected_reward/max_score, node.visits, num_visits)
