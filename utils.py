@@ -321,10 +321,9 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
             x_in.append(time)
             y_in.append(int(line))
         # last_val = float(line)
-    X2 = X[:2]
-    Y2 = Y[:2]
-    X2 = np.array(X2)
-    Y2 = np.array(Y2)
+
+    X = np.array(X)
+    Y = np.array(Y)
 
     #  # # visualize:
     # fig = plt.figure()
@@ -338,7 +337,7 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
     #     plt.title("Brayford Schedule Node " + request + ": November")
     #     plt.savefig(out_gif_path + "november_" + request + ".jpg")
 
-    return X2, Y2
+    return X, Y
 
 
 def load_brayford_testing_data_histogram(request, data_path, stat_run, out_gif_path):

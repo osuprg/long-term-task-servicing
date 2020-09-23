@@ -257,7 +257,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 stat_run = 0
                 for test_run in range(num_test_runs):
                     if strategy == 'mcts':
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run][test_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     else:
                         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run][test_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     
