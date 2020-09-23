@@ -418,14 +418,14 @@ def calculate_best_delivery_time(node_avails, last_observation, start_time, end_
         best_prob = -float("inf")
         if last_observation is None:
             for time in list(range(start_time, end_time)):
-                prob = node_avails.get_prediction(time)
+                prob = node_avails.predict(time)
                 if prob > best_prob:
                     best_prob = prob
         else:
             last_observation_value = last_observation[0]
             last_observation_time = last_observation[1]
             for time in list(range(start_time, end_time)):
-                a_priori_prob = node_avails.get_prediction(time)
+                a_priori_prob = node_avails.predict(time)
                 prob = combine_probabilities(a_priori_prob, mu, time, last_observation_value, last_observation_time)
                 if prob > best_prob:
                     best_prob = prob
