@@ -38,6 +38,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
     params['rooms'] = rooms
     
     # for num_deliveries in num_deliveries_runs:
+    num_deliveries = num_deliveries_runs[0]
     for availability_percent in availability_percents:
 
         for budget in budgets:
