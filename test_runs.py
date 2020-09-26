@@ -174,7 +174,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                             from gp import GP
                             gps = {}
                             for request in node_requests[stat_run]:
-                                x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
+                                x_in = list(range(int(params['start_time']), int(params['budget']), int(params['time_interval'])))
                                 y_in = copy.deepcopy(avails[request])
                                 for i in range(len(y_in)):
                                     y = max(y_in[i]+random.random()*params['noise_scaling'] - params['noise_scaling']/2.0, 0.01)
@@ -186,7 +186,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         else:
                             gmms = {}
                             for request in node_requests[stat_run]:
-                                x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
+                                x_in = list(range(int(params['start_time']), int(params['budget']), int(params['time_interval'])))
                                 y_in = copy.deepcopy(avails[request])
                                 for i in range(len(y_in)):
                                     y = max(y_in[i]+random.random()*params['noise_scaling'] - params['noise_scaling']/2.0, 0.01)
