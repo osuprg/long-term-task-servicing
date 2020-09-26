@@ -26,7 +26,7 @@ def main(num_stat_runs, input_file, output_file):
         availability_percents.append(float(i))
     budgets = []
     for i in inputs['budgets']:
-        budgets.append(float(i))
+        budgets.append(int(i))
     if not(output_file is None):
         output_file = filepath + output_file
     visualize = bool(int(inputs['visualize']))
