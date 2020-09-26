@@ -29,6 +29,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
     curr_node = params['start_node_id']
     path_length = 1
     path_visits = 0
+    plan_times = []
 
     # replan
     if (strategy == 'no_temp') or (strategy == 'no_replan'):
@@ -55,6 +56,7 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
         path = plan_path(strategy, g, base_availability_models, base_model_variances, availability_observations, requests_left_to_deliver, curr_time, curr_node, mu, params)
         path_length = len(path)
         plan_time = timer() - runtime_start
+        plan_times.append(plan_time)
         print ("Plan time: " + str(plan_time))
 
         ## Execute
@@ -150,11 +152,13 @@ def plan_and_execute(strategy, g, base_availability_models, base_model_variances
     print ()
     print(strategy + " cr: " + str(competitive_ratio))
 
+    ave_plan_time = sum(plan_times)/len(plan_times)
+
     if visualize:
         imageio.mimsave(visualize_path, img_history, duration=2)
         print (action_history)
 
-    return total_profit, competitive_ratio, maintenance_competitive_ratio, path_history
+    return total_profit, competitive_ratio, maintenance_competitive_ratio, path_history, ave_plan_time
 
 
 
@@ -178,6 +182,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
     path_visits = 0
     maintenance_reward_collected_current_plan = 0.0
     failure_penalty_current_plan = 0.0
+    plan_times = []
 
     # # replan
     # if (strategy == 'no_temp') or (strategy == 'no_replan'):
@@ -213,6 +218,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
             mcts = MCTS(g, base_availability_models, availability_observations, requests_left_to_deliver, curr_node, curr_time, params['budget']-curr_time, params['max_iterations'], params['planning_horizon'], params['maintenance_reward'], params['deliver_reward'], params['mu'], params['discovery_factor'], params['distribution_node'], params['maintenance_node'])
             mcts.create_policy()
             plan_time = timer() - runtime_start
+            plan_times.append(plan_time)
             print ("MCTS plan time: " + str(plan_time))
 
             path_visits = 1
@@ -343,8 +349,10 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
     print ()
     print(strategy + " cr: " + str(competitive_ratio))
 
+    ave_plan_time = sum(plan_times)/len(plan_times)
+
     if visualize:
         imageio.mimsave(visualize_path, img_history, duration=2)
         print (action_history)
 
-    return total_profit, competitive_ratio, maintenance_competitive_ratio, path_history
+    return total_profit, competitive_ratio, maintenance_competitive_ratio, path_history, ave_plan_time

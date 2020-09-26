@@ -1,8 +1,8 @@
 spacing: 1
-noise_scaling: 0.02
+# noise_scaling: 0.02
 use_gp: 0
 separate_mus: 0
-shortest_period: 60
+shortest_period: 30
 #60
 # shortest_period: 43200 #60*60*12
 longest_period: 1440

@@ -39,6 +39,7 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
     params['maintenance_reward'] = float(schedule_params['maintenance_reward'])
     params['deliver_reward'] = float(schedule_params['deliver_reward'])
     params['max_noise_amplitude'] = float(schedule_params['max_noise_amplitude'])
+    params['noise_scaling'] = float(schedule_params['noise_scaling'])
     params['schedule_generation_method'] = schedule_params['schedule_generation_method']
     params['num_intervals'] = int(params['budget']/params['time_interval'])
     params['data_path'] = schedule_params['data_path']
@@ -59,7 +60,6 @@ def load_params(world_config_file, schedule_config_file, planner_config_file, mo
     with open(model_config_file) as f:
         model_params = yaml.load(f, Loader=yaml.FullLoader)
     params['spacing'] = int(model_params['spacing'])
-    params['noise_scaling'] = float(model_params['noise_scaling'])
     params['use_gp'] = bool(int(model_params['use_gp']))
     params['separate_mus'] = bool(int(model_params['separate_mus']))
     params['shortest_period'] = int(model_params['shortest_period'])
@@ -175,6 +175,7 @@ def load_brayford_training_data(request, data_path, out_gif_path):
 
 
 def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
+    # print ("request " + str(request))
     X = []
     Y = []
     path = data_path + "february_" + request + ".txt"
@@ -234,6 +235,7 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
         x_in.append(time)
         y_in.append(int(line))
         # last_val = float(line)
+    # print (sum(y_in))
     X.append(copy.deepcopy(x_in))
     Y.append(copy.deepcopy(y_in))
 
@@ -310,6 +312,7 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
             time = time%1440     # 1 day is 1440 minutes
             x_in.append(time)
             y_in.append(int(line))
+            # print (sum(y_in))
             X.append(copy.deepcopy(x_in))
             Y.append(copy.deepcopy(y_in))
 
@@ -322,6 +325,7 @@ def load_brayford_testing_data(request, data_path, stat_run, out_gif_path):
             y_in.append(int(line))
         # last_val = float(line)
 
+    # print ()
     X = np.array(X)
     Y = np.array(Y)
 

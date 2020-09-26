@@ -19,7 +19,7 @@ from spectral_clustering import build_gmm
 
 
 ### High level code for running stat runs of task planning and simulated execution
-def stat_runs(world_config_file, schedule_config_file, planner_config_file, model_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries_runs, availability_percents, num_stat_runs, visualize, out_gif_path):
+def stat_runs(world_config_file, schedule_config_file, planner_config_file, model_config_file, base_model_filepath, schedule_filepath, output_file, strategies, num_deliveries_runs, availability_percents, budgets, num_stat_runs, visualize, out_gif_path):
 
     if output_file == None:
         record_output = False
@@ -37,8 +37,13 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
     g, rooms = generate_graph(params['graph_generator_type'], os.path.dirname(os.path.abspath(__file__)), params['graph_filename'], params['max_rooms'], params['rooms'], params['max_traversal_cost'], params['distance_scaling'])
     params['rooms'] = rooms
     
-    for num_deliveries in num_deliveries_runs:
-        for availability_percent in availability_percents:
+    # for num_deliveries in num_deliveries_runs:
+    for availability_percent in availability_percents:
+
+        for budget in budgets:
+
+            params['budget'] = budget
+            params['longest_period'] = budget
 
             # temporal consistency parameter
             if params['availabilities'] == 'windows':
@@ -154,42 +159,63 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         true_schedules.append(schedules)
 
 
-                    # elif params['availabilities'] == 'windows': 
+                    elif params['availabilities'] == 'windows': 
 
-                    #     # sample rooms for delivieries 
-                    #     if params['node_closeness'] == 'random':
-                    #         node_requests.append(random.sample(params['rooms'], num_deliveries))
-                    #     if params['node_closeness'] == 'sequential':
-                    #         node_requests.append(params['rooms'][0:num_deliveries])
+                        # sample rooms for delivieries 
+                        if params['node_closeness'] == 'random':
+                            node_requests.append(random.sample(params['rooms'], num_deliveries))
+                        if params['node_closeness'] == 'sequential':
+                            node_requests.append(params['rooms'][0:num_deliveries])
                         
-                    #     ## base availability models
-                    #     avails, variances = generate_windows_overlapping(node_requests[stat_run], params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
-                    #     if params['use_gp']:
-                    #         from gp import GP
-                    #         gps = {}
-                    #         for request in node_requests[stat_run]:
-                    #             x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
-                    #             gps[request] = GP(None, x_in, avails[request], params['budget'], params['spacing'], params['noise_scaling'], True, 'values')
-                    #         base_availability_models.append(gps)
-                    #     else:
-                    #         base_availability_models.append(avails)
+                        ## base availability models
+                        avails, variances = generate_windows_overlapping(node_requests[stat_run], params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
+                        if params['use_gp']:
+                            from gp import GP
+                            gps = {}
+                            for request in node_requests[stat_run]:
+                                x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
+                                y_in = copy.deepcopy(avails[request])
+                                for i in range(len(y_in)):
+                                    y = max(y_in[i]+random.random()*params['noise_scaling'] - params['noise_scaling']/2.0, 0.01)
+                                    y = min(y, .99)
+                                    y_in[i] = y
 
-                    #     # base_availability_models.append(avails)
-                    #     base_model_variances.append(variances)
+                                gps[request] = GP(None, x_in, y_in, params['budget'], params['spacing'], 0.0, True, 'values')
+                            base_availability_models.append(gps)
+                        else:
+                            gmms = {}
+                            for request in node_requests[stat_run]:
+                                x_in = list(range(params['start_time'], params['budget'], params['time_interval']))
+                                y_in = copy.deepcopy(avails[request])
+                                for i in range(len(y_in)):
+                                    y = max(y_in[i]+random.random()*params['noise_scaling'] - params['noise_scaling']/2.0, 0.01)
+                                    y = min(y, .99)
+                                    y_in[i] = y
+                                gmms[request] = build_gmm(x_in, y_in, params['start_time'], params['start_time'] + params['budget'], params['time_interval'], params, True)
+                                # gmms[request].visualize(out_gif_path + "train_" + request + "_gmm_histogram_10.jpg", request)
+                                # mus[request] = mu_combined/mu_combined_n
+                                # mu += mu_combined
+                                # mu_n += mu_combined_n
+                            base_availability_models.append(gmms)
+                        # else:
+                        #     base_availability_models.append(avails)
 
-                    #     # true availability models
-                    #     sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
-                    #     sampled_avails = avails
+                        # base_availability_models.append(avails)
+                        base_model_variances.append(variances)
+
+                        # true availability models
+                        sampled_avails = sample_model_parameters(node_requests[stat_run], avails, variances, params['sampling_method'])
+                        sampled_avails = avails
                         
 
-                    #     true_availability_models.append(avails)
+                        true_availability_models.append(avails)
 
-                    #     ## true schedules
-                    #     true_schedules.append(generate_schedule(node_requests[stat_run], avails, params['mu'], params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency']))
-                    #     # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
+                        ## true schedules
+                        true_schedules.append(generate_schedule(node_requests[stat_run], avails, params['mu'], params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency']))
+                        # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
 
-                    #     # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
-                    #     # save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
+                        # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
+                        # save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
 
 
                     # elif params['availabilities'] == 'simple':
@@ -216,8 +242,8 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                     #     # save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
                     #     # save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
                         
-                    # else:
-                    #     raise ValueError(params['availabilities'])
+                    else:
+                        raise ValueError(params['availabilities'])
                     
 
             ## "learned" availability models
@@ -242,6 +268,13 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                     strategy_name = strategy
                     strategy = 'observe_mult_visits'
 
+                if strategy == 'observe_mult_visits_up_0_or_7_dt_0':
+                    params['uncertainty_penalty'] = 0.0
+                    params['observation_reward'] = 0.7
+                    params['deliver_threshold'] = 0.0
+                    strategy_name = strategy
+                    strategy = 'observe_mult_visits'
+
                 if strategy == 'observe_mult_visits_up_5_or_7_dt_0':
                     params['uncertainty_penalty'] = 0.5
                     params['observation_reward'] = 0.7
@@ -253,18 +286,18 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 
 
 
-                # for stat_run in range(num_stat_runs):
-                stat_run = 0
-                for test_run in range(num_test_runs):
+                for stat_run in range(num_stat_runs):
+                # stat_run = 0
+                # for test_run in range(num_test_runs):
                     if strategy == 'mcts':
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run][test_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history, ave_plan_time = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     else:
-                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run][test_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
+                        total_profit, competitive_ratio, maintenance_competitive_ratio, path_history, ave_plan_time = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     
                     if record_output:
                         with open(output_file, 'a', newline='') as csvfile:
                             writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                            writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio])
+                            writer.writerow([strategy_name, params['budget'], num_deliveries, availability_percent, params['availability_chance'], params['maintenance_reward'], params['max_noise_amplitude'], params['variance_bias'], competitive_ratio, maintenance_competitive_ratio, ave_plan_time])
 
 
 
