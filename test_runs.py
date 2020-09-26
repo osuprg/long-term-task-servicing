@@ -44,6 +44,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
         for budget in budgets:
 
             params['budget'] = budget
+            params['num_intervals'] = int(params['budget']/params['time_interval'])
             params['longest_period'] = budget
 
             # temporal consistency parameter
