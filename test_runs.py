@@ -80,10 +80,17 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 schedule_file_exists = os.path.exists(schedule_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml")
                 if model_file_exists and schedule_file_exists:
                 #     # load pre-generated schedules/models
-                    base_avails, base_variances, requests = load_base_models_from_file(base_model_filepath, num_deliveries, availability_percent, stat_run)
+                    Y_in, base_variances, requests = load_base_models_from_file(base_model_filepath, num_deliveries, availability_percent, stat_run)
                     true_avails, schedules = load_schedules_from_file(schedule_filepath, num_deliveries, availability_percent, stat_run)
                     node_requests.append(requests)
-                    base_availability_models.append(base_avails)
+
+                    gmms = {}
+                    for request in node_requests[stat_run]:
+                        x_in = list(range(int(params['start_time']), int(params['budget']), int(params['time_interval'])))
+                        y_in = Y_in[request][:len(x_in)]
+                        gmms[request] = build_gmm(x_in, y_in, params['start_time'], params['start_time'] + params['budget'], params['time_interval'], params, True)
+
+                    base_availability_models.append(gmms)
                     base_model_variances.append(base_variances)
                     true_availability_models.append(true_avails)
                     true_schedules.append(schedules)
@@ -171,6 +178,8 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         
                         ## base availability models
                         avails, variances = generate_windows_overlapping(node_requests[stat_run], params['start_time'], availability_percent, params['budget'], params['time_interval'], params['availability_length'], params['availability_chance'])
+                        # X_in = {}
+                        Y_in = {}
                         if params['use_gp']:
                             from gp import GP
                             gps = {}
@@ -183,6 +192,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                                     y_in[i] = y
 
                                 gps[request] = GP(None, x_in, y_in, params['budget'], params['spacing'], 0.0, True, 'values')
+                                Y_in[request] = y_in
                             base_availability_models.append(gps)
                         else:
                             gmms = {}
@@ -194,6 +204,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                                     y = min(y, .99)
                                     y_in[i] = y
                                 gmms[request] = build_gmm(x_in, y_in, params['start_time'], params['start_time'] + params['budget'], params['time_interval'], params, True)
+                                Y_in[request] = y_in
                                 # gmms[request].visualize(out_gif_path + "train_" + request + "_gmm_histogram_10.jpg", request)
                                 # mus[request] = mu_combined/mu_combined_n
                                 # mu += mu_combined
@@ -216,7 +227,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         true_schedules.append(generate_schedule(node_requests[stat_run], avails, params['mu'], params['num_intervals'], params['schedule_generation_method'], params['temporal_consistency']))
                         # true_schedules.append(sample_schedule_from_model(node_requests[stat_run], sampled_avails, mu, params['num_intervals'], params['temporal_consistency']))
 
-                        save_base_models_to_file(base_model_filepath, base_availability_models[stat_run], base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
+                        save_base_models_to_file(base_model_filepath, Y_in, base_model_variances[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
                         save_schedules_to_file(schedule_filepath, true_availability_models[stat_run], true_schedules[stat_run], node_requests[stat_run], num_deliveries, availability_percent, stat_run)
 
 
