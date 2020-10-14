@@ -3,6 +3,7 @@ import random
 import copy
 import math
 import yaml
+import pickle
 
 def bernoulli_variance(availability_prob):
     return availability_prob*(1-availability_prob)
@@ -310,20 +311,21 @@ def sample_schedule_from_model_temporal_consistency(node_requests, availability_
 
 
 def load_base_models_from_file(base_model_filepath, num_deliveries, availability_percent, stat_run):
-    filename = base_model_filepath  + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml"
-    with open(filename) as f:
-        in_dict = yaml.load(f, Loader=yaml.FullLoader)
+    filename = base_model_filepath  + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".p"
+    # with open(filename) as f:
+    #     in_dict = yaml.load(f, Loader=yaml.FullLoader)
+    in_dict = pickle.load( open( filename, "rb" ) )
     node_requests = in_dict['node_requests']
-    base_availability_models = {}
-    base_model_variances = {}
-    for node_request in node_requests:
-        avails = []
-        variances = []
-        for i in range(len(in_dict['base_availability_models'][node_request])):
-            avails.append(float(in_dict['base_availability_models'][node_request][i]))
-            variances.append(float(in_dict['base_model_variances'][node_request][i]))
-        base_availability_models[node_request] = avails
-        base_model_variances[node_request] = variances              
+    base_availability_models = in_dict['base_availability_models']
+    base_model_variances = in_dict['base_model_variances']
+    # for node_request in node_requests:
+    #     avails = []
+    #     variances = []
+    #     for i in range(len(in_dict['base_availability_models'][node_request])):
+    #         avails.append(float(in_dict['base_availability_models'][node_request][i]))
+    #         variances.append(float(in_dict['base_model_variances'][node_request][i]))
+    #     base_availability_models[node_request] = avails
+    #     base_model_variances[node_request] = variances              
     return base_availability_models, base_model_variances, node_requests
 
 def load_schedules_from_file(schedule_filepath, num_deliveries, availability_percent, stat_run):
@@ -346,13 +348,14 @@ def load_schedules_from_file(schedule_filepath, num_deliveries, availability_per
     
 
 def save_base_models_to_file(base_model_filepath, base_availability_models, base_model_variances, node_requests, num_deliveries, availability_percent, stat_run):
-    filename = base_model_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml"
+    filename = base_model_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".p"
     out_dict = {}
     out_dict['base_availability_models'] = base_availability_models
     out_dict['base_model_variances'] = base_model_variances
     out_dict['node_requests'] = node_requests
-    with open(filename, 'w') as f:
-         yaml.dump(out_dict, f)
+    # with open(filename, 'w') as f:
+    #      yaml.dump(out_dict, f)
+    pickle.dump( out_dict, open( filename, "wb" ) )
 
 def save_schedules_to_file(schedule_filepath, true_availability_models, true_schedules, node_requests, num_deliveries, availability_percent, stat_run):
     filename = schedule_filepath + str(num_deliveries) + "_" + str(availability_percent) + "_" + str(stat_run) + ".yaml"
