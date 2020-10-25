@@ -302,7 +302,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                 for stat_run in range(num_stat_runs):
                 # stat_run = 0
                 # for test_run in range(num_test_runs):
-                    if strategy == 'mcts':
+                    if strategy == 'mcts_1000':
                         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history, ave_plan_time = create_policy_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
                     else:
                         total_profit, competitive_ratio, maintenance_competitive_ratio, path_history, ave_plan_time = plan_and_execute(strategy, g, availability_models[stat_run], model_variances[stat_run], true_schedules[stat_run], node_requests[stat_run], params['mu'], params, visualize, out_gif_path)
