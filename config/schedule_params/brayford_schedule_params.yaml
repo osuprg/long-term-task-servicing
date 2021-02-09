@@ -11,5 +11,6 @@ availability_chance: 0
 maintenance_reward: 0.001
 deliver_reward: 1.0
 max_noise_amplitude: 0.0
+noise_scaling: 0.0
 schedule_generation_method: temporal_consistency
 data_path: /datasets/brayford/
