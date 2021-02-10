@@ -301,7 +301,7 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
                 for stat_run in range(num_stat_runs):
 
-                    print true_schedules[stat_run].keys()
+                    print (true_schedules[stat_run].keys())
                 # stat_run = 0
                 # for test_run in range(num_test_runs):
                     if strategy == 'mcts':
