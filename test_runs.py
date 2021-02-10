@@ -136,11 +136,13 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
                         schedules = {}
                         for request in node_requests[stat_run]:
                             X, Y = load_brayford_testing_data(request, os.path.dirname(os.path.abspath(__file__)) + params['data_path'], stat_run, out_gif_path)
-                            for i in range(Y.shape[0]):
-                                if not(i in schedules):
-                                    schedules[i] = {}
-                                schedules[i][request] = Y[i]
-                            num_test_runs = Y.shape[0]
+                            schedules[request] = Y[stat_run]
+                            # for i in range(Y.shape[0]):
+                            #     if not(i in schedules):
+                            #         schedules[i] = {}
+                            #     schedules[i][request] = Y[i]
+                            # num_test_runs = Y.shape[0]
+
                             # schedules[request] = Y
                             # if params['use_gp']:
                             # from gp import GP
@@ -300,8 +302,6 @@ def stat_runs(world_config_file, schedule_config_file, planner_config_file, mode
 
 
                 for stat_run in range(num_stat_runs):
-
-                    print (true_schedules[stat_run].keys())
                 # stat_run = 0
                 # for test_run in range(num_test_runs):
                     if strategy == 'mcts':
