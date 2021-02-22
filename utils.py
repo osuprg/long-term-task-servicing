@@ -406,9 +406,9 @@ def persistence_prob(mu, delta_t, last_observation):
 def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_observation_time, ensemble_method):
     likelihood = persistence_prob(mu, curr_time-last_observation_time, last_observation)
 
-    if ensemble_method=='BMA':
+    if ensemble_method == 'bma':
         return .5*a_priori_prob + .5*likelihood
-    else:
+    elif ensemble_method == 'bayesian_update':
         # if last_observation == 1:
         #     evidence_prob = availability_model(last_observation_time)
         # else:
@@ -419,6 +419,8 @@ def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_o
         else:
             new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
         return new_prob
+    else:
+        raise ValueError(ensemble_method)
 
 
 def calculate_best_delivery_time(node_avails, last_observation, start_time, end_time, mu):

@@ -896,10 +896,10 @@ class SpatioTemporalGraph:
 
         likelihood = persistence_prob(self.mu, curr_time-last_observation_time, last_observation)
 
-        if ensemble_method=='BMA':
+        if ensemble_method == 'bma':
             return .5*a_priori_prob + .5*likelihood
 
-        else:
+        elif ensemble_method == 'bayesian_update':
         # if last_observation == 1:
             #     evidence_prob = availability_model(last_observation_time)
             # else:
@@ -910,6 +910,8 @@ class SpatioTemporalGraph:
             else:
                 new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
             return new_prob
+        else:
+            raise ValueError(ensemble_method)
 
     def combined_uncertainty(self, node_id, curr_time, prob, last_observation, last_observation_time):
         if self.use_gp:

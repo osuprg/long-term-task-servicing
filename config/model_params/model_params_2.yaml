@@ -13,4 +13,4 @@ num_iterations: 100
 version: hard
 fuzzyfier: 1
 lambda_param: 5
-ensemble_method: BMA
+ensemble_method: bma
