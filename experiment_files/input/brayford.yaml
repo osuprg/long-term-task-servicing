@@ -10,7 +10,7 @@ budgets: [1440]
 # strategies: [no_temp, no_replan, replan_no_observe, hack_observe, observe, observe_sampling, observe_sampling_variance_bias, observe_sampling_mult_visits]
 # strategies: [no_temp, no_replan, replan_no_observe, observe, observe_mult_visits]
 # strategies: [replan_no_observe, observe_mult_visits_up_0_or_7_dt_0, observe_mult_visits_up_5_or_0_dt_0, observe_mult_visits_up_5_or_7_dt_0]
-# strategies: [replan_no_observe, observe_mult_visits_up_5_or_0_dt_0, observe_mult_visits_up_5_or_7_dt_0]
-strategies: [mcts]
+strategies: [replan_no_observe, no_long_term, observe_mult_visits_up_5_or_0_dt_0, observe_emergent, observe_mult_visits_up_5_or_7_dt_0]
+# strategies: [mcts]
 visualize: 0
 visualize_path: /figs/schedules/brayford/

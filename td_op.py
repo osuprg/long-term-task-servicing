@@ -225,16 +225,16 @@ class SpatioTemporalGraph:
         if dest_name not in self.edges[source_name]:
             self.edges[source_name][dest_name] = STGraphEdge(edge_type, profit, edge_dist)
 
-    def create_node(self, v, node_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack):
+    def create_node(self, v, node_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, ensemble_method):
         if v in requests_left_to_deliver:
-            st_node = self.create_delivery_node(v, node_time, observations, incorporate_observation, incorporate_observation_hack)
+            st_node = self.create_delivery_node(v, node_time, observations, incorporate_observation, incorporate_observation_hack, ensemble_method)
         elif v == self.maintenance_node:
             st_node = self.create_maintenance_node(v, node_time)
         else:
             st_node = self.create_transit_node(v, node_time)
         return st_node
 
-    def create_delivery_node(self, v, node_time, observations, incorporate_observation, incorporate_observation_hack):
+    def create_delivery_node(self, v, node_time, observations, incorporate_observation, incorporate_observation_hack, ensemble_method):
         st_node = STGraphNode()
         st_node.id = v
         st_node.t = node_time
@@ -268,7 +268,7 @@ class SpatioTemporalGraph:
                 if st_node.id in observations.keys():
                     last_observation = observations[v][0]
                     last_observation_time = observations[v][1]
-                    st_node.prob = self.combine_probabilities(v, st_node.t, last_observation, last_observation_time)
+                    st_node.prob = self.combine_probabilities(v, st_node.t, last_observation, last_observation_time, ensemble_method)
                     st_node.uncertainty = self.combined_uncertainty(st_node.id, node_time, st_node.prob, last_observation, last_observation_time)
                     st_node.observation_profit = observation_profit(st_node.uncertainty)
                     st_node.delivery_profit = deliver_profit(st_node.prob, self.deliver_reward)
@@ -330,7 +330,7 @@ class SpatioTemporalGraph:
 
 
     ### Create STGraph, node for each spatial node/time slice. Edges connect nodes at different time slices according to traversal costs.
-    def build_graph(self, spatial_graph, graph_start_node_id, graph_start_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, variance_bias):
+    def build_graph(self, spatial_graph, graph_start_node_id, graph_start_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, variance_bias, ensemble_method):
         graph_start_node = STGraphNode()
         graph_start_node.id = graph_start_node_id
         graph_start_node.t = graph_start_time
@@ -379,7 +379,7 @@ class SpatioTemporalGraph:
                             if st_node.id in observations.keys():
                                 last_observation = observations[v][0]
                                 last_observation_time = observations[v][1]
-                                st_node.prob = self.combine_probabilities(v, st_node.t, last_observation, last_observation_time)
+                                st_node.prob = self.combine_probabilities(v, st_node.t, last_observation, last_observation_time, ensemble_method)
                                 st_node.profit = bernoulli_variance_biasing(st_node.prob, variance_bias, self.deliver_reward)
                                 st_node.serviced_probs[st_node.id] = st_node.prob
                             else:
@@ -557,7 +557,7 @@ class SpatioTemporalGraph:
 
 
     ### Create STGraph, node for each spatial node/time slice. Edges connect nodes at different time slices according to traversal costs.
-    def build_graph_single_delivery(self, spatial_graph, graph_start_node_id, graph_start_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, variance_bias):
+    def build_graph_single_delivery(self, spatial_graph, graph_start_node_id, graph_start_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, variance_bias, ensemble_method):
         graph_start_node = STGraphNode()
         graph_start_node.id = graph_start_node_id
         graph_start_node.t = graph_start_time
@@ -578,7 +578,7 @@ class SpatioTemporalGraph:
                 if node_name in self.vertices:
                     st_node = self.vertices[node_name]
                 else:
-                    st_node = self.create_node(v, node_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+                    st_node = self.create_node(v, node_time, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, ensemble_method)
 
                 ## Move action to neighbors
                 # for each neighbor
@@ -594,7 +594,7 @@ class SpatioTemporalGraph:
                         if neighbor_name in self.vertices:
                             neighbor_node = self.vertices[neighbor_name]
                         else:
-                            neighbor_node = self.create_node(neighbor, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+                            neighbor_node = self.create_node(neighbor, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, ensemble_method)
 
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
@@ -611,7 +611,7 @@ class SpatioTemporalGraph:
                         if neighbor_name in self.vertices:
                             neighbor_node = self.vertices[neighbor_name]
                         else:
-                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, ensemble_method)
                         
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
@@ -628,7 +628,7 @@ class SpatioTemporalGraph:
                         if neighbor_name in self.vertices:
                             neighbor_node = self.vertices[neighbor_name]
                         else:
-                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, ensemble_method)
                         
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
@@ -646,7 +646,7 @@ class SpatioTemporalGraph:
                         if neighbor_name in self.vertices:
                             neighbor_node = self.vertices[neighbor_name]
                         else:
-                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, ensemble_method)
 
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
@@ -663,7 +663,7 @@ class SpatioTemporalGraph:
                         if neighbor_name in self.vertices:
                             neighbor_node = self.vertices[neighbor_name]
                         else:
-                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack)
+                            neighbor_node = self.create_node(v, st_node.t + dist, requests_left_to_deliver, observations, incorporate_observation, incorporate_observation_hack, ensemble_method)
                         neighbor_node.indegree += 1
                         self.vertices[neighbor_name] = neighbor_node
                         st_node.successors.append(neighbor_name)
@@ -677,7 +677,7 @@ class SpatioTemporalGraph:
 
 
     ### DP based calculation of max profit path from starting node within budget
-    def calc_max_profit_path_single_delivery(self, L, node_requests, multiple_visits):
+    def calc_max_profit_path_single_delivery(self, L, node_requests, multiple_visits, ensemble_method):
 
         # for each node in topological order
         for node_name in L:
@@ -698,7 +698,7 @@ class SpatioTemporalGraph:
                         if successor.id in node.last_attempted_deliveries:
                             last_observation = 0
                             last_observation_time = node.last_attempted_deliveries[successor.id]
-                            prob = self.combine_probabilities(successor.id, successor.t, last_observation, last_observation_time)
+                            prob = self.combine_probabilities(successor.id, successor.t, last_observation, last_observation_time, ensemble_method)
                         else:
                             prob = successor.prob
 
@@ -760,7 +760,7 @@ class SpatioTemporalGraph:
                         if successor.id in node.last_attempted_deliveries:
                             last_observation = 0
                             last_observation_time = node.last_attempted_deliveries[successor.id]
-                            prob = self.combine_probabilities(successor.id, successor.t, last_observation, last_observation_time)
+                            prob = self.combine_probabilities(successor.id, successor.t, last_observation, last_observation_time, ensemble_method)
                         else:
                             prob = successor.prob
 
@@ -885,7 +885,7 @@ class SpatioTemporalGraph:
 
 
     ### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)
-    def combine_probabilities(self, node_id, curr_time, last_observation, last_observation_time):
+    def combine_probabilities(self, node_id, curr_time, last_observation, last_observation_time, ensemble_method):
         if not(self.long_term_model):
             a_priori_prob = .5
         elif self.use_gp:
@@ -895,16 +895,21 @@ class SpatioTemporalGraph:
             # a_priori_prob = self.availability_models[node_id][int(curr_time/self.time_interval)]
 
         likelihood = persistence_prob(self.mu, curr_time-last_observation_time, last_observation)
-        # if last_observation == 1:
-        #     evidence_prob = availability_model(last_observation_time)
-        # else:
-        #     evidence_prob = 1 - availability_model(last_observation_time)
-        evidence_prob = (likelihood*a_priori_prob) + (1.0-likelihood)*(1.0-a_priori_prob)
-        if (likelihood < .0001) or (a_priori_prob < .0001):
-            new_prob = .0001
+
+        if ensemble_method=='BMA':
+            return .5*a_priori_prob + .5*likelihood
+
         else:
-            new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
-        return new_prob
+        # if last_observation == 1:
+            #     evidence_prob = availability_model(last_observation_time)
+            # else:
+            #     evidence_prob = 1 - availability_model(last_observation_time)
+            evidence_prob = (likelihood*a_priori_prob) + (1.0-likelihood)*(1.0-a_priori_prob)
+            if (likelihood < .0001) or (a_priori_prob < .0001):
+                new_prob = .0001
+            else:
+                new_prob = likelihood*a_priori_prob/evidence_prob         # Bayesian update of last observation times occ prior
+            return new_prob
 
     def combined_uncertainty(self, node_id, curr_time, prob, last_observation, last_observation_time):
         if self.use_gp:

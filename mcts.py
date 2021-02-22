@@ -163,7 +163,7 @@ class MCTS_Node:
 
 class MCTS:
 
-	def __init__(self, spatial_graph, avails, observations, requests_left_to_deliver, start_pose, start_time, budget, max_iterations, planning_horizon, maintenance_reward, deliver_reward, mu, discovery_factor, distribution_node, maintenance_node):
+	def __init__(self, spatial_graph, avails, observations, requests_left_to_deliver, start_pose, start_time, budget, max_iterations, planning_horizon, maintenance_reward, deliver_reward, mu, discovery_factor, distribution_node, maintenance_node, ensemble_method):
 		self.nodes = {}
 		self.spatial_graph = spatial_graph
 		self.avails = avails
@@ -180,6 +180,7 @@ class MCTS:
 		self.distribution_node = distribution_node
 		self.maintenance_node = maintenance_node
 		self.nodes[self.root_node_id] = MCTS_Node(self.root_node_id, start_pose, start_time, observations, requests_left_to_deliver, [])
+		self.ensemble_method = ensemble_method
 
 
 	def observations_standard_form(self, observations):
@@ -272,7 +273,7 @@ class MCTS:
 		if pose_id in observations:
 			last_observation = observations[pose_id][0]
 			last_observation_time = observations[pose_id][1]
-			prob = combine_probabilities(a_priori_prob, self.mu, deliver_time, last_observation, last_observation_time)
+			prob = combine_probabilities(a_priori_prob, self.mu, deliver_time, last_observation, last_observation_time, self.ensemble_method)
 		else:
 			prob = a_priori_prob
 
@@ -384,7 +385,7 @@ class MCTS:
 						last_observation_time = node.observations[node.pose_id][1]
 						# a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
 						a_priori_prob = self.avails[node.pose_id].predict(node.time)
-						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time)
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time, self.ensemble_method)
 					else:
 						# avail_prob = self.avails[node.pose_id].get_prediction(node.time)
 						avail_prob = self.avails[node.pose_id].predict(node.time)
@@ -411,7 +412,7 @@ class MCTS:
 						# a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time) 			# FIXME +1 minute to do delivery
 						a_priori_prob = self.avails[node.pose_id].predict(self.nodes[available].time)
 
-						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time, last_observation_value, last_observation_time)
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time, last_observation_value, last_observation_time, self.ensemble_method)
 					else:
 						# avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time)
 						avail_prob = self.avails[node.pose_id].predict(self.nodes[available].time)
@@ -468,7 +469,7 @@ class MCTS:
 						last_observation_time = node.observations[node.pose_id][1]
 						# a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
 						a_priori_prob = self.avails[node.pose_id].predict(node.time)
-						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time)
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time, self.ensemble_method)
 					else:
 						# avail_prob = self.avails[node.pose_id].get_prediction(node.time)
 						avail_prob = self.avails[node.pose_id].predict(node.time)
@@ -486,7 +487,7 @@ class MCTS:
 						last_observation_time = node.observations[node.pose_id][1]
 						# a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1) 			# minute to do delivery
 						a_priori_prob = self.avails[node.pose_id].predict(self.nodes[available].time - 1)
-						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time - 1, last_observation_value, last_observation_time)
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time - 1, last_observation_value, last_observation_time, self.ensemble_method)
 					else:
 						avail_prob = self.avails[node.pose_id].predict(self.nodes[available].time - 1)
 
@@ -530,7 +531,7 @@ class MCTS:
 						last_observation_time = node.observations[node.pose_id][1]
 						# a_priori_prob = self.avails[node.pose_id].get_prediction(node.time)
 						a_priori_prob = self.avails[node.pose_id].predict(node.time)
-						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time)
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, node.time, last_observation_value, last_observation_time, self.ensemble_method)
 					else:
 						# avail_prob = self.avails[node.pose_id].get_prediction(node.time)
 						avail_prob = self.avails[node.pose_id].predict(node.time)
@@ -550,7 +551,7 @@ class MCTS:
 						last_observation_time = node.observations[node.pose_id][1]
 						# a_priori_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1) 			# minute to do delivery
 						a_priori_prob = self.avails[node.pose_id].predict(self.nodes[available].time - 1)
-						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time - 1, last_observation_value, last_observation_time)
+						avail_prob = combine_probabilities(a_priori_prob, self.mu, self.nodes[available].time - 1, last_observation_value, last_observation_time, self.ensemble_method)
 					else:
 						# avail_prob = self.avails[node.pose_id].get_prediction(self.nodes[available].time - 1)
 						avail_prob = self.avails[node.pose_id].predict(self.nodes[available].time - 1)

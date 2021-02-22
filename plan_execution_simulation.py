@@ -215,7 +215,7 @@ def create_policy_and_execute(strategy, g, base_availability_models, base_model_
 
 
             runtime_start = timer()
-            mcts = MCTS(g, base_availability_models, availability_observations, requests_left_to_deliver, curr_node, curr_time, params['budget']-curr_time, params['max_iterations'], params['planning_horizon'], params['maintenance_reward'], params['deliver_reward'], params['mu'], params['discovery_factor'], params['distribution_node'], params['maintenance_node'])
+            mcts = MCTS(g, base_availability_models, availability_observations, requests_left_to_deliver, curr_node, curr_time, params['budget']-curr_time, params['max_iterations'], params['planning_horizon'], params['maintenance_reward'], params['deliver_reward'], params['mu'], params['discovery_factor'], params['distribution_node'], params['maintenance_node'], params['ensemble_method'])
             mcts.create_policy()
             plan_time = timer() - runtime_start
             plan_times.append(plan_time)
