@@ -403,7 +403,7 @@ def persistence_prob(mu, delta_t, last_observation):
 
 
 ### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)
-def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_observation_time, ensemble_method):
+def combine_probabilities(a_priori_prob, mu, curr_time, last_observation, last_observation_time, ensemble_method='bayesian_update'):
     likelihood = persistence_prob(mu, curr_time-last_observation_time, last_observation)
 
     if ensemble_method == 'bma':

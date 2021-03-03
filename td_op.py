@@ -885,7 +885,7 @@ class SpatioTemporalGraph:
 
 
     ### Bayesian update of model availability probabilities with info from latest observation (respecting temporal persistence)
-    def combine_probabilities(self, node_id, curr_time, last_observation, last_observation_time, ensemble_method):
+    def combine_probabilities(self, node_id, curr_time, last_observation, last_observation_time, ensemble_method='bayesian_update'):
         if not(self.long_term_model):
             a_priori_prob = .5
         elif self.use_gp:
