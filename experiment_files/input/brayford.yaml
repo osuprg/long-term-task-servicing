@@ -4,7 +4,7 @@ planner_config_file: /config/planner_params/planner_params_1.yaml
 model_config_file: /config/model_params/model_params_2.yaml
 base_model_filepath: /worlds/willow/models/params_brayford/
 schedule_filepath: /worlds/willow/schedules/params_brayford/
-num_deliveries: [6]
+num_deliveries: [8]
 availability_percents: [0]
 budgets: [1440]
 # strategies: [no_temp, no_replan, replan_no_observe, hack_observe, observe, observe_sampling, observe_sampling_variance_bias, observe_sampling_mult_visits]
